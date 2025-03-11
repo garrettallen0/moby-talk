@@ -177,3 +177,23 @@ button:disabled:hover {
   align-items: center;
   min-height: 600px;
 }
+
+.relationship-item {
+  padding: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+  margin: 0.5rem 0;
+  border: 1px solid #dee2e6;
+}
+
+.relationship-item:hover {
+  background-color: #e9ecef;
+}
+
+.relationship-item.editing {
+  background-color: #e8f4f8;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}

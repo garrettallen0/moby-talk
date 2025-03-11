@@ -8,6 +8,7 @@ function App() {
   const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set());
   const [relationships, setRelationships] = useState<Map<number, number[]>>(new Map());
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
+  const [isEditing, setIsEditing] = useState(false);
 
   // Generate array of all chapters (1-135)
   const allChapters = Array.from({ length: 135 }, (_, i) => i + 1);
@@ -45,6 +46,16 @@ function App() {
     // Reset selections
     setSelectedChapter(null);
     setRelatedChapters(new Set());
+    setIsEditing(false);
+  };
+
+  const handleEditRelationship = (chapter: number) => {
+    const related = relationships.get(chapter);
+    if (related) {
+      setSelectedChapter(chapter);
+      setRelatedChapters(new Set(related));
+      setIsEditing(true);
+    }
   };
 
   const generateGraph = () => {
@@ -97,6 +108,7 @@ function App() {
         <p className="instructions">
           First, click a chapter to select it (turns green), then click other chapters to mark them as related (turns blue).
           Click "Add Relationship" when done selecting related chapters.
+          {isEditing && " You are currently editing an existing relationship."}
         </p>
         <div className="chapter-grid">
           {allChapters.map(chapter => (
@@ -115,7 +127,7 @@ function App() {
             onClick={handleAddRelationship}
             disabled={!selectedChapter}
           >
-            Add Relationship
+            {isEditing ? 'Update Relationship' : 'Add Relationship'}
           </button>
           <button 
             className="visualize-button"
@@ -129,8 +141,13 @@ function App() {
 
       <div className="relationships-list">
         <h3>Current Relationships:</h3>
+        <p className="instructions">Click on any relationship to edit it.</p>
         {Array.from(relationships.entries()).map(([chapter, related]) => (
-          <div key={chapter}>
+          <div 
+            key={chapter} 
+            className={`relationship-item ${selectedChapter === chapter ? 'editing' : ''}`}
+            onClick={() => handleEditRelationship(chapter)}
+          >
             Chapter {chapter} → Chapters {related.join(', ')}
           </div>
         ))}
