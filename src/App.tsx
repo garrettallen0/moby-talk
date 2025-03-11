@@ -4,33 +4,47 @@ import ForceGraph from './components/ForceGraph'
 import { GraphData, Node, Link } from './types/graph'
 
 function App() {
-  const [currentChapter, setCurrentChapter] = useState<string>('');
-  const [relatedChapters, setRelatedChapters] = useState<string>('');
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
+  const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set());
   const [relationships, setRelationships] = useState<Map<number, number[]>>(new Map());
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
 
+  // Generate array of all chapters (1-135)
+  const allChapters = Array.from({ length: 135 }, (_, i) => i + 1);
+
+  const handleChapterClick = (chapter: number) => {
+    if (selectedChapter === null) {
+      // First selection
+      setSelectedChapter(chapter);
+      setRelatedChapters(new Set());
+    } else if (chapter === selectedChapter) {
+      // Deselect primary chapter
+      setSelectedChapter(null);
+      setRelatedChapters(new Set());
+    } else {
+      // Toggle related chapter
+      const newRelated = new Set(relatedChapters);
+      if (newRelated.has(chapter)) {
+        newRelated.delete(chapter);
+      } else {
+        newRelated.add(chapter);
+      }
+      setRelatedChapters(newRelated);
+    }
+  };
+
   const handleAddRelationship = () => {
-    const chapter = parseInt(currentChapter);
-    const related = relatedChapters.split(',').map(ch => parseInt(ch.trim())).filter(ch => !isNaN(ch));
-
-    if (isNaN(chapter) || chapter < 1 || chapter > 135) {
-      alert('Please enter a valid chapter number (1-135)');
-      return;
-    }
-
-    if (related.some(ch => ch < 1 || ch > 135)) {
-      alert('All related chapters must be between 1 and 135');
-      return;
-    }
+    if (selectedChapter === null) return;
 
     setRelationships(prev => {
       const newMap = new Map(prev);
-      newMap.set(chapter, related);
+      newMap.set(selectedChapter, Array.from(relatedChapters));
       return newMap;
     });
 
-    setCurrentChapter('');
-    setRelatedChapters('');
+    // Reset selections
+    setSelectedChapter(null);
+    setRelatedChapters(new Set());
   };
 
   const generateGraph = () => {
@@ -68,38 +82,49 @@ function App() {
     setGraphData({ nodes, links });
   };
 
+  const getChapterStyle = (chapter: number) => {
+    if (chapter === selectedChapter) return "chapter-button selected-primary";
+    if (relatedChapters.has(chapter)) return "chapter-button selected-related";
+    return "chapter-button";
+  };
+
   return (
     <div className="container">
       <h1>Moby-Dick Chapter Relationships</h1>
       
-      <div className="input-section">
-        <div className="input-group">
-          <label>
-            Chapter Number (1-135):
-            <input
-              type="number"
-              min="1"
-              max="135"
-              value={currentChapter}
-              onChange={(e) => setCurrentChapter(e.target.value)}
-            />
-          </label>
+      <div className="chapter-bank">
+        <h3>Select Chapters</h3>
+        <p className="instructions">
+          First, click a chapter to select it (turns green), then click other chapters to mark them as related (turns blue).
+          Click "Add Relationship" when done selecting related chapters.
+        </p>
+        <div className="chapter-grid">
+          {allChapters.map(chapter => (
+            <button
+              key={chapter}
+              className={getChapterStyle(chapter)}
+              onClick={() => handleChapterClick(chapter)}
+            >
+              {chapter}
+            </button>
+          ))}
         </div>
-        
-        <div className="input-group">
-          <label>
-            Related Chapters (comma-separated):
-            <input
-              type="text"
-              value={relatedChapters}
-              onChange={(e) => setRelatedChapters(e.target.value)}
-              placeholder="e.g., 25, 35, 38"
-            />
-          </label>
+        <div className="action-buttons">
+          <button 
+            className="add-button"
+            onClick={handleAddRelationship}
+            disabled={!selectedChapter}
+          >
+            Add Relationship
+          </button>
+          <button 
+            className="visualize-button"
+            onClick={generateGraph}
+            disabled={relationships.size === 0}
+          >
+            Visualize
+          </button>
         </div>
-
-        <button onClick={handleAddRelationship}>Add Relationship</button>
-        <button onClick={generateGraph}>Visualize</button>
       </div>
 
       <div className="relationships-list">
