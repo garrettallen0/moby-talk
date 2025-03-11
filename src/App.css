@@ -89,6 +89,7 @@ h1 {
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #000;
 }
 
 .chapter-button:hover {
