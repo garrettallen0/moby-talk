@@ -51,28 +51,16 @@ function App() {
       return newMap;
     });
 
-    // Reset selections
-    setSelectedChapter(null);
-    setRelatedChapters(new Set());
-    setIsEditing(false);
-  };
-
-  const handleEditRelationship = (chapter: number) => {
-    const related = relationships.get(chapter);
-    if (related) {
-      setSelectedChapter(chapter);
-      setRelatedChapters(new Set(related));
-      setIsEditing(true);
-    }
-  };
-
-  const generateGraph = () => {
+    // Generate visualization immediately
     const nodes: Node[] = [];
     const links: Link[] = [];
     const connectionsCount = new Map<number, number>();
 
-    // Count connections for each chapter
-    relationships.forEach((related, chapter) => {
+    // Count connections for each chapter including the new relationship
+    const updatedRelationships = new Map(relationships);
+    updatedRelationships.set(selectedChapter, Array.from(relatedChapters));
+    
+    updatedRelationships.forEach((related, chapter) => {
       connectionsCount.set(chapter, (connectionsCount.get(chapter) || 0) + related.length);
       related.forEach(r => {
         connectionsCount.set(r, (connectionsCount.get(r) || 0) + 1);
@@ -89,7 +77,7 @@ function App() {
     });
 
     // Create links
-    relationships.forEach((related, chapter) => {
+    updatedRelationships.forEach((related, chapter) => {
       related.forEach(r => {
         links.push({
           source: chapter,
@@ -99,6 +87,20 @@ function App() {
     });
 
     setGraphData({ nodes, links });
+
+    // Reset selections
+    setSelectedChapter(null);
+    setRelatedChapters(new Set());
+    setIsEditing(false);
+  };
+
+  const handleEditRelationship = (chapter: number) => {
+    const related = relationships.get(chapter);
+    if (related) {
+      setSelectedChapter(chapter);
+      setRelatedChapters(new Set(related));
+      setIsEditing(true);
+    }
   };
 
   const getChapterStyle = (chapter: number) => {
@@ -138,13 +140,6 @@ function App() {
             disabled={!selectedChapter}
           >
             {isEditing ? 'Update' : 'Add'}
-          </button>
-          <button 
-            className="visualize-button"
-            onClick={generateGraph}
-            disabled={relationships.size === 0}
-          >
-            Visualize
           </button>
         </div>
 
