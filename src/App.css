@@ -175,14 +175,69 @@ button:disabled:hover {
   border-radius: 8px;
 }
 
-.relationships-list h3 {
-  margin-top: 0;
-  color: #2c3e50;
+.relationships-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
 }
 
-.relationships-list div {
+.toggle-pill {
+  width: 40px;
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.toggle-pill.active {
+  background-color: #28a745;
+}
+
+.toggle-pill::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+.toggle-pill.active::after {
+  transform: translateX(20px);
+}
+
+.relationships-content {
+  margin-top: 1rem;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.relationships-content.closed {
+  max-height: 0;
+  margin-top: 0;
+}
+
+.relationships-content > div {
   margin: 0.5rem 0;
   color: #495057;
+}
+
+.relationships-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 500;
 }
 
 .graph-container {

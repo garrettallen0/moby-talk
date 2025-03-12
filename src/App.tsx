@@ -16,6 +16,7 @@ function App() {
   const [relationships, setRelationships] = useState<Map<number, number[]>>(new Map());
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isEditing, setIsEditing] = useState(false);
+  const [isRelationshipsOpen, setIsRelationshipsOpen] = useState(true);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -159,17 +160,26 @@ function App() {
       </div>
 
       <div className="relationships-list">
-        <h3>Current Relationships:</h3>
-        <p className="instructions">Click on any relationship to edit it.</p>
-        {Array.from(relationships.entries()).map(([chapter, related]) => (
-          <div 
-            key={chapter} 
-            className={`relationship-item ${selectedChapter === chapter ? 'editing' : ''}`}
-            onClick={() => handleEditRelationship(chapter)}
-          >
-            Chapter {chapter} → Chapters {related.join(', ')}
-          </div>
-        ))}
+        <button 
+          className="relationships-header"
+          onClick={() => setIsRelationshipsOpen(!isRelationshipsOpen)}
+        >
+          <div className={`toggle-pill ${isRelationshipsOpen ? 'active' : ''}`} />
+          <h3>Show Relationships</h3>
+        </button>
+        
+        <div className={`relationships-content ${isRelationshipsOpen ? '' : 'closed'}`}>
+          <p className="instructions">Click a relationship to edit it.</p>
+          {Array.from(relationships.entries()).map(([chapter, related]) => (
+            <div 
+              key={chapter} 
+              className={`relationship-item ${selectedChapter === chapter ? 'editing' : ''}`}
+              onClick={() => handleEditRelationship(chapter)}
+            >
+              Chapter {chapter} → Chapters {related.join(', ')}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="graph-container">
