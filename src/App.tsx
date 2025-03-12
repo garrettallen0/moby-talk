@@ -114,8 +114,7 @@ function App() {
       <div className="chapter-bank">
         <h3>Select Chapters</h3>
         <p className="instructions">
-          First, click a chapter to select it (turns green), then click other chapters to mark them as related (turns blue).
-          Click "Add Relationship" when done selecting related chapters.
+          Click a chapter to select it. Then click other chapters to mark them as related. Then click "Add".
           {isEditing && " You are currently editing an existing relationship."}
         </p>
 
@@ -138,7 +137,7 @@ function App() {
             onClick={handleAddRelationship}
             disabled={!selectedChapter}
           >
-            {isEditing ? 'Update Relationship' : 'Add Relationship'}
+            {isEditing ? 'Update' : 'Add'}
           </button>
           <button 
             className="visualize-button"
