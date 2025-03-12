@@ -2,6 +2,11 @@ import { useState } from 'react'
 import './App.css'
 import ForceGraph from './components/ForceGraph'
 import { GraphData, Node, Link } from './types/graph'
+import { AuthButton } from './components/AuthButton'
+import { useAuth } from './contexts/AuthContext'
+import { Configuration } from './types/config'
+import { saveConfiguration, getUserConfigurations, deleteConfiguration } from './services/configurationService'
+import { ConfigurationsList } from './components/ConfigurationsList'
 
 // Special chapters with their IDs
 const SPECIAL_CHAPTERS = {
@@ -11,12 +16,18 @@ const SPECIAL_CHAPTERS = {
 } as const;
 
 function App() {
+  const { user } = useAuth();
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set());
   const [relationships, setRelationships] = useState<Map<number, number[]>>(new Map());
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isEditing, setIsEditing] = useState(false);
   const [isRelationshipsOpen, setIsRelationshipsOpen] = useState(true);
+  const [configurations, setConfigurations] = useState<Configuration[]>([]);
+  const [configName, setConfigName] = useState('');
+  const [configDescription, setConfigDescription] = useState('');
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [isConfigListOpen, setIsConfigListOpen] = useState(false);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -109,10 +120,164 @@ function App() {
     return "chapter-button";
   };
 
+  const loadConfigurations = async () => {
+    if (!user) return;
+    try {
+      const userConfigs = await getUserConfigurations(user.uid);
+      setConfigurations(userConfigs);
+      // TODO: Add UI for selecting and loading a specific configuration
+    } catch (error) {
+      console.error('Error loading configurations:', error);
+    }
+  };
+
+  const handleSaveConfiguration = async () => {
+    if (!user || !configName.trim()) return;
+    
+    try {
+      await saveConfiguration(
+        user.uid,
+        configName.trim(),
+        Array.from(relationships.entries()).map(([sourceChapter, relatedChapters]) => ({
+          sourceChapter,
+          relatedChapters
+        })),
+        configDescription.trim() || undefined
+      );
+
+      // Reset form
+      setConfigName('');
+      setConfigDescription('');
+      setIsConfigModalOpen(false);
+
+      // Reload configurations
+      await loadConfigurations();
+    } catch (error) {
+      console.error('Error saving configuration:', error);
+    }
+  };
+
+  const handleLoadConfiguration = (config: Configuration) => {
+    // Convert relationships array to Map
+    const newRelationships = new Map<number, number[]>();
+    config.relationships.forEach(rel => {
+      newRelationships.set(rel.sourceChapter, rel.relatedChapters);
+    });
+    
+    setRelationships(newRelationships);
+    setIsConfigListOpen(false);
+
+    // Update graph data
+    const nodes: Node[] = [];
+    const links: Link[] = [];
+    const connectionsCount = new Map<number, number>();
+
+    // Count connections for each chapter
+    newRelationships.forEach((related, chapter) => {
+      connectionsCount.set(chapter, (connectionsCount.get(chapter) || 0) + related.length);
+      related.forEach(r => {
+        connectionsCount.set(r, (connectionsCount.get(r) || 0) + 1);
+      });
+    });
+
+    // Create nodes
+    Array.from(connectionsCount.keys()).forEach(chapter => {
+      nodes.push({
+        id: chapter,
+        chapter: chapter,
+        connections: connectionsCount.get(chapter) || 0
+      });
+    });
+
+    // Create links
+    newRelationships.forEach((related, chapter) => {
+      related.forEach(r => {
+        links.push({
+          source: chapter,
+          target: r
+        });
+      });
+    });
+
+    setGraphData({ nodes, links });
+  };
+
+  const handleDeleteConfiguration = async (configId: string) => {
+    if (!user) return;
+    
+    try {
+      await deleteConfiguration(configId);
+      await loadConfigurations();
+    } catch (error) {
+      console.error('Error deleting configuration:', error);
+    }
+  };
+
   return (
     <div className="container">
+      <AuthButton />
       <h1>Moby-Dick Chapter Relationships</h1>
       
+      {user && (
+        <div className="config-controls">
+          <button 
+            className="save-button"
+            onClick={() => setIsConfigModalOpen(true)}
+            disabled={relationships.size === 0}
+          >
+            Save Configuration
+          </button>
+          <button 
+            className="load-button"
+            onClick={async () => {
+              await loadConfigurations();
+              setIsConfigListOpen(true);
+            }}
+          >
+            Load Configuration
+          </button>
+        </div>
+      )}
+
+      {isConfigModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Save Configuration</h3>
+            <input
+              type="text"
+              placeholder="Configuration Name"
+              value={configName}
+              onChange={(e) => setConfigName(e.target.value)}
+            />
+            <textarea
+              placeholder="Description (optional)"
+              value={configDescription}
+              onChange={(e) => setConfigDescription(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button 
+                onClick={() => handleSaveConfiguration()}
+                disabled={!configName.trim()}
+              >
+                Save
+              </button>
+              <button onClick={() => setIsConfigModalOpen(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isConfigListOpen && (
+        <ConfigurationsList
+          configurations={configurations}
+          onLoadConfiguration={handleLoadConfiguration}
+          onDeleteConfiguration={handleDeleteConfiguration}
+          onClose={() => setIsConfigListOpen(false)}
+        />
+      )}
+
       <div className="chapter-bank">
         <h3>Select Chapters</h3>
         <p className="instructions">
