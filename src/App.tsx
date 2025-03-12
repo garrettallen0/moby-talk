@@ -3,6 +3,13 @@ import './App.css'
 import ForceGraph from './components/ForceGraph'
 import { GraphData, Node, Link } from './types/graph'
 
+// Special chapters with their IDs
+const SPECIAL_CHAPTERS = {
+  '-1': 'Extracts',
+  '0': 'Etymology',
+  '136': 'Epilogue'
+} as const;
+
 function App() {
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set());
@@ -10,8 +17,8 @@ function App() {
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isEditing, setIsEditing] = useState(false);
 
-  // Generate array of all chapters (1-135)
-  const allChapters = Array.from({ length: 135 }, (_, i) => i + 1);
+  // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
+  const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
 
   const handleChapterClick = (chapter: number) => {
     if (selectedChapter === null) {
@@ -110,17 +117,20 @@ function App() {
           Click "Add Relationship" when done selecting related chapters.
           {isEditing && " You are currently editing an existing relationship."}
         </p>
+
         <div className="chapter-grid">
           {allChapters.map(chapter => (
             <button
               key={chapter}
               className={getChapterStyle(chapter)}
               onClick={() => handleChapterClick(chapter)}
+              data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]}
             >
               {chapter}
             </button>
           ))}
         </div>
+
         <div className="action-buttons">
           <button 
             className="add-button"
@@ -136,6 +146,15 @@ function App() {
           >
             Visualize
           </button>
+        </div>
+
+        <div className="chapter-legend">
+          <h4>Chapter Legend:</h4>
+          {Object.entries(SPECIAL_CHAPTERS).map(([id, name]) => (
+            <div key={id} className="legend-item">
+              {id} = {name}
+            </div>
+          ))}
         </div>
       </div>
 

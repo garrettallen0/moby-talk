@@ -59,6 +59,7 @@ h1 {
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .chapter-bank h3 {
@@ -90,6 +91,7 @@ h1 {
   cursor: pointer;
   transition: all 0.2s ease;
   color: #000;
+  position: relative;
 }
 
 .chapter-button:hover {
@@ -106,6 +108,22 @@ h1 {
   background-color: #ADD8E6;
   border-color: #007bff;
   color: #1a1a1a;
+}
+
+.chapter-button[data-title]:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+  margin-bottom: 5px;
 }
 
 .action-buttons {
@@ -196,4 +214,12 @@ button:disabled:hover {
   background-color: #e8f4f8;
   border-color: #007bff;
   box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.special-chapters, .special-chapter {
+  display: none;
+}
+
+.chapter-legend, .chapter-legend h4, .legend-item {
+  display: none;
 }
