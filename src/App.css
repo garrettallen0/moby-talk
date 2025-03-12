@@ -54,44 +54,118 @@ h1 {
   margin-bottom: 2rem;
 }
 
-.input-section {
+.chapter-bank {
   background-color: #f8f9fa;
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 2rem;
+  position: relative;
 }
 
-.input-group {
+.chapter-bank h3 {
+  color: #2c3e50;
+  margin-top: 0;
   margin-bottom: 1rem;
 }
 
-.input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #495057;
+.instructions {
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
-.input-group input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ced4da;
+.chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chapter-button {
+  background-color: #fff;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
-  font-size: 1rem;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #000;
+  position: relative;
 }
 
-button {
+.chapter-button:hover {
+  background-color: #e9ecef;
+}
+
+.chapter-button.selected-primary {
+  background-color: #90EE90;
+  border-color: #28a745;
+  color: #1a1a1a;
+}
+
+.chapter-button.selected-related {
+  background-color: #ADD8E6;
+  border-color: #007bff;
+  color: #1a1a1a;
+}
+
+.chapter-button[data-title]:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+  margin-bottom: 5px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.add-button, .visualize-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.add-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.add-button:hover {
+  background-color: #218838;
+}
+
+.visualize-button {
   background-color: #007bff;
   color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 1rem;
-  font-size: 1rem;
 }
 
-button:hover {
+.visualize-button:hover {
   background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #ccc;
 }
 
 .relationships-list {
@@ -101,14 +175,69 @@ button:hover {
   border-radius: 8px;
 }
 
-.relationships-list h3 {
-  margin-top: 0;
-  color: #2c3e50;
+.relationships-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
 }
 
-.relationships-list div {
+.toggle-pill {
+  width: 40px;
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.toggle-pill.active {
+  background-color: #28a745;
+}
+
+.toggle-pill::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+.toggle-pill.active::after {
+  transform: translateX(20px);
+}
+
+.relationships-content {
+  margin-top: 1rem;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.relationships-content.closed {
+  max-height: 0;
+  margin-top: 0;
+}
+
+.relationships-content > div {
   margin: 0.5rem 0;
   color: #495057;
+}
+
+.relationships-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 500;
 }
 
 .graph-container {
@@ -120,4 +249,32 @@ button:hover {
   justify-content: center;
   align-items: center;
   min-height: 600px;
+}
+
+.relationship-item {
+  padding: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+  margin: 0.5rem 0;
+  border: 1px solid #dee2e6;
+}
+
+.relationship-item:hover {
+  background-color: #e9ecef;
+}
+
+.relationship-item.editing {
+  background-color: #e8f4f8;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.special-chapters, .special-chapter {
+  display: none;
+}
+
+.chapter-legend, .chapter-legend h4, .legend-item {
+  display: none;
 }

@@ -3,34 +3,67 @@ import './App.css'
 import ForceGraph from './components/ForceGraph'
 import { GraphData, Node, Link } from './types/graph'
 
+// Special chapters with their IDs
+const SPECIAL_CHAPTERS = {
+  '-1': 'Extracts',
+  '0': 'Etymology',
+  '136': 'Epilogue'
+} as const;
+
 function App() {
-  const [currentChapter, setCurrentChapter] = useState<string>('');
-  const [relatedChapters, setRelatedChapters] = useState<string>('');
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
+  const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set());
   const [relationships, setRelationships] = useState<Map<number, number[]>>(new Map());
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isRelationshipsOpen, setIsRelationshipsOpen] = useState(true);
+
+  // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
+  const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
+
+  const handleChapterClick = (chapter: number) => {
+    if (selectedChapter === null) {
+      // First selection
+      setSelectedChapter(chapter);
+      setRelatedChapters(new Set());
+    } else if (chapter === selectedChapter) {
+      // Deselect primary chapter
+      setSelectedChapter(null);
+      setRelatedChapters(new Set());
+    } else {
+      // Toggle related chapter
+      const newRelated = new Set(relatedChapters);
+      if (newRelated.has(chapter)) {
+        newRelated.delete(chapter);
+      } else {
+        newRelated.add(chapter);
+      }
+      setRelatedChapters(newRelated);
+    }
+  };
 
   const handleAddRelationship = () => {
-    const chapter = parseInt(currentChapter);
-    const related = relatedChapters.split(',').map(ch => parseInt(ch.trim())).filter(ch => !isNaN(ch));
-
-    if (isNaN(chapter) || chapter < 1 || chapter > 135) {
-      alert('Please enter a valid chapter number (1-135)');
-      return;
-    }
-
-    if (related.some(ch => ch < 1 || ch > 135)) {
-      alert('All related chapters must be between 1 and 135');
-      return;
-    }
+    if (selectedChapter === null) return;
 
     setRelationships(prev => {
       const newMap = new Map(prev);
-      newMap.set(chapter, related);
+      newMap.set(selectedChapter, Array.from(relatedChapters));
       return newMap;
     });
 
-    setCurrentChapter('');
-    setRelatedChapters('');
+    // Reset selections
+    setSelectedChapter(null);
+    setRelatedChapters(new Set());
+    setIsEditing(false);
+  };
+
+  const handleEditRelationship = (chapter: number) => {
+    const related = relationships.get(chapter);
+    if (related) {
+      setSelectedChapter(chapter);
+      setRelatedChapters(new Set(related));
+      setIsEditing(true);
+    }
   };
 
   const generateGraph = () => {
@@ -68,47 +101,84 @@ function App() {
     setGraphData({ nodes, links });
   };
 
+  const getChapterStyle = (chapter: number) => {
+    if (chapter === selectedChapter) return "chapter-button selected-primary";
+    if (relatedChapters.has(chapter)) return "chapter-button selected-related";
+    return "chapter-button";
+  };
+
   return (
     <div className="container">
       <h1>Moby-Dick Chapter Relationships</h1>
       
-      <div className="input-section">
-        <div className="input-group">
-          <label>
-            Chapter Number (1-135):
-            <input
-              type="number"
-              min="1"
-              max="135"
-              value={currentChapter}
-              onChange={(e) => setCurrentChapter(e.target.value)}
-            />
-          </label>
-        </div>
-        
-        <div className="input-group">
-          <label>
-            Related Chapters (comma-separated):
-            <input
-              type="text"
-              value={relatedChapters}
-              onChange={(e) => setRelatedChapters(e.target.value)}
-              placeholder="e.g., 25, 35, 38"
-            />
-          </label>
+      <div className="chapter-bank">
+        <h3>Select Chapters</h3>
+        <p className="instructions">
+          Click a chapter to select it. Then click other chapters to mark them as related. Then click "Add".
+          {isEditing && " You are currently editing an existing relationship."}
+        </p>
+
+        <div className="chapter-grid">
+          {allChapters.map(chapter => (
+            <button
+              key={chapter}
+              className={getChapterStyle(chapter)}
+              onClick={() => handleChapterClick(chapter)}
+              data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]}
+            >
+              {chapter}
+            </button>
+          ))}
         </div>
 
-        <button onClick={handleAddRelationship}>Add Relationship</button>
-        <button onClick={generateGraph}>Visualize</button>
+        <div className="action-buttons">
+          <button 
+            className="add-button"
+            onClick={handleAddRelationship}
+            disabled={!selectedChapter}
+          >
+            {isEditing ? 'Update' : 'Add'}
+          </button>
+          <button 
+            className="visualize-button"
+            onClick={generateGraph}
+            disabled={relationships.size === 0}
+          >
+            Visualize
+          </button>
+        </div>
+
+        <div className="chapter-legend">
+          <h4>Chapter Legend:</h4>
+          {Object.entries(SPECIAL_CHAPTERS).map(([id, name]) => (
+            <div key={id} className="legend-item">
+              {id} = {name}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="relationships-list">
-        <h3>Current Relationships:</h3>
-        {Array.from(relationships.entries()).map(([chapter, related]) => (
-          <div key={chapter}>
-            Chapter {chapter} → Chapters {related.join(', ')}
-          </div>
-        ))}
+        <button 
+          className="relationships-header"
+          onClick={() => setIsRelationshipsOpen(!isRelationshipsOpen)}
+        >
+          <div className={`toggle-pill ${isRelationshipsOpen ? 'active' : ''}`} />
+          <h3>Show Relationships</h3>
+        </button>
+        
+        <div className={`relationships-content ${isRelationshipsOpen ? '' : 'closed'}`}>
+          <p className="instructions">Click a relationship to edit it.</p>
+          {Array.from(relationships.entries()).map(([chapter, related]) => (
+            <div 
+              key={chapter} 
+              className={`relationship-item ${selectedChapter === chapter ? 'editing' : ''}`}
+              onClick={() => handleEditRelationship(chapter)}
+            >
+              Chapter {chapter} → Chapters {related.join(', ')}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="graph-container">
