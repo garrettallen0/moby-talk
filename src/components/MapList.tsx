@@ -3,7 +3,6 @@ import { ChapterMap } from '../types/map';
 import { MapCard } from './MapCard';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
-import { MapEditorModal } from './MapEditorModal';
 
 interface MapListProps {
   publicMaps: ChapterMap[];
@@ -28,19 +27,6 @@ export const MapList = ({
 }: MapListProps) => {
   const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
-  const [selectedMap, setSelectedMap] = useState<ChapterMap | null>(null);
-
-  const handleCardClick = (map: ChapterMap) => {
-    if (!user && activeTab === 'my-maps') {
-      setShowSignInModal(true);
-      return;
-    }
-    setSelectedMap(map);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedMap(null);
-  };
 
   const handleCreateClick = () => {
     if (!user) {
@@ -74,7 +60,7 @@ export const MapList = ({
               <MapCard
                 key={map.id}
                 map={map}
-                onCardClick={handleCardClick}
+                onCardClick={onViewMap}
                 isPublicView={true}
               />
             ))
@@ -88,7 +74,7 @@ export const MapList = ({
                 <MapCard
                   key={map.id}
                   map={map}
-                  onCardClick={handleCardClick}
+                  onCardClick={onEditMap}
                   isPublicView={false}
                 />
               ))
@@ -111,16 +97,6 @@ export const MapList = ({
 
       {showSignInModal && (
         <SignInModal onClose={() => setShowSignInModal(false)} />
-      )}
-
-      {selectedMap && (
-        <MapEditorModal
-          map={selectedMap}
-          onClose={handleCloseModal}
-          onSave={onEditMap}
-          onDelete={onDeleteMap}
-          isPublicView={activeTab === 'public'}
-        />
       )}
     </div>
   );

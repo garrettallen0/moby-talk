@@ -18,6 +18,7 @@ const SPECIAL_CHAPTERS = {
 } as const;
 
 export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = false }: MapEditorModalProps) => {
+  const [name, setName] = useState(map.name);
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
@@ -115,9 +116,11 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
   };
 
   const handleSave = () => {
+    if (!name.trim()) return;
+    
     const updatedMap: ChapterMap = {
       ...map,
-      name: map.name,
+      name: name.trim(),
       description,
       userId: map.userId,
       isPublic,
@@ -144,12 +147,19 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
       <div className="modal-overlay" onClick={onClose} />
       <div className="modal-content">
         <div className="modal-header">
-          <h2>{map.name}</h2>
+          <h2>{map.id ? map.name : 'Create New Map'}</h2>
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
 
         <div className="modal-body">
           <div className="editor-section">
+            <input
+              type="text"
+              placeholder="Map Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="name-input"
+            />
             <textarea
               placeholder="Description (optional)"
               value={description}
