@@ -158,19 +158,18 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
       <div className="modal-overlay" onClick={onClose} />
       <div className="modal-content">
         <div className="modal-header">
-          <h2>{map.id ? map.name : 'Create New Map'}</h2>
+          <input
+            type="text"
+            placeholder="Map Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="name-input"
+          />
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
 
         <div className="modal-body">
           <div className="editor-section">
-            <input
-              type="text"
-              placeholder="Map Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="name-input"
-            />
             <textarea
               placeholder="Description (optional)"
               value={description}

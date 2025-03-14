@@ -888,6 +888,29 @@ button:disabled:hover {
   border-bottom: 1px solid #eee;
 }
 
+.modal-header .name-input {
+  flex: 1;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+.modal-header .name-input:hover {
+  border-color: #dee2e6;
+}
+
+.modal-header .name-input:focus {
+  outline: none;
+  border-color: #4285f4;
+  background-color: #f8f9fa;
+}
+
 .modal-header h2 {
   margin: 0;
   color: #333;
@@ -930,11 +953,14 @@ button:disabled:hover {
   font-size: 1rem;
   resize: vertical;
   min-height: 100px;
+  background-color: #f8f9fa;
+  color: #000;
 }
 
 .description-input:focus {
   outline: none;
   border-color: #4285f4;
+  background-color: #f8f9fa;
 }
 
 .modal-footer {
