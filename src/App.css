@@ -599,6 +599,9 @@ button:disabled:hover {
   padding: 16px;
   margin-bottom: 16px;
   transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .map-card:hover {
@@ -628,6 +631,12 @@ button:disabled:hover {
   justify-content: center;
 }
 
+.map-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .map-metadata {
   display: flex;
   align-items: center;
@@ -639,8 +648,6 @@ button:disabled:hover {
 .map-actions {
   display: flex;
   gap: 8px;
-  margin-top: 12px;
-  justify-content: flex-end;
 }
 
 .visibility-badge {

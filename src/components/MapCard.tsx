@@ -60,15 +60,15 @@ export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }:
 
   return (
     <div className="map-card">
-      <div className="map-preview">
-        <div className="mini-graph">
-          <ForceGraph
-            data={graphData}
-            width={200}
-            height={150}
-            miniature={true}
-          />
-        </div>
+      <div className="mini-graph">
+        <ForceGraph
+          data={graphData}
+          width={200}
+          height={150}
+          miniature={true}
+        />
+      </div>
+      <div className="map-footer">
         <div className="map-metadata">
           <span className="map-date">{formatDate(map.createdAt)}</span>
           {!isPublicView && (
@@ -77,21 +77,21 @@ export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }:
             </span>
           )}
         </div>
-      </div>
-      <div className="map-actions">
-        <button onClick={() => onView(map)} className="view-map-button">
-          View
-        </button>
-        {isOwner && !isPublicView && (
-          <>
-            <button onClick={() => onEdit(map)} className="edit-map-button">
-              Edit
-            </button>
-            <button onClick={() => onDelete(map.id)} className="delete-map-button">
-              Delete
-            </button>
-          </>
-        )}
+        <div className="map-actions">
+          <button onClick={() => onView(map)} className="view-map-button">
+            View
+          </button>
+          {isOwner && !isPublicView && (
+            <>
+              <button onClick={() => onEdit(map)} className="edit-map-button">
+                Edit
+              </button>
+              <button onClick={() => onDelete(map.id)} className="delete-map-button">
+                Delete
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
