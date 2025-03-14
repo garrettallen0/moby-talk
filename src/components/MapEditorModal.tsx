@@ -250,7 +250,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
 
         <div className="modal-footer">
           <button className="save-button" onClick={handleSave}>
-            Save Changes
+            {map.id ? 'Save Changes' : 'Save'}
           </button>
           <button className="delete-button" onClick={() => onDelete(map.id)}>
             Delete Map
