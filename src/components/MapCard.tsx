@@ -56,7 +56,7 @@ export const MapCard = ({ map, onCardClick, isPublicView = false }: MapCardProps
 
   return (
     <button 
-      className="map-card" 
+      className={`map-card ${isPublicView ? 'public-view' : ''}`}
       onClick={() => onCardClick(map)}
     >
       <div className="mini-graph">

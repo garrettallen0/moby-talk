@@ -604,11 +604,14 @@ button:disabled:hover {
   gap: 12px;
   width: 100%;
   border: none;
-  cursor: pointer;
   text-align: left;
 }
 
-.map-card:hover {
+.map-card:not(.public-view) {
+  cursor: pointer;
+}
+
+.map-card:not(.public-view):hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -1105,3 +1108,4 @@ button:disabled:hover {
   cursor: pointer;
   transition: all 0.2s;
 }
+

@@ -60,7 +60,7 @@ export const MapList = ({
               <MapCard
                 key={map.id}
                 map={map}
-                onCardClick={onViewMap}
+                onCardClick={() => {}}
                 isPublicView={true}
               />
             ))
