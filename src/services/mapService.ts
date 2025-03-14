@@ -44,8 +44,9 @@ export const updateMap = async (
 ): Promise<void> => {
   try {
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    const { id, createdAt, updatedAt, ...updateData } = data;
     await updateDoc(mapRef, {
-      ...data,
+      ...updateData,
       updatedAt: serverTimestamp()
     });
   } catch (error) {

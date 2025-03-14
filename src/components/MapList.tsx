@@ -28,18 +28,12 @@ export const MapList = ({
   const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
 
-  const handleCreateMap = () => {
+  const handleCreateClick = () => {
     if (!user) {
       setShowSignInModal(true);
       return;
     }
     onCreateMap();
-  };
-
-  const handleSignIn = () => {
-    // Trigger Google sign-in
-    document.querySelector('.login-button')?.click();
-    setShowSignInModal(false);
   };
 
   return (
@@ -66,42 +60,43 @@ export const MapList = ({
               <MapCard
                 key={map.id}
                 map={map}
-                onView={onViewMap}
-                onEdit={map.userId === user?.uid ? onEditMap : undefined}
-                onDelete={map.userId === user?.uid ? onDeleteMap : undefined}
+                onCardClick={onViewMap}
                 isPublicView={true}
               />
             ))
           ) : (
-            <div className="no-maps-message">No public maps available</div>
+            <p className="no-maps-message">No public maps available</p>
           )
         ) : (
           <>
-            {userMaps.map(map => (
-              <MapCard
-                key={map.id}
-                map={map}
-                onView={onViewMap}
-                onEdit={onEditMap}
-                onDelete={onDeleteMap}
-                isPublicView={false}
-              />
-            ))}
-            <div className="add-map-card" onClick={handleCreateMap}>
-              <div className="add-map-content">
-                <span className="add-icon">+</span>
-                <span>Add a map</span>
-              </div>
-            </div>
+            {userMaps.length > 0 ? (
+              userMaps.map(map => (
+                <MapCard
+                  key={map.id}
+                  map={map}
+                  onCardClick={onEditMap}
+                  isPublicView={false}
+                />
+              ))
+            ) : (
+              <p className="no-maps-message">
+                {user ? "You haven't created any maps yet" : "Sign in to create and view your maps"}
+              </p>
+            )}
+            {user && (
+              <button className="add-map-card" onClick={handleCreateClick}>
+                <div className="add-map-content">
+                  <span className="add-icon">+</span>
+                  <span>Create New Map</span>
+                </div>
+              </button>
+            )}
           </>
         )}
       </div>
 
       {showSignInModal && (
-        <SignInModal
-          onClose={() => setShowSignInModal(false)}
-          onSignIn={handleSignIn}
-        />
+        <SignInModal onClose={() => setShowSignInModal(false)} />
       )}
     </div>
   );
