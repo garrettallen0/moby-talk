@@ -6,9 +6,10 @@ interface MapCardProps {
   onView: (map: ChapterMap) => void;
   onEdit?: (map: ChapterMap) => void;
   onDelete?: (mapId: string) => void;
+  isPublicView?: boolean;
 }
 
-export const MapCard = ({ map, onView, onEdit, onDelete }: MapCardProps) => {
+export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }: MapCardProps) => {
   const isOwner = onEdit && onDelete;
 
   const formatDate = (date: Date | Timestamp) => {
@@ -25,16 +26,18 @@ export const MapCard = ({ map, onView, onEdit, onDelete }: MapCardProps) => {
         {map.description && <p>{map.description}</p>}
         <div className="map-metadata">
           <span className="map-date">Created: {formatDate(map.createdAt)}</span>
-          <span className={`visibility-badge ${map.isPublic ? 'public' : 'private'}`}>
-            {map.isPublic ? 'Public' : 'Private'}
-          </span>
+          {!isPublicView && (
+            <span className={`visibility-badge ${map.isPublic ? 'public' : 'private'}`}>
+              {map.isPublic ? 'Public' : 'Private'}
+            </span>
+          )}
         </div>
       </div>
       <div className="map-actions">
         <button onClick={() => onView(map)} className="view-map-button">
           View
         </button>
-        {isOwner && (
+        {isOwner && !isPublicView && (
           <>
             <button onClick={() => onEdit(map)} className="edit-map-button">
               Edit

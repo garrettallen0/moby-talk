@@ -69,6 +69,7 @@ export const MapList = ({
                 onView={onViewMap}
                 onEdit={map.userId === user?.uid ? onEditMap : undefined}
                 onDelete={map.userId === user?.uid ? onDeleteMap : undefined}
+                isPublicView={true}
               />
             ))
           ) : (
@@ -83,6 +84,7 @@ export const MapList = ({
                 onView={onViewMap}
                 onEdit={onEditMap}
                 onDelete={onDeleteMap}
+                isPublicView={false}
               />
             ))}
             <div className="add-map-card" onClick={handleCreateMap}>
