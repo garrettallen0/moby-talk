@@ -280,10 +280,22 @@ function App() {
     updateGraphData(newRelationships);
   };
 
-  const handleEditMap = (map: ChapterMap) => {
-    setActiveTab('my-maps');
-    setIsCreatingMap(true);
-    // TODO: Load map data for editing
+  const handleEditMap = async (map: ChapterMap) => {
+    if (!user) return;
+    
+    try {
+      await updateMap(map.id, map);
+      
+      // Reload maps after update
+      const [newPublicMaps, newUserMaps] = await Promise.all([
+        getPublicMaps(),
+        getUserMaps(user.uid)
+      ]);
+      setPublicMaps(newPublicMaps);
+      setUserMaps(newUserMaps);
+    } catch (error) {
+      console.error('Error updating map:', error);
+    }
   };
 
   const handleTabChange = (tab: 'public' | 'my-maps') => {

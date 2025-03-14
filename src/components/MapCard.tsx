@@ -5,15 +5,11 @@ import { GraphData } from '../types/graph';
 
 interface MapCardProps {
   map: ChapterMap;
-  onView: (map: ChapterMap) => void;
-  onEdit?: (map: ChapterMap) => void;
-  onDelete?: (mapId: string) => void;
+  onCardClick: (map: ChapterMap) => void;
   isPublicView?: boolean;
 }
 
-export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }: MapCardProps) => {
-  const isOwner = onEdit && onDelete;
-
+export const MapCard = ({ map, onCardClick, isPublicView = false }: MapCardProps) => {
   const formatDate = (date: Date | Timestamp) => {
     if (date instanceof Timestamp) {
       return date.toDate().toLocaleDateString();
@@ -59,7 +55,10 @@ export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }:
   });
 
   return (
-    <div className="map-card">
+    <button 
+      className="map-card" 
+      onClick={() => onCardClick(map)}
+    >
       <div className="mini-graph">
         <ForceGraph
           data={graphData}
@@ -77,22 +76,7 @@ export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }:
             </span>
           )}
         </div>
-        <div className="map-actions">
-          <button onClick={() => onView(map)} className="view-map-button">
-            View
-          </button>
-          {isOwner && !isPublicView && (
-            <>
-              <button onClick={() => onEdit(map)} className="edit-map-button">
-                Edit
-              </button>
-              <button onClick={() => onDelete(map.id)} className="delete-map-button">
-                Delete
-              </button>
-            </>
-          )}
-        </div>
       </div>
-    </div>
+    </button>
   );
 }; 

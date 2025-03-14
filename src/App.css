@@ -602,6 +602,10 @@ button:disabled:hover {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  text-align: left;
 }
 
 .map-card:hover {
@@ -840,4 +844,142 @@ button:disabled:hover {
 .google-logo {
   width: 18px;
   height: 18px;
+}
+
+.map-editor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin: -0.5rem;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.description-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.description-input:focus {
+  outline: none;
+  border-color: #4285f4;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #eee;
+  background: #f8f9fa;
+}
+
+.save-button,
+.delete-button,
+.cancel-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-button {
+  background-color: #4285f4;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #3367d6;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.cancel-button {
+  background-color: #f1f3f4;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #e8eaed;
 }
