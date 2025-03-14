@@ -593,40 +593,54 @@ button:disabled:hover {
 }
 
 .map-card {
-  background-color: white;
-  border: 1px solid #dee2e6;
+  background: white;
   border-radius: 8px;
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .map-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.map-info {
-  flex: 1;
+.map-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.map-info h3 {
-  margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+.map-preview h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
 }
 
-.map-info p {
-  margin: 0 0 1rem 0;
-  color: #6c757d;
+.mini-graph {
+  background: #f8f9fa;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .map-metadata {
   display: flex;
-  gap: 1rem;
   align-items: center;
+  gap: 8px;
   font-size: 0.9rem;
-  color: #6c757d;
+  color: #666;
+}
+
+.map-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
 }
 
 .visibility-badge {
@@ -644,11 +658,6 @@ button:disabled:hover {
 .visibility-badge.private {
   background-color: #fafafa;
   color: #616161;
-}
-
-.map-actions {
-  display: flex;
-  gap: 0.5rem;
 }
 
 .view-map-button,

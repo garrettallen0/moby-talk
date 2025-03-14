@@ -4,108 +4,128 @@ import { GraphData, Node, Link } from '../types/graph';
 
 interface ForceGraphProps {
   data: GraphData;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
+  miniature?: boolean;
 }
 
-const ForceGraph = ({ data, width, height }: ForceGraphProps) => {
+const ForceGraph = ({ data, width = 800, height = 600, miniature = false }: ForceGraphProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     if (!svgRef.current || !data.nodes.length) return;
 
-    // Clear previous graph
+    // Clear existing content
     d3.select(svgRef.current).selectAll("*").remove();
 
     const svg = d3.select(svgRef.current);
-
-    // Create force simulation
-    const simulation = d3.forceSimulation<Node>(data.nodes)
-      .force("link", d3.forceLink<Node, Link>(data.links)
-        .id((d) => d.id)
-        .distance(100))
-      .force("charge", d3.forceManyBody().strength(-300))
+    
+    // Create the simulation with appropriate forces
+    const simulation = d3.forceSimulation(data.nodes)
+      .force("link", d3.forceLink(data.links)
+        .id((d: any) => d.id)
+        .distance(miniature ? 30 : 100))
+      .force("charge", d3.forceManyBody().strength(miniature ? -100 : -300))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
-    // Create links
-    const links = svg.append("g")
+    // Add zoom behavior if not in miniature mode
+    if (!miniature) {
+      const zoom = d3.zoom()
+        .scaleExtent([0.1, 4])
+        .on("zoom", (event) => {
+          container.attr("transform", event.transform);
+        });
+      svg.call(zoom as any);
+    }
+
+    const container = svg.append("g");
+
+    // Create the links
+    const links = container
       .selectAll("line")
       .data(data.links)
-      .enter()
-      .append("line")
-      .style("stroke", "#999")
-      .style("stroke-opacity", 0.6)
-      .style("stroke-width", 1);
+      .join("line")
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
+      .attr("stroke-width", miniature ? 1 : 2);
 
-    // Create nodes
-    const nodes = svg.append("g")
+    // Create the nodes
+    const nodes = container
       .selectAll("circle")
       .data(data.nodes)
-      .enter()
-      .append("circle")
-      .attr("r", d => Math.max(10, 5 + d.connections * 2))
-      .style("fill", "#69b3a2")
-      .style("stroke", "#fff")
-      .style("stroke-width", 1.5)
-      .call(d3.drag<SVGCircleElement, Node>()
+      .join("circle")
+      .attr("r", (d: any) => miniature ? 4 + Math.min(d.connections, 3) : 8 + Math.min(d.connections * 2, 8))
+      .attr("fill", "#69b3a2")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", miniature ? 1 : 2);
+
+    if (!miniature) {
+      nodes.call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
-        .on("end", dragended));
+        .on("end", dragended) as any);
+    }
 
-    // Add chapter labels
-    const labels = svg.append("g")
-      .selectAll("text")
-      .data(data.nodes)
-      .enter()
-      .append("text")
-      .text(d => d.chapter.toString())
-      .style("text-anchor", "middle")
-      .style("dominant-baseline", "central")
-      .style("font-size", "10px")
-      .style("fill", "white");
+    // Add chapter numbers if not in miniature mode
+    if (!miniature) {
+      container
+        .selectAll("text")
+        .data(data.nodes)
+        .join("text")
+        .text((d: any) => d.chapter)
+        .attr("font-size", "12px")
+        .attr("dx", 12)
+        .attr("dy", 4);
+    }
 
-    // Update positions on simulation tick
     simulation.on("tick", () => {
       links
-        .attr("x1", d => (d.source as Node).x!)
-        .attr("y1", d => (d.source as Node).y!)
-        .attr("x2", d => (d.target as Node).x!)
-        .attr("y2", d => (d.target as Node).y!);
+        .attr("x1", (d: any) => d.source.x)
+        .attr("y1", (d: any) => d.source.y)
+        .attr("x2", (d: any) => d.target.x)
+        .attr("y2", (d: any) => d.target.y);
 
       nodes
-        .attr("cx", d => d.x!)
-        .attr("cy", d => d.y!);
+        .attr("cx", (d: any) => d.x)
+        .attr("cy", (d: any) => d.y);
 
-      labels
-        .attr("x", d => d.x!)
-        .attr("y", d => d.y!);
+      if (!miniature) {
+        container
+          .selectAll("text")
+          .attr("x", (d: any) => d.x)
+          .attr("y", (d: any) => d.y);
+      }
     });
 
-    // Drag functions
-    function dragstarted(event: d3.D3DragEvent<SVGCircleElement, Node, Node>) {
+    function dragstarted(event: any, d: any) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
+      d.fx = d.x;
+      d.fy = d.y;
     }
 
-    function dragged(event: d3.D3DragEvent<SVGCircleElement, Node, Node>) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
+    function dragged(event: any, d: any) {
+      d.fx = event.x;
+      d.fy = event.y;
     }
 
-    function dragended(event: d3.D3DragEvent<SVGCircleElement, Node, Node>) {
+    function dragended(event: any, d: any) {
       if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
+      d.fx = null;
+      d.fy = null;
     }
 
     return () => {
       simulation.stop();
     };
-  }, [data, width, height]);
+  }, [data, width, height, miniature]);
 
   return (
-    <svg ref={svgRef} width={width} height={height} />
+    <svg
+      ref={svgRef}
+      width={width}
+      height={height}
+      style={{ background: miniature ? 'transparent' : '#f8f9fa' }}
+    />
   );
 };
 
