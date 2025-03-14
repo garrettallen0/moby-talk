@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChapterMap } from '../types/map';
 import ForceGraph from './ForceGraph';
 import { GraphData } from '../types/graph';
+import { ConfirmationModal } from './ConfirmationModal';
 
 interface MapEditorModalProps {
   map: ChapterMap;
@@ -29,6 +30,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
   const [isEditing, setIsEditing] = useState(false);
   const [isRelationshipsOpen, setIsRelationshipsOpen] = useState(true);
   const [graphData, setGraphData] = useState<GraphData>(convertToGraphData(relationships));
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -142,6 +144,15 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
     return "chapter-button";
   };
 
+  const handleDeleteClick = () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete(map.id);
+    onClose();
+  };
+
   return (
     <div className="map-editor-modal">
       <div className="modal-overlay" onClick={onClose} />
@@ -252,7 +263,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
           <button className="save-button" onClick={handleSave}>
             {map.id ? 'Save Changes' : 'Save'}
           </button>
-          <button className="delete-button" onClick={() => onDelete(map.id)}>
+          <button className="delete-button" onClick={handleDeleteClick}>
             Delete Map
           </button>
           <button className="cancel-button" onClick={onClose}>
@@ -260,6 +271,15 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
           </button>
         </div>
       </div>
+
+      {showDeleteConfirmation && (
+        <ConfirmationModal
+          message="Are you sure you want to delete this map?"
+          confirmText="Yes, delete"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setShowDeleteConfirmation(false)}
+        />
+      )}
     </div>
   );
 }; 
