@@ -766,7 +766,7 @@ button:disabled:hover {
 .toggle-label {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
   cursor: pointer;
   font-weight: 500;
   color: #2c3e50;
@@ -945,6 +945,26 @@ button:disabled:hover {
   gap: 1rem;
 }
 
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.controls-row .visibility-toggle {
+  margin: 0;
+}
+
+.controls-row .action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+}
+
 .description-input {
   width: 100%;
   padding: 0.75rem;
@@ -965,11 +985,29 @@ button:disabled:hover {
 
 .modal-footer {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
   padding: 1.5rem;
   border-top: 1px solid #eee;
   background: #f8f9fa;
+}
+
+.modal-footer .visibility-toggle {
+  margin: 0;
+}
+
+.modal-footer .toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.modal-footer .action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
 }
 
 .save-button,

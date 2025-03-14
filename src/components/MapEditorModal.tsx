@@ -176,20 +176,29 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
               onChange={(e) => setDescription(e.target.value)}
               className="description-input"
             />
-
-            <div className="visibility-toggle">
-              <label className="toggle-label">
-                <span>Make this map public</span>
-                <div
-                  className={`toggle-switch ${isPublic ? 'active' : ''}`}
-                  onClick={() => setIsPublic(!isPublic)}
-                >
-                  <div className="toggle-slider" />
-                </div>
-              </label>
-              <p className="visibility-hint">
-                {isPublic ? 'Anyone can view this map' : 'Only you can view this map'}
-              </p>
+            <div className="controls-row">
+              <div className="visibility-toggle">
+                <label className="toggle-label">
+                  <span>{isPublic ? 'Public' : 'Private'}</span>
+                  <div
+                    className={`toggle-switch ${isPublic ? 'active' : ''}`}
+                    onClick={() => setIsPublic(!isPublic)}
+                  >
+                    <div className="toggle-slider" />
+                  </div>
+                </label>
+              </div>
+              <div className="action-buttons">
+                <button className="save-button" onClick={handleSave}>
+                  {map.id ? 'Save Changes' : 'Save'}
+                </button>
+                <button className="delete-button" onClick={handleDeleteClick}>
+                  Delete Map
+                </button>
+                <button className="cancel-button" onClick={onClose}>
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
 
@@ -256,18 +265,6 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = 
               />
             )}
           </div>
-        </div>
-
-        <div className="modal-footer">
-          <button className="save-button" onClick={handleSave}>
-            {map.id ? 'Save Changes' : 'Save'}
-          </button>
-          <button className="delete-button" onClick={handleDeleteClick}>
-            Delete Map
-          </button>
-          <button className="cancel-button" onClick={onClose}>
-            Cancel
-          </button>
         </div>
       </div>
 
