@@ -286,10 +286,43 @@ button:disabled:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.avatar-container {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
 .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+}
+
+.user-avatar.photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  z-index: 2;
+}
+
+.user-avatar.initials {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #4285f4;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.user-avatar.initials.hidden {
+  display: none;
 }
 
 .user-name {
