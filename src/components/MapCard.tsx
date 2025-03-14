@@ -61,7 +61,6 @@ export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }:
   return (
     <div className="map-card">
       <div className="map-preview">
-        <h3>{map.name}</h3>
         <div className="mini-graph">
           <ForceGraph
             data={graphData}
@@ -71,7 +70,7 @@ export const MapCard = ({ map, onView, onEdit, onDelete, isPublicView = false }:
           />
         </div>
         <div className="map-metadata">
-          <span className="map-date">Created: {formatDate(map.createdAt)}</span>
+          <span className="map-date">{formatDate(map.createdAt)}</span>
           {!isPublicView && (
             <span className={`visibility-badge ${map.isPublic ? 'public' : 'private'}`}>
               {map.isPublic ? 'Public' : 'Private'}
