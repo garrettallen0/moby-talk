@@ -37,14 +37,6 @@ export const saveMap = async (
       updatedAt: serverTimestamp() as Timestamp,
     };
 
-    console.log('Debug - Attempting to save map data:', {
-      collection: MAPS_COLLECTION,
-      userId,
-      name,
-      relationshipsCount: relationships.length,
-      isPublic
-    });
-
     const docRef = await addDoc(collection(db, MAPS_COLLECTION), mapData);
     return docRef.id;
   } catch (error) {

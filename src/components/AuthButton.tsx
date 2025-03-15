@@ -8,12 +8,6 @@ export const AuthButton = () => {
     return name.charAt(0).toUpperCase();
   };
 
-  console.log('User data:', {
-    displayName: user?.displayName,
-    photoURL: user?.photoURL,
-    email: user?.email
-  });
-
   return (
     <div className="auth-button">
       {user ? (
