@@ -22,7 +22,18 @@ service cloud.firestore {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
       
       // Allow update and delete if user owns the document
-      allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow update: if (
+        request.auth != null && (
+          // Allow full update if user owns the document
+          resource.data.userId == request.auth.uid ||
+          // Allow likes array update for any authenticated user
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']) &&
+           (request.resource.data.likes.size() == resource.data.likes.size() + 1 ||
+            request.resource.data.likes.size() == resource.data.likes.size() - 1))
+        )
+      );
+      
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
   }
 }
