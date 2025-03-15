@@ -18,6 +18,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { app, db, auth };
+export const googleProvider = new GoogleAuthProvider();
+// Add recommended security settings
+googleProvider.setCustomParameters({
+  prompt: 'select_account',
+  // This helps prevent the COOP warning
+  auth_type: 'reauthenticate'
+});
 
-export const googleProvider = new GoogleAuthProvider(); 
+export { app, db, auth }; 
