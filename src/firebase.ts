@@ -13,15 +13,11 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-console.log('Debug - Firebase Config:', {
-  hasApiKey: !!firebaseConfig.apiKey,
-  hasProjectId: !!firebaseConfig.projectId,
-  projectId: firebaseConfig.projectId
-});
-
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-export default app; 
+export { app, db, auth };
+
+export const googleProvider = new GoogleAuthProvider(); 
