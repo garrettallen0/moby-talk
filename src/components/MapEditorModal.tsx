@@ -9,7 +9,6 @@ interface MapEditorModalProps {
   onClose: () => void;
   onSave: (map: ChapterMap) => void;
   onDelete: (mapId: string) => void;
-  isPublicView?: boolean;
 }
 
 const SPECIAL_CHAPTERS = {
@@ -18,7 +17,7 @@ const SPECIAL_CHAPTERS = {
   '136': 'Epilogue'
 } as const;
 
-export const MapEditorModal = ({ map, onClose, onSave, onDelete, isPublicView = false }: MapEditorModalProps) => {
+export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModalProps) => {
   const [name, setName] = useState(map.name);
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);

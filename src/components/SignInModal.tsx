@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface SignInModalProps {
   onClose: () => void;
   onSignIn: () => void;

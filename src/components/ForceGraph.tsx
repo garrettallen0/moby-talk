@@ -1,83 +1,72 @@
-import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { GraphData, Node, Link } from '../types/graph';
+import { GraphData } from '../types/graph';
+import { useEffect, useRef } from 'react';
 
 interface ForceGraphProps {
   data: GraphData;
-  width?: number;
-  height?: number;
+  width: number;
+  height: number;
   miniature?: boolean;
 }
 
-const ForceGraph = ({ data, width = 800, height = 600, miniature = false }: ForceGraphProps) => {
+export const ForceGraph = ({ data, width, height, miniature = false }: ForceGraphProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (!svgRef.current || !data.nodes.length) return;
+    if (!svgRef.current) return;
 
     // Clear existing content
     d3.select(svgRef.current).selectAll("*").remove();
 
     const svg = d3.select(svgRef.current);
-    
-    // Create the simulation with appropriate forces
-    const simulation = d3.forceSimulation(data.nodes)
-      .force("link", d3.forceLink(data.links)
-        .id((d: any) => d.id)
-        .distance(miniature ? 30 : 100))
-      .force("charge", d3.forceManyBody().strength(miniature ? -100 : -300))
-      .force("center", d3.forceCenter(width / 2, height / 2));
-
-    // Add zoom behavior if not in miniature mode
-    if (!miniature) {
-      const zoom = d3.zoom()
-        .scaleExtent([0.1, 4])
-        .on("zoom", (event) => {
-          container.attr("transform", event.transform);
-        });
-      svg.call(zoom as any);
-    }
-
     const container = svg.append("g");
 
-    // Create the links
+    // Add zoom behavior
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.1, 4])
+      .on("zoom", (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+        container.attr("transform", event.transform.toString());
+      });
+
+    svg.call(zoom);
+
+    // Create force simulation
+    const simulation = d3.forceSimulation(data.nodes as d3.SimulationNodeDatum[])
+      .force("link", d3.forceLink(data.links).id((d: any) => d.id))
+      .force("charge", d3.forceManyBody().strength(miniature ? -100 : -300))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("collision", d3.forceCollide().radius(20));
+
+    // Draw links
     const links = container
       .selectAll("line")
       .data(data.links)
-      .join("line")
+      .enter()
+      .append("line")
       .attr("stroke", "#999")
-      .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", miniature ? 1 : 2);
+      .attr("stroke-opacity", 0.6);
 
-    // Create the nodes
+    // Draw nodes
     const nodes = container
       .selectAll("circle")
       .data(data.nodes)
-      .join("circle")
-      .attr("r", (d: any) => miniature ? 4 + Math.min(d.connections, 3) : 8 + Math.min(d.connections * 2, 8))
-      .attr("fill", "#69b3a2")
-      .attr("stroke", "#fff")
-      .attr("stroke-width", miniature ? 1 : 2);
+      .enter()
+      .append("circle")
+      .attr("r", 5)
+      .attr("fill", "#69b3a2");
 
-    if (!miniature) {
-      nodes.call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended) as any);
-    }
+    // Add node labels
+    const labels = container
+      .selectAll("text")
+      .data(data.nodes)
+      .enter()
+      .append("text")
+      .text((d: any) => d.chapter)
+      .attr("font-size", "10px")
+      .attr("dx", 8)
+      .attr("dy", 3);
 
-    // Add chapter numbers if not in miniature mode
-    if (!miniature) {
-      container
-        .selectAll("text")
-        .data(data.nodes)
-        .join("text")
-        .text((d: any) => d.chapter)
-        .attr("font-size", "12px")
-        .attr("dx", 12)
-        .attr("dy", 4);
-    }
-
+    // Update positions on each tick
     simulation.on("tick", () => {
       links
         .attr("x1", (d: any) => d.source.x)
@@ -89,44 +78,18 @@ const ForceGraph = ({ data, width = 800, height = 600, miniature = false }: Forc
         .attr("cx", (d: any) => d.x)
         .attr("cy", (d: any) => d.y);
 
-      if (!miniature) {
-        container
-          .selectAll("text")
-          .attr("x", (d: any) => d.x)
-          .attr("y", (d: any) => d.y);
-      }
+      labels
+        .attr("x", (d: any) => d.x)
+        .attr("y", (d: any) => d.y);
     });
 
-    function dragstarted(event: any, d: any) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    }
-
-    function dragged(event: any, d: any) {
-      d.fx = event.x;
-      d.fy = event.y;
-    }
-
-    function dragended(event: any, d: any) {
-      if (!event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
-    }
-
+    // Cleanup
     return () => {
       simulation.stop();
     };
   }, [data, width, height, miniature]);
 
-  return (
-    <svg
-      ref={svgRef}
-      width={width}
-      height={height}
-      style={{ background: miniature ? 'transparent' : '#f8f9fa' }}
-    />
-  );
+  return <svg ref={svgRef} width={width} height={height} />;
 };
 
 export default ForceGraph; 

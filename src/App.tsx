@@ -178,9 +178,7 @@ function App() {
       <MapList
         publicMaps={publicMaps}
         userMaps={userMaps}
-        onViewMap={setSelectedMap}
         onEditMap={setSelectedMap}
-        onDeleteMap={handleDeleteMap}
         onCreateMap={handleCreateMap}
         onLike={handleLikeMap}
         onComment={handleCommentMap}
@@ -197,7 +195,6 @@ function App() {
           }}
           onSave={isCreatingMap ? handleSaveMap : handleEditMap}
           onDelete={handleDeleteMap}
-          isPublicView={activeTab === 'public'}
         />
       )}
     </div>

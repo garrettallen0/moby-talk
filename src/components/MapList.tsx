@@ -7,9 +7,7 @@ import { SignInModal } from './SignInModal';
 interface MapListProps {
   publicMaps: ChapterMap[];
   userMaps: ChapterMap[];
-  onViewMap: (map: ChapterMap) => void;
   onEditMap: (map: ChapterMap) => void;
-  onDeleteMap: (mapId: string) => void;
   onCreateMap: () => void;
   onLike: (mapId: string) => void;
   onComment: (mapId: string, text: string) => void;
@@ -20,9 +18,7 @@ interface MapListProps {
 export const MapList = ({
   publicMaps,
   userMaps,
-  onViewMap,
   onEditMap,
-  onDeleteMap,
   onCreateMap,
   onLike,
   onComment,
@@ -104,7 +100,13 @@ export const MapList = ({
       </div>
 
       {showSignInModal && (
-        <SignInModal onClose={() => setShowSignInModal(false)} />
+        <SignInModal 
+          onClose={() => setShowSignInModal(false)} 
+          onSignIn={() => {
+            setShowSignInModal(false);
+            onCreateMap();
+          }}
+        />
       )}
     </div>
   );

@@ -1,6 +1,20 @@
+import { 
+  collection, 
+  doc, 
+  getDocs,
+  getDoc,
+  query, 
+  where, 
+  addDoc, 
+  deleteDoc, 
+  updateDoc, 
+  arrayUnion, 
+  arrayRemove, 
+  Timestamp,
+  serverTimestamp
+} from 'firebase/firestore';
 import { db } from '../firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, Timestamp, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
-import { ChapterMap, Comment } from '../types/map';
+import { ChapterMap } from '../types/map';
 
 const MAPS_COLLECTION = 'maps';
 

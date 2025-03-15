@@ -27,7 +27,7 @@ export const saveConfiguration = async (
     description,
     relationships,
     createdAt: Timestamp.now(),
-    updatedAt: Timestamp.now()
+    updatedAt: Timestamp.now().toDate()
   };
 
   const docRef = await addDoc(collection(db, COLLECTION_NAME), config);
@@ -43,7 +43,7 @@ export const updateConfiguration = async (
   const configRef = doc(db, COLLECTION_NAME, configId);
   const updates: Partial<Configuration> = {
     relationships,
-    updatedAt: Timestamp.now()
+    updatedAt: Timestamp.now().toDate()
   };
   
   if (name) updates.name = name;
