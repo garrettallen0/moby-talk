@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ChapterMap, Comment } from '../types/map';
+import { ChapterMap } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
 import ForceGraph from './ForceGraph';
 import { GraphData } from '../types/graph';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
+import { CommentModal } from './CommentModal';
 
 interface MapCardProps {
   map: ChapterMap;
@@ -17,8 +18,7 @@ interface MapCardProps {
 export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = false }: MapCardProps) => {
   const { user, signInWithGoogle } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
-  const [showComments, setShowComments] = useState(false);
-  const [newComment, setNewComment] = useState('');
+  const [showCommentModal, setShowCommentModal] = useState(false);
 
   const formatDate = (date: Date | Timestamp) => {
     if (date instanceof Timestamp) {
@@ -28,7 +28,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
   };
 
   const handleLikeClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering the card click
+    e.stopPropagation();
     
     if (!user) {
       setShowSignInModal(true);
@@ -41,23 +41,23 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
   };
 
   const handleCommentClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering the card click
+    e.stopPropagation();
     
     if (!user) {
       setShowSignInModal(true);
       return;
     }
     
-    setShowComments(!showComments);
+    setShowCommentModal(true);
   };
 
-  const handleSubmitComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation(); // Prevent triggering the card click
-    
-    if (onComment && newComment.trim()) {
-      onComment(map.id, newComment.trim());
-      setNewComment('');
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      setShowSignInModal(false);
+      setShowCommentModal(true);
+    } catch (error) {
+      console.error('Error signing in:', error);
     }
   };
 
@@ -72,9 +72,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
   // Create a set of all chapters involved and count connections
   const chapterConnections = new Map<number, number>();
   map.relationships.forEach(rel => {
-    // Add source chapter and increment its connections count
     chapterConnections.set(rel.sourceChapter, (chapterConnections.get(rel.sourceChapter) || 0) + rel.relatedChapters.length);
-    // Add each related chapter and increment their connections count
     rel.relatedChapters.forEach(chapter => {
       chapterConnections.set(chapter, (chapterConnections.get(chapter) || 0) + 1);
     });
@@ -98,16 +96,6 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
       });
     });
   });
-
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      setShowSignInModal(false);
-      setShowComments(true);
-    } catch (error) {
-      console.error('Error signing in:', error);
-    }
-  };
 
   return (
     <div 
@@ -139,6 +127,14 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
           )}
         </div>
         <div className="map-actions">
+          <button
+            className={`comment-button ${showCommentModal ? 'active' : ''}`}
+            onClick={handleCommentClick}
+            aria-label="Show comments"
+          >
+            💬
+            <span className="comments-count">{map.comments?.length || 0}</span>
+          </button>
           <button 
             className={`upvote-button ${hasLiked ? 'active' : ''}`}
             onClick={handleLikeClick}
@@ -147,55 +143,21 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
             ↑
             <span className="likes-count">{map.likes?.length || 0}</span>
           </button>
-          <button
-            className={`comment-button ${showComments ? 'active' : ''}`}
-            onClick={handleCommentClick}
-            aria-label="Show comments"
-          >
-            💬
-            <span className="comments-count">{map.comments?.length || 0}</span>
-          </button>
         </div>
       </div>
-
-      {showComments && (
-        <div className="comments-section" onClick={e => e.stopPropagation()}>
-          <div className="comments-list">
-            {map.comments?.map((comment: Comment) => (
-              <div key={comment.id} className="comment">
-                <div className="comment-header">
-                  <span className="comment-author">{comment.userName}</span>
-                  <span className="comment-date">{formatDate(comment.createdAt)}</span>
-                </div>
-                <p className="comment-text">{comment.text}</p>
-              </div>
-            ))}
-          </div>
-          {user && (
-            <form className="comment-form" onSubmit={handleSubmitComment}>
-              <input
-                type="text"
-                value={newComment}
-                onChange={e => setNewComment(e.target.value)}
-                placeholder="Add a comment..."
-                className="comment-input"
-              />
-              <button 
-                type="submit" 
-                className="comment-submit"
-                disabled={!newComment.trim()}
-              >
-                Post
-              </button>
-            </form>
-          )}
-        </div>
-      )}
 
       {showSignInModal && (
         <SignInModal 
           onClose={() => setShowSignInModal(false)} 
           onSignIn={handleSignIn}
+        />
+      )}
+
+      {showCommentModal && (
+        <CommentModal
+          map={map}
+          onClose={() => setShowCommentModal(false)}
+          onComment={onComment || (() => {})}
         />
       )}
     </div>

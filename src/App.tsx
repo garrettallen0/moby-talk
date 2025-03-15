@@ -4,7 +4,15 @@ import { AuthButton } from './components/AuthButton'
 import { useAuth } from './contexts/AuthContext'
 import { ChapterMap } from './types/map'
 import { MapList } from './components/MapList'
-import { saveMap, getPublicMaps, getUserMaps, deleteMap, updateMap, toggleLike } from './services/mapService'
+import { 
+  saveMap, 
+  getPublicMaps, 
+  getUserMaps, 
+  deleteMap, 
+  updateMap, 
+  toggleLike,
+  addComment 
+} from './services/mapService'
 import { MapEditorModal } from './components/MapEditorModal'
 
 type ActiveTab = 'public' | 'my-maps';
@@ -121,6 +129,24 @@ function App() {
     }
   };
 
+  const handleCommentMap = async (mapId: string, text: string) => {
+    if (!user) return;
+    
+    try {
+      await addComment(mapId, user.uid, user.displayName || 'Anonymous', text);
+      
+      // Reload maps after comment
+      const [newPublicMaps, newUserMaps] = await Promise.all([
+        getPublicMaps(),
+        getUserMaps(user.uid)
+      ]);
+      setPublicMaps(newPublicMaps);
+      setUserMaps(newUserMaps);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
+
   const handleTabChange = (tab: 'public' | 'my-maps') => {
     setActiveTab(tab);
   };
@@ -157,6 +183,7 @@ function App() {
         onDeleteMap={handleDeleteMap}
         onCreateMap={handleCreateMap}
         onLike={handleLikeMap}
+        onComment={handleCommentMap}
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />

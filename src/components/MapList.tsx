@@ -12,6 +12,7 @@ interface MapListProps {
   onDeleteMap: (mapId: string) => void;
   onCreateMap: () => void;
   onLike: (mapId: string) => void;
+  onComment: (mapId: string, text: string) => void;
   activeTab: 'public' | 'my-maps';
   onTabChange: (tab: 'public' | 'my-maps') => void;
 }
@@ -24,6 +25,7 @@ export const MapList = ({
   onDeleteMap,
   onCreateMap,
   onLike,
+  onComment,
   activeTab,
   onTabChange
 }: MapListProps) => {
@@ -64,6 +66,7 @@ export const MapList = ({
                 map={map}
                 onCardClick={() => {}}
                 onLike={onLike}
+                onComment={onComment}
                 isPublicView={true}
               />
             ))
@@ -79,6 +82,7 @@ export const MapList = ({
                   map={map}
                   onCardClick={onEditMap}
                   onLike={onLike}
+                  onComment={onComment}
                   isPublicView={false}
                 />
               ))

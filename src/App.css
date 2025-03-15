@@ -1257,3 +1257,125 @@ button:disabled:hover {
   cursor: not-allowed;
 }
 
+.comment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.comment-modal .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+}
+
+.comment-modal .modal-content {
+  position: relative;
+  background: white;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.comment-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.comment-modal .modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.comment-modal .graph-section {
+  padding: 0 1.5rem;
+  height: 400px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.comment-modal .comments-section {
+  margin: 0 1.5rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  max-height: none;
+}
+
+.comment-modal .comments-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+  padding-right: 1rem;
+}
+
+.comment-modal .comment-form {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 1.5rem;
+  border-top: 1px solid #eee;
+  background: #f8f9fa;
+}
+
+.comment-modal .comment-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: white;
+}
+
+.comment-modal .comment-input:focus {
+  outline: none;
+  border-color: #4285f4;
+}
+
+.comment-modal .comment-submit {
+  padding: 0.75rem 1.5rem;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comment-modal .comment-submit:hover {
+  background-color: #3367d6;
+}
+
+.comment-modal .comment-submit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Remove the old inline comments section from the card */
+.map-card .comments-section {
+  display: none;
+}
+
