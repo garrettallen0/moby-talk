@@ -1,6 +1,6 @@
 import { db } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, Timestamp, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, Comment } from '../types/map';
 
 const MAPS_COLLECTION = 'maps';
 
@@ -132,6 +132,26 @@ export const toggleLike = async (mapId: string, userId: string): Promise<void> =
     });
   } catch (error) {
     console.error('Error toggling like:', error);
+    throw error;
+  }
+};
+
+export const addComment = async (mapId: string, userId: string, userName: string, text: string): Promise<void> => {
+  try {
+    const comment = {
+      id: crypto.randomUUID(),
+      userId,
+      userName,
+      text,
+      createdAt: serverTimestamp()
+    };
+
+    const mapRef = doc(db, 'maps', mapId);
+    await updateDoc(mapRef, {
+      comments: arrayUnion(comment)
+    });
+  } catch (error) {
+    console.error('Error adding comment:', error);
     throw error;
   }
 }; 
