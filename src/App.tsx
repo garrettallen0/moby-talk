@@ -4,7 +4,7 @@ import { AuthButton } from './components/AuthButton'
 import { useAuth } from './contexts/AuthContext'
 import { ChapterMap } from './types/map'
 import { MapList } from './components/MapList'
-import { saveMap, getPublicMaps, getUserMaps, deleteMap, updateMap } from './services/mapService'
+import { saveMap, getPublicMaps, getUserMaps, deleteMap, updateMap, toggleLike } from './services/mapService'
 import { MapEditorModal } from './components/MapEditorModal'
 
 type ActiveTab = 'public' | 'my-maps';
@@ -103,6 +103,24 @@ function App() {
     }
   };
 
+  const handleLikeMap = async (mapId: string) => {
+    if (!user) return;
+    
+    try {
+      await toggleLike(mapId, user.uid);
+      
+      // Reload maps after like
+      const [newPublicMaps, newUserMaps] = await Promise.all([
+        getPublicMaps(),
+        getUserMaps(user.uid)
+      ]);
+      setPublicMaps(newPublicMaps);
+      setUserMaps(newUserMaps);
+    } catch (error) {
+      console.error('Error liking map:', error);
+    }
+  };
+
   const handleTabChange = (tab: 'public' | 'my-maps') => {
     setActiveTab(tab);
   };
@@ -117,6 +135,7 @@ function App() {
       userId: user.uid,
       relationships: [],
       isPublic: false,
+      likes: [],
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -137,6 +156,7 @@ function App() {
         onEditMap={setSelectedMap}
         onDeleteMap={handleDeleteMap}
         onCreateMap={handleCreateMap}
+        onLike={handleLikeMap}
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />

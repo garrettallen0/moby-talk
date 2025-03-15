@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, Timestamp, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { ChapterMap } from '../types/map';
 
 const MAPS_COLLECTION = 'maps';
@@ -18,6 +18,7 @@ export const saveMap = async (
       userId,
       relationships,
       isPublic,
+      likes: [],
       createdAt: serverTimestamp() as Timestamp,
       updatedAt: serverTimestamp() as Timestamp,
     };
@@ -44,7 +45,11 @@ export const updateMap = async (
 ): Promise<void> => {
   try {
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
-    const { id, createdAt, updatedAt, ...updateData } = data;
+    const updateData = { ...data };
+    delete updateData.id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    
     await updateDoc(mapRef, {
       ...updateData,
       updatedAt: serverTimestamp()
@@ -105,6 +110,28 @@ export const getUserMaps = async (userId: string): Promise<ChapterMap[]> => {
     });
   } catch (error) {
     console.error('Error getting user maps:', error);
+    throw error;
+  }
+};
+
+export const toggleLike = async (mapId: string, userId: string): Promise<void> => {
+  try {
+    const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    const mapDoc = await getDoc(mapRef);
+    const mapData = mapDoc.data();
+
+    if (!mapData) {
+      throw new Error('Map not found');
+    }
+
+    const likes = mapData.likes || [];
+    const hasLiked = likes.includes(userId);
+
+    await updateDoc(mapRef, {
+      likes: hasLiked ? arrayRemove(userId) : arrayUnion(userId)
+    });
+  } catch (error) {
+    console.error('Error toggling like:', error);
     throw error;
   }
 }; 

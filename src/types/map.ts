@@ -12,4 +12,5 @@ export interface ChapterMap {
     sourceChapter: number;
     relatedChapters: number[];
   }[];
+  likes: string[]; // Array of user IDs who have liked the map
 } 

@@ -1,21 +1,43 @@
+import { useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
 import ForceGraph from './ForceGraph';
 import { GraphData } from '../types/graph';
+import { useAuth } from '../contexts/AuthContext';
+import { SignInModal } from './SignInModal';
 
 interface MapCardProps {
   map: ChapterMap;
   onCardClick: (map: ChapterMap) => void;
+  onLike?: (mapId: string) => void;
   isPublicView?: boolean;
 }
 
-export const MapCard = ({ map, onCardClick, isPublicView = false }: MapCardProps) => {
+export const MapCard = ({ map, onCardClick, onLike, isPublicView = false }: MapCardProps) => {
+  const { user } = useAuth();
+  const [showSignInModal, setShowSignInModal] = useState(false);
+
   const formatDate = (date: Date | Timestamp) => {
     if (date instanceof Timestamp) {
       return date.toDate().toLocaleDateString();
     }
     return date.toLocaleDateString();
   };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the card click
+    
+    if (!user) {
+      setShowSignInModal(true);
+      return;
+    }
+
+    if (onLike) {
+      onLike(map.id);
+    }
+  };
+
+  const hasLiked = user && map.likes?.includes(user.uid);
 
   // Convert relationships to graph data
   const graphData: GraphData = {
@@ -76,7 +98,24 @@ export const MapCard = ({ map, onCardClick, isPublicView = false }: MapCardProps
             </span>
           )}
         </div>
+        <div className="map-actions">
+          <button 
+            className={`upvote-button ${hasLiked ? 'active' : ''}`}
+            onClick={handleLikeClick}
+            aria-label="Upvote map"
+          >
+            ↑
+            <span className="likes-count">{map.likes?.length || 0}</span>
+          </button>
+        </div>
       </div>
+
+      {showSignInModal && (
+        <SignInModal 
+          onClose={() => setShowSignInModal(false)} 
+          onSignIn={() => setShowSignInModal(false)}
+        />
+      )}
     </button>
   );
 }; 
