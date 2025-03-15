@@ -655,6 +655,15 @@ button:disabled:hover {
 .map-actions {
   display: flex;
   gap: 8px;
+  justify-content: flex-end;
+}
+
+.map-actions .comment-button {
+  order: 1;
+}
+
+.map-actions .upvote-button {
+  order: 2;
 }
 
 .visibility-badge {
@@ -1111,8 +1120,8 @@ button:disabled:hover {
 
 .upvote-button {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 6px;
   background: none;
   border: none;
   cursor: pointer;
@@ -1133,14 +1142,13 @@ button:disabled:hover {
 }
 
 .upvote-button .likes-count {
-  font-size: 0.8rem;
-  margin-top: 2px;
+  font-size: 0.9rem;
 }
 
 .comment-button {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 6px;
   background: none;
   border: none;
   cursor: pointer;
@@ -1161,8 +1169,7 @@ button:disabled:hover {
 }
 
 .comment-button .comments-count {
-  font-size: 0.8rem;
-  margin-top: 2px;
+  font-size: 0.9rem;
 }
 
 .comments-section {
