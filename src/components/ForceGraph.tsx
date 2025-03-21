@@ -19,6 +19,12 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
     d3.select(svgRef.current).selectAll("*").remove();
 
     const svg = d3.select(svgRef.current);
+    
+    // Set up the SVG with proper viewBox and transform
+    svg
+      .attr("viewBox", [0, 0, width, height])
+      .attr("preserveAspectRatio", "xMidYMid meet");
+    
     const container = svg.append("g");
 
     // Add zoom behavior
@@ -34,12 +40,20 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
     const simulation = d3.forceSimulation(data.nodes as d3.SimulationNodeDatum[])
       .force("link", d3.forceLink(data.links)
         .id((d: any) => d.id)
-        .distance(miniature ? 35 : 45)) // Increased link distance to spread nodes out
+        .distance(miniature ? 35 : 45))
       .force("charge", d3.forceManyBody()
-        .strength(miniature ? -80 : -200)) // Increased repulsion to prevent clustering
-      .force("center", d3.forceCenter(width / 2, height / 2)) // Default center force
+        .strength(miniature ? -80 : -200))
+      .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide()
-        .radius(12)); // Reduced collision radius to allow closer node spacing
+        .radius(12));
+
+    // Initialize node positions in a circle
+    const radius = Math.min(width, height) / 3;
+    data.nodes.forEach((node: any, i: number) => {
+      const angle = (i / data.nodes.length) * 2 * Math.PI;
+      node.x = width / 2 + radius * Math.cos(angle);
+      node.y = height / 2 + radius * Math.sin(angle);
+    });
 
     // Draw links
     const links = container
