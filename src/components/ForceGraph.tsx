@@ -89,7 +89,17 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
     };
   }, [data, width, height, miniature]);
 
-  return <svg ref={svgRef} width={width} height={height} />;
+  return (
+    <svg 
+      ref={svgRef} 
+      width={width} 
+      height={height}
+      style={{
+        width: '100%',
+        height: '100%'
+      }}
+    />
+  );
 };
 
 export default ForceGraph; 
