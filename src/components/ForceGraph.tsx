@@ -40,9 +40,9 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
     const simulation = d3.forceSimulation(data.nodes as d3.SimulationNodeDatum[])
       .force("link", d3.forceLink(data.links)
         .id((d: any) => d.id)
-        .distance(miniature ? 35 : 45))
+        .distance(miniature ? 25 : 35))
       .force("charge", d3.forceManyBody()
-        .strength(miniature ? -80 : -200))
+        .strength(miniature ? -5 : -80))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide()
         .radius(12));
@@ -70,7 +70,7 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
       .data(data.nodes)
       .enter()
       .append("circle")
-      .attr("r", 5)
+      .attr("r", 2)
       .attr("fill", "#69b3a2");
 
     // Add node labels
