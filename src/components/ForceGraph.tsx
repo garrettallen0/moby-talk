@@ -30,12 +30,16 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
 
     svg.call(zoom);
 
-    // Create force simulation
+    // Create force simulation with adjusted parameters for better containment
     const simulation = d3.forceSimulation(data.nodes as d3.SimulationNodeDatum[])
-      .force("link", d3.forceLink(data.links).id((d: any) => d.id))
-      .force("charge", d3.forceManyBody().strength(miniature ? -100 : -300))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(20));
+      .force("link", d3.forceLink(data.links)
+        .id((d: any) => d.id)
+        .distance(miniature ? 35 : 45)) // Increased link distance to spread nodes out
+      .force("charge", d3.forceManyBody()
+        .strength(miniature ? -80 : -200)) // Increased repulsion to prevent clustering
+      .force("center", d3.forceCenter(width / 2, height / 2)) // Default center force
+      .force("collision", d3.forceCollide()
+        .radius(12)); // Reduced collision radius to allow closer node spacing
 
     // Draw links
     const links = container
