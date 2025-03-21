@@ -1048,6 +1048,15 @@ button:disabled:hover {
     font-size: 0.9rem;
     min-width: auto;
   }
+
+  .modal-content {
+    padding: 0.5rem;
+    width: 100%;
+  }
+
+  .modal-body {
+    padding: 0.5rem;
+  }
 }
 
 .description-input {
