@@ -19,6 +19,12 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
     d3.select(svgRef.current).selectAll("*").remove();
 
     const svg = d3.select(svgRef.current);
+    
+    // Set up the SVG with proper viewBox and transform
+    svg
+      .attr("viewBox", [0, 0, width, height])
+      .attr("preserveAspectRatio", "xMidYMid meet");
+    
     const container = svg.append("g");
 
     // Add zoom behavior
@@ -30,12 +36,24 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
 
     svg.call(zoom);
 
-    // Create force simulation
+    // Create force simulation with adjusted parameters for better containment
     const simulation = d3.forceSimulation(data.nodes as d3.SimulationNodeDatum[])
-      .force("link", d3.forceLink(data.links).id((d: any) => d.id))
-      .force("charge", d3.forceManyBody().strength(miniature ? -100 : -300))
+      .force("link", d3.forceLink(data.links)
+        .id((d: any) => d.id)
+        .distance(miniature ? 25 : 35))
+      .force("charge", d3.forceManyBody()
+        .strength(miniature ? -5 : -80))
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(20));
+      .force("collision", d3.forceCollide()
+        .radius(12));
+
+    // Initialize node positions in a circle
+    const radius = Math.min(width, height) / 3;
+    data.nodes.forEach((node: any, i: number) => {
+      const angle = (i / data.nodes.length) * 2 * Math.PI;
+      node.x = width / 2 + radius * Math.cos(angle);
+      node.y = height / 2 + radius * Math.sin(angle);
+    });
 
     // Draw links
     const links = container
@@ -52,7 +70,7 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
       .data(data.nodes)
       .enter()
       .append("circle")
-      .attr("r", 5)
+      .attr("r", 2)
       .attr("fill", "#69b3a2");
 
     // Add node labels
@@ -89,7 +107,17 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
     };
   }, [data, width, height, miniature]);
 
-  return <svg ref={svgRef} width={width} height={height} />;
+  return (
+    <svg 
+      ref={svgRef} 
+      width={width} 
+      height={height}
+      style={{
+        width: '100%',
+        height: '100%'
+      }}
+    />
+  );
 };
 
 export default ForceGraph; 
