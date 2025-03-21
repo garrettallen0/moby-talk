@@ -1030,13 +1030,10 @@ button:disabled:hover {
     flex-direction: column;
     gap: 0.5rem;
     align-items: center;
-    text-align: center;
   }
 
   .controls-row .toggle-label {
     margin-bottom: 0.5rem;
-    width: 100%;
-    justify-content: center;
   }
 
   .controls-row .action-buttons {
@@ -1047,15 +1044,6 @@ button:disabled:hover {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     min-width: auto;
-  }
-
-  .modal-content {
-    padding: 0.5rem;
-    width: 100%;
-  }
-
-  .modal-body {
-    padding: 0.5rem;
   }
 }
 
