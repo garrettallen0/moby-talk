@@ -297,16 +297,24 @@ button:disabled:hover {
 .auth-button {
   display: flex;
   justify-content: flex-end;
+  position: relative;
 }
 
 .user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: white;
-  padding: 0.5rem;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.avatar-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.avatar-button:hover {
+  transform: scale(1.05);
 }
 
 .avatar-container {
@@ -1412,5 +1420,77 @@ button:disabled:hover {
 /* Remove the old inline comments section from the card */
 .map-card .comments-section {
   display: none;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.user-dropdown-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-dropdown-avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.user-dropdown-info {
+  flex: 1;
+  text-align: left;
+}
+
+.user-dropdown-name {
+  font-weight: 500;
+  color: #202124;
+  font-size: 14px;
+}
+
+.user-dropdown-email {
+  color: #5f6368;
+  font-size: 12px;
+}
+
+.user-dropdown-divider {
+  height: 1px;
+  background-color: #dadce0;
+  margin: 8px 0;
+}
+
+.user-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  color: #202124;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.user-dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.user-dropdown-item.logout {
+  color: #ea4335;
+}
+
+.user-dropdown-item.logout:hover {
+  background-color: #fce8e6;
 }
 
