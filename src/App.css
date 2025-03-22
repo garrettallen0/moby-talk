@@ -291,10 +291,8 @@ button:disabled:hover {
 }
 
 .auth-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .user-info {
