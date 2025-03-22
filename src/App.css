@@ -1003,12 +1003,16 @@ button:disabled:hover {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .editor-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .controls-row {
@@ -1070,6 +1074,7 @@ button:disabled:hover {
   min-height: 100px;
   background-color: #f8f9fa;
   color: #000;
+  box-sizing: border-box;
 }
 
 .description-input:focus {
