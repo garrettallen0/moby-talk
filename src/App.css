@@ -5,6 +5,12 @@
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  #root {
+    padding: .5rem;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -41,17 +47,37 @@
   color: #888;
 }
 
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   font-family: Arial, sans-serif;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 h1 {
   color: white;
   text-align: center;
   margin-bottom: 2rem;
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
 }
 
 .chapter-bank {
@@ -124,13 +150,6 @@ h1 {
   white-space: nowrap;
   z-index: 10;
   margin-bottom: 5px;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
 }
 
 .add-button {
@@ -270,10 +289,8 @@ button:disabled:hover {
 }
 
 .auth-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .user-info {
@@ -364,34 +381,6 @@ button:disabled:hover {
   margin-bottom: 2rem;
 }
 
-.save-button, .load-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  min-width: 150px;
-}
-
-.save-button {
-  background-color: #4285f4;
-  color: white;
-}
-
-.save-button:hover {
-  background-color: #3367d6;
-}
-
-.load-button {
-  background-color: #34a853;
-  color: white;
-}
-
-.load-button:hover {
-  background-color: #2d8a46;
-}
-
 .modal {
   position: fixed;
   top: 0;
@@ -411,6 +400,12 @@ button:disabled:hover {
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    padding: .5rem;
+  }
 }
 
 .modal-content h3 {
@@ -593,6 +588,8 @@ button:disabled:hover {
   padding: 1rem;
   max-width: 600px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .map-card {
@@ -608,6 +605,8 @@ button:disabled:hover {
   border: none;
   text-align: left;
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .map-card:not(.public-view) {
@@ -968,12 +967,16 @@ button:disabled:hover {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .editor-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .controls-row {
@@ -996,6 +999,35 @@ button:disabled:hover {
   margin: 0;
 }
 
+@media (max-width: 768px) {
+  .controls-row {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .controls-row .visibility-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .controls-row .toggle-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .controls-row .action-buttons {
+    justify-content: flex-end;
+  }
+
+  .controls-row .action-buttons button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    min-width: auto;
+  }
+}
+
 .description-input {
   width: 100%;
   padding: 0.75rem;
@@ -1006,6 +1038,7 @@ button:disabled:hover {
   min-height: 100px;
   background-color: #f8f9fa;
   color: #000;
+  box-sizing: border-box;
 }
 
 .description-input:focus {
