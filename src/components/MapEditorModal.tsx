@@ -192,7 +192,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
                   {map.id ? 'Save Changes' : 'Save'}
                 </button>
                 <button className="delete-button" onClick={handleDeleteClick}>
-                  Delete Map
+                  Delete
                 </button>
                 <button className="cancel-button" onClick={onClose}>
                   Cancel
