@@ -859,29 +859,6 @@ button:disabled:hover {
   color: #666;
 }
 
-.google-sign-in-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-weight: 500;
-  color: #333;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.google-sign-in-button:hover {
-  background-color: #f8f8f8;
-}
-
-.google-logo {
-  width: 18px;
-  height: 18px;
-}
-
 .map-editor-modal {
   position: fixed;
   top: 0;

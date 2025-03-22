@@ -1,4 +1,6 @@
 import { useAuth } from '../contexts/AuthContext';
+import { GoogleSignInButton } from './GoogleSignInButton';
+import '../styles/GoogleSignInButton.css';
 
 export const AuthButton = () => {
   const { user, signInWithGoogle, logout } = useAuth();
@@ -34,9 +36,7 @@ export const AuthButton = () => {
           </button>
         </div>
       ) : (
-        <button onClick={signInWithGoogle} className="login-button">
-          Sign in with Google
-        </button>
+        <GoogleSignInButton onClick={signInWithGoogle} />
       )}
     </div>
   );
