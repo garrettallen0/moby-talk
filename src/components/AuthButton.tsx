@@ -1,11 +1,30 @@
 import { useAuth } from '../contexts/AuthContext';
 import { GoogleSignInButton } from './GoogleSignInButton';
 import '../styles/GoogleSignInButton.css';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export const AuthButton = () => {
   const { user, signInWithGoogle, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const getInitials = (name: string | null) => {
     if (!name) return '?';
@@ -20,7 +39,7 @@ export const AuthButton = () => {
   return (
     <div className="auth-button">
       {user ? (
-        <div className="user-info">
+        <div className="user-info" ref={dropdownRef}>
           <button 
             className="avatar-button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
