@@ -438,6 +438,12 @@ button:disabled:hover {
   max-width: 500px;
 }
 
+@media (max-width: 768px) {
+  .modal-content {
+    padding: .5rem;
+  }
+}
+
 .modal-content h3 {
   color: #333;
   margin-top: 0;
