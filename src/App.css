@@ -600,7 +600,7 @@ button:disabled:hover {
   grid-template-columns: 1fr;
   gap: 1.5rem;
   padding: 1rem;
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -610,17 +610,64 @@ button:disabled:hover {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 16px;
+  padding: 24px;
   transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  aspect-ratio: 1;
   border: none;
   text-align: left;
   position: relative;
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.map-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 769px) {
+  .map-content {
+    flex-direction: row;
+    min-height: 400px;
+  }
+
+  .map-info {
+    width: 250px;
+    flex-shrink: 0;
+    padding-right: 24px;
+    border-right: 1px solid #eee;
+  }
+
+  .map-preview {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mini-graph {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-card {
+    gap: 16px;
+  }
+
+  .map-content {
+    gap: 16px;
+  }
+
+  .map-info {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+  }
+
+  .mini-graph {
+    min-height: 250px;
+  }
 }
 
 .map-card:not(.public-view) {
@@ -633,7 +680,6 @@ button:disabled:hover {
 }
 
 .map-preview {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -648,7 +694,7 @@ button:disabled:hover {
 
 .mini-graph {
   flex: 1;
-  min-height: 0;
+  min-height: 250px;
   background: #f8f9fa;
   border-radius: 4px;
   overflow: hidden;
@@ -667,13 +713,25 @@ button:disabled:hover {
   height: 100%;
 }
 
-.map-footer {
-  margin-top: auto;
+.map-info {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 8px;
-  border-top: 1px solid #eee;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.map-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .map-metadata {
@@ -690,12 +748,22 @@ button:disabled:hover {
   justify-content: flex-end;
 }
 
-.map-actions .comment-button {
-  order: 1;
+.map-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
 }
 
-.map-actions .upvote-button {
-  order: 2;
+@media (max-width: 768px) {
+  .map-footer {
+    gap: 8px;
+  }
+
+  .map-metadata {
+    flex-wrap: wrap;
+  }
 }
 
 .visibility-badge {
