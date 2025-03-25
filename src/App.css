@@ -631,6 +631,7 @@ button:disabled:hover {
 @media (min-width: 769px) {
   .map-content {
     flex-direction: row;
+    min-height: 400px;
   }
 
   .map-info {
@@ -646,7 +647,7 @@ button:disabled:hover {
   }
 
   .mini-graph {
-    min-height: 300px;
+    min-height: 400px;
   }
 }
 
@@ -693,7 +694,7 @@ button:disabled:hover {
 
 .mini-graph {
   flex: 1;
-  min-height: 200px;
+  min-height: 250px;
   background: #f8f9fa;
   border-radius: 4px;
   overflow: hidden;
