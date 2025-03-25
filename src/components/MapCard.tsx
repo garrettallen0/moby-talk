@@ -110,6 +110,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
       }}
     >
       <div className="map-info">
+        <h3>{map.name}</h3>
         <div className="map-metadata">
           <span className="map-date">{formatDate(map.createdAt)}</span>
           {!isPublicView && (
@@ -139,7 +140,6 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
       </div>
 
       <div className="map-preview">
-        <h3>{map.name}</h3>
         <div className="mini-graph">
           <ForceGraph
             data={graphData}

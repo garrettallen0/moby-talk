@@ -697,8 +697,14 @@ button:disabled:hover {
 
 .map-info {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
 }
 
 .map-metadata {
@@ -713,6 +719,7 @@ button:disabled:hover {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  margin-top: auto;
 }
 
 .map-actions .comment-button {
