@@ -111,6 +111,9 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
     >
       <div className="map-info">
         <h3>{map.name}</h3>
+        {map.description && (
+          <p className="map-description">{map.description}</p>
+        )}
         <div className="map-metadata">
           <span className="map-date">{formatDate(map.createdAt)}</span>
           {!isPublicView && (

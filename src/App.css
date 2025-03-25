@@ -716,6 +716,16 @@ button:disabled:hover {
   color: #333;
 }
 
+.map-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  /* Prevent very long descriptions from breaking layout */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
 .map-metadata {
   display: flex;
   align-items: center;
