@@ -109,15 +109,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
         }
       }}
     >
-      <div className="mini-graph">
-        <ForceGraph
-          data={graphData}
-          width={200}
-          height={150}
-          miniature={true}
-        />
-      </div>
-      <div className="map-footer">
+      <div className="map-info">
         <div className="map-metadata">
           <span className="map-date">{formatDate(map.createdAt)}</span>
           {!isPublicView && (
@@ -143,6 +135,18 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
             ↑
             <span className="likes-count">{map.likes?.length || 0}</span>
           </button>
+        </div>
+      </div>
+
+      <div className="map-preview">
+        <h3>{map.name}</h3>
+        <div className="mini-graph">
+          <ForceGraph
+            data={graphData}
+            width={200}
+            height={150}
+            miniature={true}
+          />
         </div>
       </div>
 

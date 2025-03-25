@@ -612,15 +612,44 @@ button:disabled:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 16px;
   transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  aspect-ratio: 1;
   border: none;
   text-align: left;
   position: relative;
   width: 100%;
   box-sizing: border-box;
+}
+
+@media (min-width: 769px) {
+  .map-card {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .map-info {
+    width: 200px;
+    flex-shrink: 0;
+    padding-right: 16px;
+    border-right: 1px solid #eee;
+  }
+
+  .map-preview {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .map-info {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+  }
 }
 
 .map-card:not(.public-view) {
@@ -633,7 +662,6 @@ button:disabled:hover {
 }
 
 .map-preview {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -648,7 +676,7 @@ button:disabled:hover {
 
 .mini-graph {
   flex: 1;
-  min-height: 0;
+  min-height: 200px;
   background: #f8f9fa;
   border-radius: 4px;
   overflow: hidden;
@@ -667,13 +695,10 @@ button:disabled:hover {
   height: 100%;
 }
 
-.map-footer {
-  margin-top: auto;
+.map-info {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding-top: 8px;
-  border-top: 1px solid #eee;
+  align-items: flex-start;
 }
 
 .map-metadata {
