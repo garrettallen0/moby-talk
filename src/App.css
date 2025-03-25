@@ -617,14 +617,20 @@ button:disabled:hover {
   position: relative;
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.map-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 @media (min-width: 769px) {
-  .map-card {
-    display: flex;
+  .map-content {
     flex-direction: row;
-    gap: 24px;
-    min-height: 300px;
   }
 
   .map-info {
@@ -646,8 +652,10 @@ button:disabled:hover {
 
 @media (max-width: 768px) {
   .map-card {
-    display: flex;
-    flex-direction: column;
+    gap: 16px;
+  }
+
+  .map-content {
     gap: 16px;
   }
 
@@ -721,7 +729,6 @@ button:disabled:hover {
   font-size: 0.9rem;
   color: #666;
   line-height: 1.4;
-  /* Prevent very long descriptions from breaking layout */
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
@@ -738,15 +745,24 @@ button:disabled:hover {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  margin-top: auto;
 }
 
-.map-actions .comment-button {
-  order: 1;
+.map-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
 }
 
-.map-actions .upvote-button {
-  order: 2;
+@media (max-width: 768px) {
+  .map-footer {
+    gap: 8px;
+  }
+
+  .map-metadata {
+    flex-wrap: wrap;
+  }
 }
 
 .visibility-badge {
