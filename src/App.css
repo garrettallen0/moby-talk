@@ -600,7 +600,7 @@ button:disabled:hover {
   grid-template-columns: 1fr;
   gap: 1.5rem;
   padding: 1rem;
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -610,7 +610,7 @@ button:disabled:hover {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 16px;
+  padding: 24px;
   transition: transform 0.2s, box-shadow 0.2s;
   border: none;
   text-align: left;
@@ -623,19 +623,24 @@ button:disabled:hover {
   .map-card {
     display: flex;
     flex-direction: row;
-    gap: 16px;
+    gap: 24px;
+    min-height: 300px;
   }
 
   .map-info {
-    width: 200px;
+    width: 250px;
     flex-shrink: 0;
-    padding-right: 16px;
+    padding-right: 24px;
     border-right: 1px solid #eee;
   }
 
   .map-preview {
     flex: 1;
     min-width: 0;
+  }
+
+  .mini-graph {
+    min-height: 300px;
   }
 }
 
@@ -649,6 +654,10 @@ button:disabled:hover {
   .map-info {
     border-bottom: 1px solid #eee;
     padding-bottom: 16px;
+  }
+
+  .mini-graph {
+    min-height: 250px;
   }
 }
 
