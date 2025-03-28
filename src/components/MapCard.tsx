@@ -81,7 +81,12 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
           )}
           {map.selectedChapters.length > 0 && (
             <div className="selected-chapters-mini">
-              <h4 className="chapters-heading" style={{color: 'black', fontWeight: 'bold'}}>Chapters</h4>
+              <h4 
+                className="chapters-heading" 
+                data-element="chapter-heading"
+              >
+                Chapters
+              </h4>
               <div className="chapter-grid">
                 {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
                   <button
