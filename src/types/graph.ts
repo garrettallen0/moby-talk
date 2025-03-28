@@ -1,7 +1,9 @@
-export interface Node {
+export interface GraphNode {
   id: number;
   chapter: number;
   connections: number; // number of connections for sizing
+  x?: number; // optional x position
+  y?: number; // optional y position
 }
 
 export interface Link {
@@ -10,6 +12,6 @@ export interface Link {
 }
 
 export interface GraphData {
-  nodes: Node[];
+  nodes: GraphNode[];
   links: Link[];
 } 

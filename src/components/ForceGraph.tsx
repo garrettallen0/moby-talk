@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { GraphData } from '../types/graph';
+import { GraphData, GraphNode } from '../types/graph';
 import { useEffect, useRef } from 'react';
 
 interface ForceGraphProps {
@@ -49,10 +49,17 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
 
     // Initialize node positions in a circle
     const radius = Math.min(width, height) / 3;
-    data.nodes.forEach((node: any, i: number) => {
-      const angle = (i / data.nodes.length) * 2 * Math.PI;
-      node.x = width / 2 + radius * Math.cos(angle);
-      node.y = height / 2 + radius * Math.sin(angle);
+    const themeNode = data.nodes.find((node: GraphNode) => node.id === 0); // Assuming id 0 is the theme node
+    if (themeNode) {
+      (themeNode as any).x = width / 2;
+      (themeNode as any).y = height / 2;
+    }
+    data.nodes.forEach((node: GraphNode) => {
+      if (node !== themeNode) {
+        const angle = (node.id / (data.nodes.length - 1)) * 2 * Math.PI;
+        (node as any).x = width / 2 + radius * Math.cos(angle);
+        (node as any).y = height / 2 + radius * Math.sin(angle);
+      }
     });
 
     // Draw links
@@ -70,8 +77,8 @@ export const ForceGraph = ({ data, width, height, miniature = false }: ForceGrap
       .data(data.nodes)
       .enter()
       .append("circle")
-      .attr("r", 2)
-      .attr("fill", "#69b3a2");
+      .attr("r", (d: GraphNode) => d === themeNode ? 5 : 2)
+      .attr("fill", (d: GraphNode) => d === themeNode ? "#ff6347" : "#69b3a2");
 
     // Add node labels
     const labels = container

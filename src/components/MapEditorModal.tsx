@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChapterMap } from '../types/map';
 import ForceGraph from './ForceGraph';
-import { GraphData } from '../types/graph';
+import { GraphData, GraphNode, Link } from '../types/graph';
 import { ConfirmationModal } from './ConfirmationModal';
 
 interface MapEditorModalProps {
@@ -21,48 +21,37 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   const [name, setName] = useState(map.name);
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);
-  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
-  const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set());
-  const [relationships, setRelationships] = useState<Map<number, number[]>>(
-    new Map(map.relationships.map(rel => [rel.sourceChapter, rel.relatedChapters]))
-  );
-  const [isEditing, setIsEditing] = useState(false);
+  const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set(map.relationships.flatMap(rel => rel.relatedChapters)));
   const [isRelationshipsOpen, setIsRelationshipsOpen] = useState(true);
-  const [graphData, setGraphData] = useState<GraphData>(convertToGraphData(relationships));
+  const [graphData, setGraphData] = useState<GraphData>(convertToGraphData(relatedChapters));
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
 
-  function convertToGraphData(relationships: Map<number, number[]>): GraphData {
-    const nodes: any[] = [];
-    const links: any[] = [];
-    const connectionsCount = new Map<number, number>();
+  function convertToGraphData(relatedChapters: Set<number>): GraphData {
+    const nodes: GraphNode[] = [];
+    const links: Link[] = [];
 
-    // Count connections for each chapter
-    relationships.forEach((related, chapter) => {
-      connectionsCount.set(chapter, (connectionsCount.get(chapter) || 0) + related.length);
-      related.forEach(r => {
-        connectionsCount.set(r, (connectionsCount.get(r) || 0) + 1);
-      });
+    // Add the central theme node
+    nodes.push({
+      id: 0,
+      chapter: 0,
+      connections: relatedChapters.size
     });
 
-    // Create nodes
-    Array.from(connectionsCount.keys()).forEach(chapter => {
+    // Create nodes and links for each chapter
+    relatedChapters.forEach(chapter => {
       nodes.push({
         id: chapter,
         chapter: chapter,
-        connections: connectionsCount.get(chapter) || 0
+        connections: 1
       });
-    });
 
-    // Create links
-    relationships.forEach((related, chapter) => {
-      related.forEach(r => {
-        links.push({
-          source: chapter,
-          target: r
-        });
+      // Create links from the theme node to each chapter
+      links.push({
+        source: 0, // theme node
+        target: chapter
       });
     });
 
@@ -70,50 +59,14 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   }
 
   const handleChapterClick = (chapter: number) => {
-    if (selectedChapter === null) {
-      // First selection
-      setSelectedChapter(chapter);
-      setRelatedChapters(new Set());
-    } else if (chapter === selectedChapter) {
-      // Deselect primary chapter
-      setSelectedChapter(null);
-      setRelatedChapters(new Set());
+    const newRelatedChapters = new Set(relatedChapters);
+    if (newRelatedChapters.has(chapter)) {
+      newRelatedChapters.delete(chapter);
     } else {
-      // Toggle related chapter
-      const newRelated = new Set(relatedChapters);
-      if (newRelated.has(chapter)) {
-        newRelated.delete(chapter);
-      } else {
-        newRelated.add(chapter);
-      }
-      setRelatedChapters(newRelated);
+      newRelatedChapters.add(chapter);
     }
-  };
-
-  const handleAddRelationship = () => {
-    if (selectedChapter === null) return;
-
-    // Update relationships Map
-    const newRelationships = new Map(relationships);
-    newRelationships.set(selectedChapter, Array.from(relatedChapters));
-    setRelationships(newRelationships);
-
-    // Update graph data
-    setGraphData(convertToGraphData(newRelationships));
-
-    // Reset selection state
-    setSelectedChapter(null);
-    setRelatedChapters(new Set());
-    setIsEditing(false);
-  };
-
-  const handleEditRelationship = (chapter: number) => {
-    const related = relationships.get(chapter);
-    if (related) {
-      setSelectedChapter(chapter);
-      setRelatedChapters(new Set(related));
-      setIsEditing(true);
-    }
+    setRelatedChapters(newRelatedChapters);
+    setGraphData(convertToGraphData(newRelatedChapters));
   };
 
   const handleSave = () => {
@@ -125,10 +78,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
       description,
       userId: map.userId,
       isPublic,
-      relationships: Array.from(relationships.entries()).map(([sourceChapter, relatedChapters]) => ({
-        sourceChapter,
-        relatedChapters
-      })),
+      relationships: [{ sourceChapter: 0, relatedChapters: Array.from(relatedChapters) }],
       createdAt: map.createdAt,
       updatedAt: new Date(),
       id: map.id
@@ -138,9 +88,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   };
 
   const getChapterStyle = (chapter: number) => {
-    if (chapter === selectedChapter) return "chapter-button selected-primary";
-    if (relatedChapters.has(chapter)) return "chapter-button selected-related";
-    return "chapter-button";
+    return relatedChapters.has(chapter) ? "chapter-button selected-primary" : "chapter-button";
   };
 
   const handleDeleteClick = () => {
@@ -205,7 +153,6 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             <h3>Select Chapters</h3>
             <p className="instructions">
               Click a chapter to select it. Then click other chapters to mark them as related. Then click "Add".
-              {isEditing && " You are currently editing an existing relationship."}
             </p>
 
             <div className="chapter-grid">
@@ -220,16 +167,6 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
                 </button>
               ))}
             </div>
-
-            <div className="action-buttons">
-              <button 
-                className="add-button"
-                onClick={handleAddRelationship}
-                disabled={!selectedChapter}
-              >
-                {isEditing ? 'Update' : 'Add'}
-              </button>
-            </div>
           </div>
 
           <div className="relationships-list">
@@ -243,13 +180,12 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             
             <div className={`relationships-content ${isRelationshipsOpen ? '' : 'closed'}`}>
               <p className="instructions">Click a relationship to edit it.</p>
-              {Array.from(relationships.entries()).map(([chapter, related]) => (
+              {Array.from(relatedChapters).map(chapter => (
                 <div 
                   key={chapter} 
-                  className={`relationship-item ${selectedChapter === chapter ? 'editing' : ''}`}
-                  onClick={() => handleEditRelationship(chapter)}
+                  className="relationship-item"
                 >
-                  Chapter {chapter} → Chapters {related.join(', ')}
+                  Chapter {chapter}
                 </div>
               ))}
             </div>
