@@ -1570,3 +1570,36 @@ button:disabled:hover {
   flex-shrink: 0;
 }
 
+.selected-chapters {
+  margin-top: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.selected-chapters-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.selected-chapters-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.selected-chapter-item {
+  padding: 0.5rem 1rem;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.selected-chapter-item:hover {
+  background-color: #d6d8db;
+}
+

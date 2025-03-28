@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
-import ForceGraph from './ForceGraph';
-import { GraphData } from '../types/graph';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { CommentModal } from './CommentModal';
@@ -63,40 +61,6 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
 
   const hasLiked = user && map.likes?.includes(user.uid);
 
-  // Convert relationships to graph data
-  const graphData: GraphData = {
-    nodes: [],
-    links: []
-  };
-
-  // Create a set of all chapters involved and count connections
-  const chapterConnections = new Map<number, number>();
-  map.relationships.forEach(rel => {
-    chapterConnections.set(rel.sourceChapter, (chapterConnections.get(rel.sourceChapter) || 0) + rel.relatedChapters.length);
-    rel.relatedChapters.forEach(chapter => {
-      chapterConnections.set(chapter, (chapterConnections.get(chapter) || 0) + 1);
-    });
-  });
-
-  // Create nodes for each chapter with their connection counts
-  chapterConnections.forEach((connections, chapter) => {
-    graphData.nodes.push({
-      id: chapter,
-      chapter: chapter,
-      connections: connections
-    });
-  });
-
-  // Create links directly from relationships
-  map.relationships.forEach(rel => {
-    rel.relatedChapters.forEach(target => {
-      graphData.links.push({
-        source: rel.sourceChapter,
-        target: target
-      });
-    });
-  });
-
   return (
     <div 
       className={`map-card ${isPublicView ? 'public-view' : ''}`}
@@ -118,13 +82,9 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
         </div>
 
         <div className="map-preview">
-          <div className="mini-graph">
-            <ForceGraph
-              data={graphData}
-              width={200}
-              height={150}
-              miniature={true}
-            />
+          <div className="chapter-count-display">
+            <span className="chapter-count">{map.selectedChapters.length}</span>
+            <span className="chapter-label">Chapters</span>
           </div>
         </div>
       </div>

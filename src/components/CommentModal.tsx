@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { ChapterMap, Comment } from '../types/map';
-import ForceGraph from './ForceGraph';
-import { GraphData } from '../types/graph';
 
 interface CommentModalProps {
   map: ChapterMap;
@@ -20,42 +18,8 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
     }
   };
 
-  // Convert relationships to graph data
-  const graphData: GraphData = {
-    nodes: [],
-    links: []
-  };
-
-  // Create a set of all chapters involved and count connections
-  const chapterConnections = new Map<number, number>();
-  map.relationships.forEach(rel => {
-    chapterConnections.set(rel.sourceChapter, (chapterConnections.get(rel.sourceChapter) || 0) + rel.relatedChapters.length);
-    rel.relatedChapters.forEach(chapter => {
-      chapterConnections.set(chapter, (chapterConnections.get(chapter) || 0) + 1);
-    });
-  });
-
-  // Create nodes for each chapter with their connection counts
-  chapterConnections.forEach((connections, chapter) => {
-    graphData.nodes.push({
-      id: chapter,
-      chapter: chapter,
-      connections: connections
-    });
-  });
-
-  // Create links directly from relationships
-  map.relationships.forEach(rel => {
-    rel.relatedChapters.forEach(target => {
-      graphData.links.push({
-        source: rel.sourceChapter,
-        target: target
-      });
-    });
-  });
-
-  const formatDate = (date: any) => {
-    if (date?.toDate) {
+  const formatDate = (date: Date | { toDate: () => Date }) => {
+    if (typeof date === 'object' && 'toDate' in date) {
       return date.toDate().toLocaleDateString();
     }
     return new Date(date).toLocaleDateString();
@@ -70,12 +34,14 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
 
-        <div className="graph-section">
-          <ForceGraph
-            data={graphData}
-            width={800}
-            height={400}
-          />
+        <div className="theme-summary">
+          <h3>Theme Info</h3>
+          <p>{map.description || 'No description provided'}</p>
+          <p className="chapter-summary">
+            Chapters: {map.selectedChapters.length > 0 
+              ? map.selectedChapters.sort((a, b) => a - b).join(', ') 
+              : 'None'}
+          </p>
         </div>
 
         <div className="comments-section">

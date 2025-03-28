@@ -1,0 +1,56 @@
+/* Add this to your existing App.css or create a new CSS file if needed */
+
+/* Chapter count in MapCard */
+.chapter-count-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #3a506b;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  color: white;
+  margin: 10px;
+}
+
+.chapter-count {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.chapter-label {
+  font-size: 12px;
+}
+
+/* Selected chapters summary in MapEditorModal */
+.selected-chapters-summary {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.selected-chapters-list {
+  margin-top: 10px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.selected-chapters-list p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Theme summary in CommentModal */
+.theme-summary {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.chapter-summary {
+  margin-top: 10px;
+  font-size: 14px;
+} 

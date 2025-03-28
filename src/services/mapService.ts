@@ -21,16 +21,17 @@ const MAPS_COLLECTION = 'maps';
 export const saveMap = async (
   userId: string,
   name: string,
-  relationships: { sourceChapter: number; relatedChapters: number[] }[],
+  selectedChapters: number[],
   description?: string,
   isPublic: boolean = false
 ): Promise<string> => {
   try {
+    console.log('Saving map with selectedChapters:', selectedChapters);
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
       userId,
-      relationships,
+      selectedChapters,
       isPublic,
       likes: [],
       createdAt: serverTimestamp() as Timestamp,
@@ -50,6 +51,7 @@ export const updateMap = async (
   data: Partial<ChapterMap>
 ): Promise<void> => {
   try {
+    console.log('Updating map with data:', data);
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
     const updateData = { ...data };
     delete updateData.id;
