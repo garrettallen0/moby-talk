@@ -141,7 +141,18 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             <h3>Selected Chapters</h3>
             <div className="selected-chapters-list">
               {Array.from(selectedChapters).length > 0 ? (
-                <p>{Array.from(selectedChapters).sort((a, b) => a - b).join(', ')}</p>
+                <div className="chapter-grid">
+                  {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
+                    <button
+                      key={chapter}
+                      className="chapter-button selected-primary"
+                      onClick={() => handleChapterClick(chapter)}
+                      data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]}
+                    >
+                      {chapter}
+                    </button>
+                  ))}
+                </div>
               ) : (
                 <p>No chapters selected</p>
               )}

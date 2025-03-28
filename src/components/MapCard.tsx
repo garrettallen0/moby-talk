@@ -79,6 +79,22 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
           {map.description && (
             <p className="map-description">{map.description}</p>
           )}
+          {map.selectedChapters.length > 0 && (
+            <div className="selected-chapters-mini">
+              <h4 className="chapters-heading" style={{color: 'black', fontWeight: 'bold'}}>Chapters</h4>
+              <div className="chapter-grid">
+                {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
+                  <button
+                    key={chapter}
+                    className="chapter-button selected-primary chapter-mini"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {chapter}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="map-preview">
