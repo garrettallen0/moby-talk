@@ -1,0 +1,77 @@
+.chapter-wheel-container {
+  position: relative;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.wheel {
+  position: relative;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.wheel-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #3a506b;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.wheel-hub span {
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+  font-size: 16px;
+  max-width: 80px;
+  overflow-wrap: break-word;
+}
+
+.chapter-node {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.spoke-line {
+  position: absolute;
+  height: 2px;
+  background-color: #6fffe9;
+  transform-origin: 0 50%;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.chapter-label {
+  background-color: #5bc0be;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  z-index: 2;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.chapter-node:hover .chapter-label {
+  background-color: #0b132b;
+  transform: scale(1.1);
+}
+
+.chapter-node:active .chapter-label {
+  transform: scale(0.95);
+} 

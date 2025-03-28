@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChapterMap } from '../types/map';
-import ForceGraph from './ForceGraph';
-import { GraphData, GraphNode, Link } from '../types/graph';
+import ChapterWheel from './ChapterWheel';
 import { ConfirmationModal } from './ConfirmationModal';
 
 interface MapEditorModalProps {
@@ -22,40 +21,9 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);
   const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set(map.selectedChapters));
-  const [graphData, setGraphData] = useState<GraphData>(convertToGraphData(selectedChapters));
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
-
-  function convertToGraphData(selectedChapters: Set<number>): GraphData {
-    const nodes: GraphNode[] = [];
-    const links: Link[] = [];
-
-    // Add the central theme node with the map's name as the theme
-    nodes.push({
-      id: 0,
-      chapter: name, // Use the map's name as the theme
-      connections: selectedChapters.size
-    });
-
-    // Create nodes and links for each chapter
-    selectedChapters.forEach(chapter => {
-      nodes.push({
-        id: chapter,
-        chapter: chapter,
-        connections: 1
-      });
-
-      // Create links from the theme node to each chapter
-      links.push({
-        source: 0, // theme node
-        target: chapter
-      });
-    });
-
-    return { nodes, links };
-  }
 
   const handleChapterClick = (chapter: number) => {
     const newSelectedChapters = new Set(selectedChapters);
@@ -65,7 +33,6 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
       newSelectedChapters.add(chapter);
     }
     setSelectedChapters(newSelectedChapters);
-    setGraphData(convertToGraphData(newSelectedChapters));
   };
 
   const handleSave = () => {
@@ -95,6 +62,8 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   const handleDeleteClick = () => {
     setShowDeleteConfirmation(true);
   };
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const handleConfirmDelete = () => {
     onDelete(map.id);
@@ -153,7 +122,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
           <div className="chapter-bank">
             <h3>Select Chapters</h3>
             <p className="instructions">
-              Click a chapter to select it. Then click other chapters to mark them as related. Then click "Add".
+              Click a chapter to add or remove it from your theme map.
             </p>
 
             <div className="chapter-grid">
@@ -171,10 +140,11 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
           </div>
 
           <div className="graph-container">
-            {graphData.nodes.length > 0 && (
-              <ForceGraph
-                data={graphData}
-                width={800}
+            {selectedChapters.size > 0 && (
+              <ChapterWheel
+                selectedChapters={Array.from(selectedChapters)}
+                theme={name || 'Theme'}
+                width={600}
                 height={600}
               />
             )}
