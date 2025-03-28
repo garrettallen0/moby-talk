@@ -74,4 +74,47 @@
 
 .chapter-node:active .chapter-label {
   transform: scale(0.95);
+}
+
+/* Empty wheel state */
+.empty-wheel-message {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #6c757d;
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+}
+
+/* Styles for mini wheel in MapCard */
+.mini-wheel .chapter-wheel-container {
+  transform: scale(0.8);
+  transform-origin: center;
+}
+
+.mini-wheel .wheel-hub {
+  width: 60px;
+  height: 60px;
+}
+
+.mini-wheel .wheel-hub span {
+  font-size: 10px;
+  max-width: 50px;
+}
+
+.mini-wheel .chapter-label {
+  font-size: 10px;
+  padding: 3px 6px;
+  white-space: nowrap;
+}
+
+.mini-wheel .spoke-line {
+  height: 1px;
+}
+
+.mini-wheel .empty-wheel-message {
+  font-size: 10px;
 } 

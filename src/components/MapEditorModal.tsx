@@ -140,14 +140,12 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
           </div>
 
           <div className="graph-container">
-            {selectedChapters.size > 0 && (
-              <ChapterWheel
-                selectedChapters={Array.from(selectedChapters)}
-                theme={name || 'Theme'}
-                width={600}
-                height={600}
-              />
-            )}
+            <ChapterWheel
+              selectedChapters={Array.from(selectedChapters)}
+              theme={name || 'Theme'}
+              width={600}
+              height={600}
+            />
           </div>
         </div>
       </div>

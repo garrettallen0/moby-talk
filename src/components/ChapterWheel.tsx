@@ -10,14 +10,29 @@ interface ChapterWheelProps {
 }
 
 export const ChapterWheel: React.FC<ChapterWheelProps> = ({
-  selectedChapters,
-  theme,
+  selectedChapters = [],
+  theme = "Theme",
   onChapterClick,
   width = 600,
   height = 600
 }) => {
   const [rotation, setRotation] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Guard against empty arrays
+  if (!selectedChapters || selectedChapters.length === 0) {
+    return (
+      <div 
+        className="chapter-wheel-container empty-wheel" 
+        style={{ width: `${width}px`, height: `${height}px` }}
+      >
+        <div className="wheel-hub">
+          <span>{theme}</span>
+        </div>
+        <div className="empty-wheel-message">No chapters selected</div>
+      </div>
+    );
+  }
   
   // Calculate the angle for each chapter based on total number of chapters
   const getChapterPosition = (index: number, total: number) => {
@@ -55,7 +70,7 @@ export const ChapterWheel: React.FC<ChapterWheelProps> = ({
     >
       {/* Center hub - the theme */}
       <div className="wheel-hub">
-        <span>{theme || 'Theme'}</span>
+        <span>{theme}</span>
       </div>
       
       {/* Wheel with spokes */}

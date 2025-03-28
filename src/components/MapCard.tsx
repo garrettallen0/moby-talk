@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
-import ForceGraph from './ForceGraph';
-import { GraphData } from '../types/graph';
+import ChapterWheel from './ChapterWheel';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { CommentModal } from './CommentModal';
@@ -63,34 +62,6 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
 
   const hasLiked = user && map.likes?.includes(user.uid);
 
-  // Convert selectedChapters to graph data
-  const graphData: GraphData = {
-    nodes: [],
-    links: []
-  };
-
-  // Add the central theme node with the map's name as the theme
-  graphData.nodes.push({
-    id: 0,
-    chapter: map.name, // Use the map's name as the theme
-    connections: map.selectedChapters.length
-  });
-
-  // Create nodes for each selected chapter
-  map.selectedChapters.forEach(chapter => {
-    graphData.nodes.push({
-      id: chapter,
-      chapter: chapter,
-      connections: 1
-    });
-
-    // Create links from the theme node to each chapter
-    graphData.links.push({
-      source: 0, // theme node
-      target: chapter
-    });
-  });
-
   return (
     <div 
       className={`map-card ${isPublicView ? 'public-view' : ''}`}
@@ -112,12 +83,12 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
         </div>
 
         <div className="map-preview">
-          <div className="mini-graph">
-            <ForceGraph
-              data={graphData}
+          <div className="mini-wheel">
+            <ChapterWheel
+              selectedChapters={map.selectedChapters}
+              theme={map.name}
               width={200}
               height={150}
-              miniature={true}
             />
           </div>
         </div>

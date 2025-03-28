@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChapterMap, Comment } from '../types/map';
-import ForceGraph from './ForceGraph';
-import { GraphData } from '../types/graph';
+import ChapterWheel from './ChapterWheel';
 
 interface CommentModalProps {
   map: ChapterMap;
@@ -20,34 +19,6 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
     }
   };
 
-  // Convert selectedChapters to graph data
-  const graphData: GraphData = {
-    nodes: [],
-    links: []
-  };
-
-  // Add the central theme node with the map's name as the theme
-  graphData.nodes.push({
-    id: 0,
-    chapter: map.name, // Use the map's name as the theme
-    connections: map.selectedChapters.length
-  });
-
-  // Create nodes for each selected chapter
-  map.selectedChapters.forEach(chapter => {
-    graphData.nodes.push({
-      id: chapter,
-      chapter: chapter,
-      connections: 1
-    });
-
-    // Create links from the theme node to each chapter
-    graphData.links.push({
-      source: 0, // theme node
-      target: chapter
-    });
-  });
-
   const formatDate = (date: Date | { toDate: () => Date }) => {
     if (typeof date === 'object' && 'toDate' in date) {
       return date.toDate().toLocaleDateString();
@@ -65,8 +36,9 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
         </div>
 
         <div className="graph-section">
-          <ForceGraph
-            data={graphData}
+          <ChapterWheel
+            selectedChapters={map.selectedChapters}
+            theme={map.name}
             width={800}
             height={400}
           />
