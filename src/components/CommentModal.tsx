@@ -20,42 +20,36 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
     }
   };
 
-  // Convert relationships to graph data
+  // Convert selectedChapters to graph data
   const graphData: GraphData = {
     nodes: [],
     links: []
   };
 
-  // Create a set of all chapters involved and count connections
-  const chapterConnections = new Map<number, number>();
-  map.relationships.forEach(rel => {
-    chapterConnections.set(rel.sourceChapter, (chapterConnections.get(rel.sourceChapter) || 0) + rel.relatedChapters.length);
-    rel.relatedChapters.forEach(chapter => {
-      chapterConnections.set(chapter, (chapterConnections.get(chapter) || 0) + 1);
-    });
+  // Add the central theme node with the map's name as the theme
+  graphData.nodes.push({
+    id: 0,
+    chapter: map.name, // Use the map's name as the theme
+    connections: map.selectedChapters.length
   });
 
-  // Create nodes for each chapter with their connection counts
-  chapterConnections.forEach((connections, chapter) => {
+  // Create nodes for each selected chapter
+  map.selectedChapters.forEach(chapter => {
     graphData.nodes.push({
       id: chapter,
       chapter: chapter,
-      connections: connections
+      connections: 1
+    });
+
+    // Create links from the theme node to each chapter
+    graphData.links.push({
+      source: 0, // theme node
+      target: chapter
     });
   });
 
-  // Create links directly from relationships
-  map.relationships.forEach(rel => {
-    rel.relatedChapters.forEach(target => {
-      graphData.links.push({
-        source: rel.sourceChapter,
-        target: target
-      });
-    });
-  });
-
-  const formatDate = (date: any) => {
-    if (date?.toDate) {
+  const formatDate = (date: Date | { toDate: () => Date }) => {
+    if (typeof date === 'object' && 'toDate' in date) {
       return date.toDate().toLocaleDateString();
     }
     return new Date(date).toLocaleDateString();

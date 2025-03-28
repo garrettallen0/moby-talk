@@ -13,10 +13,7 @@ export interface ChapterMap {
   name: string;
   description?: string;
   userId: string;
-  relationships: Array<{
-    sourceChapter: number;
-    relatedChapters: number[];
-  }>;
+  selectedChapters: number[];
   isPublic: boolean;
   likes?: string[];
   comments?: Comment[];

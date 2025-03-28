@@ -21,27 +21,26 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   const [name, setName] = useState(map.name);
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);
-  const [relatedChapters, setRelatedChapters] = useState<Set<number>>(new Set(map.relationships.flatMap(rel => rel.relatedChapters)));
-  const [isRelationshipsOpen, setIsRelationshipsOpen] = useState(true);
-  const [graphData, setGraphData] = useState<GraphData>(convertToGraphData(relatedChapters));
+  const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set(map.selectedChapters));
+  const [graphData, setGraphData] = useState<GraphData>(convertToGraphData(selectedChapters));
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
 
-  function convertToGraphData(relatedChapters: Set<number>): GraphData {
+  function convertToGraphData(selectedChapters: Set<number>): GraphData {
     const nodes: GraphNode[] = [];
     const links: Link[] = [];
 
-    // Add the central theme node
+    // Add the central theme node with the map's name as the theme
     nodes.push({
       id: 0,
-      chapter: 0,
-      connections: relatedChapters.size
+      chapter: name, // Use the map's name as the theme
+      connections: selectedChapters.size
     });
 
     // Create nodes and links for each chapter
-    relatedChapters.forEach(chapter => {
+    selectedChapters.forEach(chapter => {
       nodes.push({
         id: chapter,
         chapter: chapter,
@@ -59,26 +58,28 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   }
 
   const handleChapterClick = (chapter: number) => {
-    const newRelatedChapters = new Set(relatedChapters);
-    if (newRelatedChapters.has(chapter)) {
-      newRelatedChapters.delete(chapter);
+    const newSelectedChapters = new Set(selectedChapters);
+    if (newSelectedChapters.has(chapter)) {
+      newSelectedChapters.delete(chapter);
     } else {
-      newRelatedChapters.add(chapter);
+      newSelectedChapters.add(chapter);
     }
-    setRelatedChapters(newRelatedChapters);
-    setGraphData(convertToGraphData(newRelatedChapters));
+    setSelectedChapters(newSelectedChapters);
+    setGraphData(convertToGraphData(newSelectedChapters));
   };
 
   const handleSave = () => {
     if (!name.trim()) return;
     
+    console.log('Selected Chapters:', Array.from(selectedChapters)); // Log selectedChapters
+
     const updatedMap: ChapterMap = {
       ...map,
       name: name.trim(),
       description,
       userId: map.userId,
       isPublic,
-      relationships: [{ sourceChapter: 0, relatedChapters: Array.from(relatedChapters) }],
+      selectedChapters: Array.from(selectedChapters), // Save as flat array
       createdAt: map.createdAt,
       updatedAt: new Date(),
       id: map.id
@@ -88,7 +89,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   };
 
   const getChapterStyle = (chapter: number) => {
-    return relatedChapters.has(chapter) ? "chapter-button selected-primary" : "chapter-button";
+    return selectedChapters.has(chapter) ? "chapter-button selected-primary" : "chapter-button";
   };
 
   const handleDeleteClick = () => {
@@ -165,28 +166,6 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
                 >
                   {chapter}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="relationships-list">
-            <button 
-              className="relationships-header"
-              onClick={() => setIsRelationshipsOpen(!isRelationshipsOpen)}
-            >
-              <div className={`toggle-pill ${isRelationshipsOpen ? 'active' : ''}`} />
-              <h3>Show Relationships</h3>
-            </button>
-            
-            <div className={`relationships-content ${isRelationshipsOpen ? '' : 'closed'}`}>
-              <p className="instructions">Click a relationship to edit it.</p>
-              {Array.from(relatedChapters).map(chapter => (
-                <div 
-                  key={chapter} 
-                  className="relationship-item"
-                >
-                  Chapter {chapter}
-                </div>
               ))}
             </div>
           </div>
