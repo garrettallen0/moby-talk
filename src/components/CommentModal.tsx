@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ChapterMap, Comment } from '../types/map';
-import ChapterWheel from './ChapterWheel';
 
 interface CommentModalProps {
   map: ChapterMap;
@@ -35,13 +34,14 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
 
-        <div className="graph-section">
-          <ChapterWheel
-            selectedChapters={map.selectedChapters}
-            theme={map.name}
-            width={800}
-            height={400}
-          />
+        <div className="theme-summary">
+          <h3>Theme Info</h3>
+          <p>{map.description || 'No description provided'}</p>
+          <p className="chapter-summary">
+            Chapters: {map.selectedChapters.length > 0 
+              ? map.selectedChapters.sort((a, b) => a - b).join(', ') 
+              : 'None'}
+          </p>
         </div>
 
         <div className="comments-section">

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ChapterMap } from '../types/map';
-import ChapterWheel from './ChapterWheel';
 import { ConfirmationModal } from './ConfirmationModal';
 
 interface MapEditorModalProps {
@@ -21,6 +20,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);
   const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set(map.selectedChapters));
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -62,8 +62,6 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   const handleDeleteClick = () => {
     setShowDeleteConfirmation(true);
   };
-
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const handleConfirmDelete = () => {
     onDelete(map.id);
@@ -139,13 +137,15 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             </div>
           </div>
 
-          <div className="graph-container">
-            <ChapterWheel
-              selectedChapters={Array.from(selectedChapters)}
-              theme={name || 'Theme'}
-              width={600}
-              height={600}
-            />
+          <div className="selected-chapters-summary">
+            <h3>Selected Chapters</h3>
+            <div className="selected-chapters-list">
+              {Array.from(selectedChapters).length > 0 ? (
+                <p>{Array.from(selectedChapters).sort((a, b) => a - b).join(', ')}</p>
+              ) : (
+                <p>No chapters selected</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

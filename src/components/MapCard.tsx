@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
-import ChapterWheel from './ChapterWheel';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { CommentModal } from './CommentModal';
@@ -83,13 +82,9 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
         </div>
 
         <div className="map-preview">
-          <div className="mini-wheel">
-            <ChapterWheel
-              selectedChapters={map.selectedChapters}
-              theme={map.name}
-              width={200}
-              height={150}
-            />
+          <div className="chapter-count-display">
+            <span className="chapter-count">{map.selectedChapters.length}</span>
+            <span className="chapter-label">Chapters</span>
           </div>
         </div>
       </div>
