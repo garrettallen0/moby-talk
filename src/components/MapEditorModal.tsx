@@ -117,26 +117,6 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             </div>
           </div>
 
-          <div className="chapter-bank">
-            <h3>Select Chapters</h3>
-            <p className="instructions">
-              Click a chapter to add or remove it from your theme map.
-            </p>
-
-            <div className="chapter-grid">
-              {allChapters.map(chapter => (
-                <button
-                  key={chapter}
-                  className={getChapterStyle(chapter)}
-                  onClick={() => handleChapterClick(chapter)}
-                  data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]}
-                >
-                  {chapter}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="selected-chapters-summary">
             <h3>Selected Chapters</h3>
             <div className="selected-chapters-list">
@@ -156,6 +136,26 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
               ) : (
                 <p>No chapters selected</p>
               )}
+            </div>
+          </div>
+
+          <div className="chapter-bank">
+            <h3>Select Chapters</h3>
+            <p className="instructions">
+              Click a chapter to add or remove it from your theme map.
+            </p>
+
+            <div className="chapter-grid">
+              {allChapters.map(chapter => (
+                <button
+                  key={chapter}
+                  className={getChapterStyle(chapter)}
+                  onClick={() => handleChapterClick(chapter)}
+                  data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]}
+                >
+                  {chapter}
+                </button>
+              ))}
             </div>
           </div>
         </div>

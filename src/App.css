@@ -1638,3 +1638,36 @@ button:disabled:hover {
   font-size: 14px;
 }
 
+.selected-chapters-summary {
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.selected-chapters-summary h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.selected-chapters-list {
+  margin-top: 1rem;
+}
+
+.selected-chapters-list .chapter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.selected-chapters-list p {
+  margin: 0;
+  line-height: 1.4;
+  color: #666;
+}
+
