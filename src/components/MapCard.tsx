@@ -58,7 +58,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
 
   const handleChapterClick = (e: React.MouseEvent, chapter: number) => {
     e.stopPropagation();
-    setSelectedChapter(chapter);
+    setSelectedChapter(prev => prev === chapter ? null : chapter);
   };
 
   const getChapterTitle = (chapter: number) => {
@@ -94,6 +94,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
                     key={chapter}
                     className={`chapter-button selected-primary chapter-mini ${selectedChapter === chapter ? 'active' : ''}`}
                     onClick={(e) => handleChapterClick(e, chapter)}
+                    aria-pressed={selectedChapter === chapter}
                   >
                     {chapter}
                   </button>
