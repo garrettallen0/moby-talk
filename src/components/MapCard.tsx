@@ -132,27 +132,23 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
                 </div>
               </div>
             ) : (
-              <div className="map-preview-main">
-                <div className="map-preview-placeholder">
-                  There are no annotations yet for this chapter
-                </div>
+              <div className="map-preview-placeholder">
+                There are no annotations yet for this chapter
               </div>
             )
           ) : (
-            <div className="map-preview-main">
-              {map.description ? (
-                <div className="map-description-container">
-                  <h3>Summary</h3>
-                  <div className="map-description">
-                    {map.description}
-                  </div>
+            map.description ? (
+              <div className="map-description-container">
+                <h3>Summary</h3>
+                <div className="map-description">
+                  {map.description}
                 </div>
-              ) : (
-                <div className="map-preview-placeholder">
-                  Click a chapter to view its annotations
-                </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="map-preview-placeholder">
+                Click a chapter to view its annotations
+              </div>
+            )
           )}
         </div>
       </div>
