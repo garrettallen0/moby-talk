@@ -58,7 +58,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
 
   const handleChapterClick = (e: React.MouseEvent, chapter: number) => {
     e.stopPropagation();
-    setSelectedChapter(chapter);
+    setSelectedChapter(prev => prev === chapter ? null : chapter);
   };
 
   const getChapterTitle = (chapter: number) => {
@@ -80,9 +80,6 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
       <div className="map-content">
         <div className="map-info">
           <h3>{map.name}</h3>
-          {map.description && (
-            <p className="map-description">{map.description}</p>
-          )}
           {map.selectedChapters.length > 0 && (
             <div className="selected-chapters-mini">
               <h4 
@@ -97,6 +94,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
                     key={chapter}
                     className={`chapter-button selected-primary chapter-mini ${selectedChapter === chapter ? 'active' : ''}`}
                     onClick={(e) => handleChapterClick(e, chapter)}
+                    aria-pressed={selectedChapter === chapter}
                   >
                     {chapter}
                   </button>
@@ -112,30 +110,45 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
         </div>
 
         <div className="map-preview">
-          {selectedChapter !== null && map.chapterAnnotations?.[selectedChapter] ? (
-            <div className="chapter-annotations">
-              <h3>{getChapterTitle(selectedChapter)}</h3>
-              <div className="annotations-list">
-                {map.chapterAnnotations[selectedChapter].map((annotation, index) => (
-                  <div key={index} className="annotation-item">
-                    <div className="annotation-content">
-                      <div className="annotation-field">
-                        <label>Passage</label>
-                        <div className="annotation-text">{annotation.passage}</div>
-                      </div>
-                      <div className="annotation-field">
-                        <label>Commentary</label>
-                        <div className="annotation-text">{annotation.commentary}</div>
+          {selectedChapter !== null ? (
+            map.chapterAnnotations && map.chapterAnnotations[selectedChapter]?.length > 0 ? (
+              <div className="chapter-annotations">
+                <h3>{getChapterTitle(selectedChapter)}</h3>
+                <div className="annotations-list">
+                  {map.chapterAnnotations[selectedChapter].map((annotation, index) => (
+                    <div key={index} className="annotation-item">
+                      <div className="annotation-content">
+                        <div className="annotation-field">
+                          <label>Passage</label>
+                          <div className="annotation-text">{annotation.passage}</div>
+                        </div>
+                        <div className="annotation-field">
+                          <label>Commentary</label>
+                          <div className="annotation-text">{annotation.commentary}</div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="map-preview-placeholder">
+                There are no annotations yet for this chapter
+              </div>
+            )
           ) : (
-            <div className="map-preview-placeholder">
-              Click a chapter to view its annotations
-            </div>
+            map.description ? (
+              <div className="map-description-container">
+                <h3>Summary</h3>
+                <div className="map-description">
+                  {map.description}
+                </div>
+              </div>
+            ) : (
+              <div className="map-preview-placeholder">
+                Click a chapter to view its annotations
+              </div>
+            )
           )}
         </div>
       </div>

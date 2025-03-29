@@ -645,24 +645,56 @@ button:disabled:hover {
   flex-direction: column;
   gap: 8px;
   min-height: 0;
+  flex: 1;
+  border-radius: 4px;
+  overflow-y: auto;
 }
 
 .map-preview h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  padding: 1.5rem 1.5rem 0;
+}
+
+.map-preview-container {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.map-description-container {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.map-description-container h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.map-description {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
 .map-preview-placeholder {
-  flex: 1;
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
-  border-radius: 4px;
   color: #666;
   font-size: 0.9rem;
-  padding: 2rem;
   text-align: center;
 }
 
@@ -676,15 +708,6 @@ button:disabled:hover {
   margin: 0;
   font-size: 1.1rem;
   color: #333;
-}
-
-.map-description {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.4;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
 }
 
 .map-metadata {
