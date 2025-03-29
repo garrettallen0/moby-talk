@@ -98,14 +98,18 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
                   </button>
                 ))}
               </div>
+              <div className="divider"></div>
+              <div className="chapter-count-display">
+                <span className="chapter-count">{map.selectedChapters.length}</span>
+                <span className="chapter-label">Chapters</span>
+              </div>
             </div>
           )}
         </div>
 
         <div className="map-preview">
-          <div className="chapter-count-display">
-            <span className="chapter-count">{map.selectedChapters.length}</span>
-            <span className="chapter-label">Chapters</span>
+          <div className="mini-graph">
+            {/* Graph visualization will go here */}
           </div>
         </div>
       </div>
