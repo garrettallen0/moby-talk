@@ -133,8 +133,8 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
               </div>
             </div>
           ) : (
-            <div className="mini-graph">
-              {/* Graph visualization will go here */}
+            <div className="map-preview-placeholder">
+              Click a chapter to view its annotations
             </div>
           )}
         </div>
