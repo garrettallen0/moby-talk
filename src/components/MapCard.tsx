@@ -13,10 +13,19 @@ interface MapCardProps {
   isPublicView?: boolean;
 }
 
+const SPECIAL_CHAPTERS = {
+  '-1': 'Extracts',
+  '0': 'Etymology',
+  '136': 'Epilogue'
+} as const;
+
 export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = false }: MapCardProps) => {
-  const { user, signInWithGoogle } = useAuth();
+  const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
+
+  const hasLiked = user && map.likes?.includes(user.uid);
 
   const formatDate = (date: Date | Timestamp) => {
     if (date instanceof Timestamp) {
@@ -27,39 +36,34 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
     if (!user) {
       setShowSignInModal(true);
       return;
     }
-
-    if (onLike) {
-      onLike(map.id);
-    }
+    onLike?.(map.id);
   };
 
   const handleCommentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
     if (!user) {
       setShowSignInModal(true);
       return;
     }
-    
     setShowCommentModal(true);
   };
 
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      setShowSignInModal(false);
-      setShowCommentModal(true);
-    } catch (error) {
-      console.error('Error signing in:', error);
-    }
+  const handleSignIn = () => {
+    setShowSignInModal(false);
   };
 
-  const hasLiked = user && map.likes?.includes(user.uid);
+  const handleChapterClick = (e: React.MouseEvent, chapter: number) => {
+    e.stopPropagation();
+    setSelectedChapter(chapter);
+  };
+
+  const getChapterTitle = (chapter: number) => {
+    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
+  };
 
   return (
     <div 
@@ -91,8 +95,8 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
                 {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
                   <button
                     key={chapter}
-                    className="chapter-button selected-primary chapter-mini"
-                    onClick={(e) => e.stopPropagation()}
+                    className={`chapter-button selected-primary chapter-mini ${selectedChapter === chapter ? 'active' : ''}`}
+                    onClick={(e) => handleChapterClick(e, chapter)}
                   >
                     {chapter}
                   </button>
@@ -108,9 +112,31 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
         </div>
 
         <div className="map-preview">
-          <div className="mini-graph">
-            {/* Graph visualization will go here */}
-          </div>
+          {selectedChapter !== null && map.chapterAnnotations?.[selectedChapter] ? (
+            <div className="chapter-annotations">
+              <h3>{getChapterTitle(selectedChapter)}</h3>
+              <div className="annotations-list">
+                {map.chapterAnnotations[selectedChapter].map((annotation, index) => (
+                  <div key={index} className="annotation-item">
+                    <div className="annotation-content">
+                      <div className="annotation-field">
+                        <label>Passage</label>
+                        <div className="annotation-text">{annotation.passage}</div>
+                      </div>
+                      <div className="annotation-field">
+                        <label>Commentary</label>
+                        <div className="annotation-text">{annotation.commentary}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="mini-graph">
+              {/* Graph visualization will go here */}
+            </div>
+          )}
         </div>
       </div>
 

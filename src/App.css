@@ -1808,3 +1808,59 @@ button:disabled:hover {
   background-color: #2d8a46;
 }
 
+/* Chapter annotations in map preview */
+.chapter-annotations {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.chapter-annotations h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.chapter-annotations .annotations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chapter-annotations .annotation-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.chapter-annotations .annotation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chapter-annotations .annotation-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chapter-annotations .annotation-field label {
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.chapter-annotations .annotation-text {
+  color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+}
+
+.chapter-button.chapter-mini.active {
+  background-color: #4285f4;
+  border-color: #4285f4;
+  color: white;
+}
+
