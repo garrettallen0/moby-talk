@@ -12,6 +12,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -1601,5 +1603,94 @@ button:disabled:hover {
 
 .selected-chapter-item:hover {
   background-color: #d6d8db;
+}
+
+/* Chapter count display styles */
+.chapter-count-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #3a506b;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  color: white;
+  margin: 10px;
+}
+
+.chapter-count {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.chapter-label {
+  font-size: 12px;
+}
+
+/* Selected chapters summary styles */
+.selected-chapters-summary {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.selected-chapters-list {
+  margin-top: 10px;
+}
+
+.selected-chapters-list .chapter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.selected-chapters-list p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Mini chapter list styles */
+.selected-chapters-mini {
+  margin-top: 8px;
+}
+
+.chapters-heading {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.selected-chapters-mini .chapter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  max-height: 100px;
+  overflow-y: auto;
+  padding: 3px;
+}
+
+.chapter-button.chapter-mini {
+  width: 30px;
+  height: 30px;
+  font-size: 11px;
+  margin: 1px;
+}
+
+/* Theme summary styles */
+.theme-summary {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.chapter-summary {
+  margin-top: 10px;
+  font-size: 14px;
 }
 
