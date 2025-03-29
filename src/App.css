@@ -479,48 +479,15 @@ button:disabled:hover {
   background-color: #e8eaed;
 }
 
-.configurations-list {
-  max-height: 400px;
-  overflow-y: auto;
-  margin: -1rem;
-  padding: 1rem;
-}
-
-.configuration-item {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.configuration-info {
-  flex: 1;
-}
-
-.configuration-info h4 {
-  margin: 0 0 0.5rem 0;
-  color: #333;
-}
-
-.configuration-info p {
-  margin: 0 0 0.5rem 0;
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.configuration-date {
-  font-size: 0.8rem;
-  color: #888;
-}
-
+/* Remove configuration styles */
+.configurations-list,
+.configuration-item,
+.configuration-info,
+.configuration-info h4,
+.configuration-info p,
+.configuration-date,
 .configuration-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: 1rem;
+  display: none;
 }
 
 .load-config-button,
