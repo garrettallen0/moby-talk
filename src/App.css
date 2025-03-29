@@ -653,6 +653,24 @@ button:disabled:hover {
   color: #333;
 }
 
+.map-preview-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  overflow-y: auto;
+}
+
+.map-description {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
 .map-preview-placeholder {
   flex: 1;
   display: flex;
@@ -676,15 +694,6 @@ button:disabled:hover {
   margin: 0;
   font-size: 1.1rem;
   color: #333;
-}
-
-.map-description {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.4;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
 }
 
 .map-metadata {
