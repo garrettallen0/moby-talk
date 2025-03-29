@@ -37,11 +37,28 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
         <div className="theme-summary">
           <h3>Theme Info</h3>
           <p>{map.description || 'No description provided'}</p>
-          <p className="chapter-summary">
-            Chapters: {map.selectedChapters.length > 0 
-              ? map.selectedChapters.sort((a, b) => a - b).join(', ') 
-              : 'None'}
-          </p>
+          {map.selectedChapters.length > 0 ? (
+            <div className="selected-chapters-mini">
+              <h4 
+                className="chapters-heading"
+                data-element="chapter-heading"
+              >
+                Chapters
+              </h4>
+              <div className="chapter-grid">
+                {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
+                  <button
+                    key={chapter}
+                    className="chapter-button selected-primary chapter-mini"
+                  >
+                    {chapter}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="chapter-summary">No chapters selected</p>
+          )}
         </div>
 
         <div className="comments-section">
