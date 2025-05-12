@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, Annotation } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
@@ -111,11 +111,11 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
 
         <div className="map-preview">
           {selectedChapter !== null ? (
-            map.chapterAnnotations && map.chapterAnnotations[selectedChapter]?.length > 0 ? (
+            map.chapterAnnotations?.[selectedChapter]?.length > 0 ? (
               <div className="chapter-annotations">
                 <h3>{getChapterTitle(selectedChapter)}</h3>
                 <div className="annotations-list">
-                  {map.chapterAnnotations[selectedChapter].map((annotation, index) => (
+                  {(map.chapterAnnotations?.[selectedChapter] ?? []).map((annotation, index) => (
                     <div key={index} className="annotation-item">
                       <div className="annotation-content">
                         <div className="annotation-field">
