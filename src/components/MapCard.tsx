@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
-import ForceGraph from './ForceGraph';
-import { GraphData } from '../types/graph';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { CommentModal } from './CommentModal';
@@ -15,10 +13,19 @@ interface MapCardProps {
   isPublicView?: boolean;
 }
 
+const SPECIAL_CHAPTERS = {
+  '-1': 'Extracts',
+  '0': 'Etymology',
+  '136': 'Epilogue'
+} as const;
+
 export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = false }: MapCardProps) => {
-  const { user, signInWithGoogle } = useAuth();
+  const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
+
+  const hasLiked = user && map.likes?.includes(user.uid);
 
   const formatDate = (date: Date | Timestamp) => {
     if (date instanceof Timestamp) {
@@ -29,73 +36,34 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
     if (!user) {
       setShowSignInModal(true);
       return;
     }
-
-    if (onLike) {
-      onLike(map.id);
-    }
+    onLike?.(map.id);
   };
 
   const handleCommentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
     if (!user) {
       setShowSignInModal(true);
       return;
     }
-    
     setShowCommentModal(true);
   };
 
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      setShowSignInModal(false);
-      setShowCommentModal(true);
-    } catch (error) {
-      console.error('Error signing in:', error);
-    }
+  const handleSignIn = () => {
+    setShowSignInModal(false);
   };
 
-  const hasLiked = user && map.likes?.includes(user.uid);
-
-  // Convert relationships to graph data
-  const graphData: GraphData = {
-    nodes: [],
-    links: []
+  const handleChapterClick = (e: React.MouseEvent, chapter: number) => {
+    e.stopPropagation();
+    setSelectedChapter(prev => prev === chapter ? null : chapter);
   };
 
-  // Create a set of all chapters involved and count connections
-  const chapterConnections = new Map<number, number>();
-  map.relationships.forEach(rel => {
-    chapterConnections.set(rel.sourceChapter, (chapterConnections.get(rel.sourceChapter) || 0) + rel.relatedChapters.length);
-    rel.relatedChapters.forEach(chapter => {
-      chapterConnections.set(chapter, (chapterConnections.get(chapter) || 0) + 1);
-    });
-  });
-
-  // Create nodes for each chapter with their connection counts
-  chapterConnections.forEach((connections, chapter) => {
-    graphData.nodes.push({
-      id: chapter,
-      chapter: chapter,
-      connections: connections
-    });
-  });
-
-  // Create links directly from relationships
-  map.relationships.forEach(rel => {
-    rel.relatedChapters.forEach(target => {
-      graphData.links.push({
-        source: rel.sourceChapter,
-        target: target
-      });
-    });
-  });
+  const getChapterTitle = (chapter: number) => {
+    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
+  };
 
   return (
     <div 
@@ -109,14 +77,82 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
         }
       }}
     >
-      <div className="mini-graph">
-        <ForceGraph
-          data={graphData}
-          width={200}
-          height={150}
-          miniature={true}
-        />
+      <div className="map-content">
+        <div className="map-info">
+          <h3>{map.name}</h3>
+          {map.selectedChapters.length > 0 && (
+            <div className="selected-chapters-mini">
+              <h4 
+                className="chapters-heading" 
+                data-element="chapter-heading"
+              >
+                Chapters
+              </h4>
+              <div className="chapter-grid">
+                {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
+                  <button
+                    key={chapter}
+                    className={`chapter-button selected-primary chapter-mini ${selectedChapter === chapter ? 'active' : ''}`}
+                    onClick={(e) => handleChapterClick(e, chapter)}
+                    aria-pressed={selectedChapter === chapter}
+                  >
+                    {chapter}
+                  </button>
+                ))}
+              </div>
+              <div className="divider"></div>
+              <div className="chapter-count-display">
+                <span className="chapter-count">{map.selectedChapters.length}</span>
+                <span className="chapter-label">Chapters</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="map-preview">
+          {selectedChapter !== null ? (
+            (map.chapterAnnotations?.[selectedChapter] || []).length > 0 ? (
+              <div className="chapter-annotations">
+                <h3>{getChapterTitle(selectedChapter)}</h3>
+                <div className="annotations-list">
+                  {(map.chapterAnnotations?.[selectedChapter] ?? []).map((annotation, index) => (
+                    <div key={index} className="annotation-item">
+                      <div className="annotation-content">
+                        <div className="annotation-field">
+                          <label>Passage</label>
+                          <div className="annotation-text">{annotation.passage}</div>
+                        </div>
+                        <div className="annotation-field">
+                          <label>Commentary</label>
+                          <div className="annotation-text">{annotation.commentary}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="map-preview-placeholder">
+                There are no annotations yet for this chapter
+              </div>
+            )
+          ) : (
+            map.description ? (
+              <div className="map-description-container">
+                <h3>Summary</h3>
+                <div className="map-description">
+                  {map.description}
+                </div>
+              </div>
+            ) : (
+              <div className="map-preview-placeholder">
+                Click a chapter to view its annotations
+              </div>
+            )
+          )}
+        </div>
       </div>
+
       <div className="map-footer">
         <div className="map-metadata">
           <span className="map-date">{formatDate(map.createdAt)}</span>

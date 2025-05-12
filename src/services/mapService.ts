@@ -14,25 +14,28 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, Annotation } from '../types/map';
 
 const MAPS_COLLECTION = 'maps';
 
 export const saveMap = async (
   userId: string,
   name: string,
-  relationships: { sourceChapter: number; relatedChapters: number[] }[],
+  selectedChapters: number[],
   description?: string,
-  isPublic: boolean = false
+  isPublic: boolean = false,
+  chapterAnnotations?: { [key: number]: Annotation[] }
 ): Promise<string> => {
   try {
+    console.log('Saving map with selectedChapters:', selectedChapters);
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
       userId,
-      relationships,
+      selectedChapters,
       isPublic,
       likes: [],
+      chapterAnnotations,
       createdAt: serverTimestamp() as Timestamp,
       updatedAt: serverTimestamp() as Timestamp,
     };
@@ -50,6 +53,7 @@ export const updateMap = async (
   data: Partial<ChapterMap>
 ): Promise<void> => {
   try {
+    console.log('Updating map with data:', data);
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
     const updateData = { ...data };
     delete updateData.id;
@@ -72,6 +76,42 @@ export const deleteMap = async (mapId: string): Promise<void> => {
     await deleteDoc(mapRef);
   } catch (error) {
     console.error('Error deleting map:', error);
+    throw error;
+  }
+};
+
+export const updateChapterAnnotations = async (
+  mapId: string,
+  chapter: number,
+  annotations: Annotation[]
+): Promise<void> => {
+  try {
+    const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    const mapDoc = await getDoc(mapRef);
+    
+    if (!mapDoc.exists()) {
+      throw new Error('Map not found');
+    }
+
+    const mapData = mapDoc.data() as ChapterMap;
+    const currentAnnotations = mapData.chapterAnnotations || {};
+    
+    // If annotations array is empty, remove the chapter entry
+    if (annotations.length === 0) {
+      const { [chapter]: removed, ...rest } = currentAnnotations;
+      await updateDoc(mapRef, {
+        chapterAnnotations: rest,
+        updatedAt: serverTimestamp()
+      });
+    } else {
+      // Update or add the chapter's annotations
+      await updateDoc(mapRef, {
+        [`chapterAnnotations.${chapter}`]: annotations,
+        updatedAt: serverTimestamp()
+      });
+    }
+  } catch (error) {
+    console.error('Error updating chapter annotations:', error);
     throw error;
   }
 };

@@ -53,7 +53,7 @@ function App() {
       await saveMap(
         user.uid,
         map.name,
-        map.relationships,
+        map.selectedChapters,
         map.description,
         map.isPublic
       );
@@ -159,7 +159,7 @@ function App() {
       name: '',
       description: '',
       userId: user.uid,
-      relationships: [],
+      selectedChapters: [],
       isPublic: false,
       likes: [],
       createdAt: new Date(),
