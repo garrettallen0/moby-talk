@@ -1,9 +1,5 @@
 import { useState } from 'react';
-
-interface Annotation {
-  passage: string;
-  commentary: string;
-}
+import { Annotation } from '../types/map';
 
 interface AnnotationModalProps {
   chapter: number;
@@ -12,12 +8,6 @@ interface AnnotationModalProps {
   onClose: () => void;
   onSave: (annotations: Annotation[]) => void;
 }
-
-const SPECIAL_CHAPTERS = {
-  '-1': 'Extracts',
-  '0': 'Etymology',
-  '136': 'Epilogue'
-} as const;
 
 export const AnnotationModal = ({ chapter, chapterTitle, annotations: initialAnnotations, onClose, onSave }: AnnotationModalProps) => {
   const [annotations, setAnnotations] = useState<Annotation[]>(initialAnnotations);
