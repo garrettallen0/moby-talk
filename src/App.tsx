@@ -50,13 +50,20 @@ function App() {
     if (!user) return;
     
     try {
-      await saveMap(
-        user.uid,
-        map.name,
-        map.selectedChapters,
-        map.description,
-        map.isPublic
-      );
+      if (map.id) {
+        // If map has an ID, it's an update
+        await updateMap(map.id, map);
+      } else {
+        // If no ID, it's a new map
+        await saveMap(
+          user.uid,
+          map.name,
+          map.selectedChapters,
+          map.description,
+          map.isPublic,
+          map.chapterAnnotations
+        );
+      }
 
       // Reset state
       setIsCreatingMap(false);
