@@ -79,7 +79,7 @@ export const MapCard = ({ map, onCardClick, onLike, onComment, isPublicView = fa
     >
       <div className="map-content">
         <div className="map-info">
-          <h3>{map.name}</h3>
+          <h3>{map.name} by {map.userId}</h3>
           {map.selectedChapters.length > 0 && (
             <div className="selected-chapters-mini">
               <h4 
