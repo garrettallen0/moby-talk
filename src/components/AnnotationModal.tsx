@@ -36,7 +36,7 @@ export const AnnotationModal = ({ chapter, chapterTitle, annotations: initialAnn
       <div className="modal-overlay" onClick={onClose} />
       <div className="modal-content">
         <div className="modal-header">
-          <h2>Chapter {chapter}: {chapterTitle}</h2>
+          <h2>{chapterTitle}</h2>
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
 
