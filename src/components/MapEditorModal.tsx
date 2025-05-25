@@ -63,7 +63,7 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
   };
 
   const handleSave = () => {
-    if (!name.trim()) return;
+    if (!name.trim() || selectedChapters.size === 0) return;
     
     const updatedMap: ChapterMap = {
       ...map,
