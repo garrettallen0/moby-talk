@@ -4,6 +4,7 @@ import { AuthButton } from './components/AuthButton'
 import { useAuth } from './contexts/AuthContext'
 import { ChapterMap } from './types/map'
 import { MapList } from './components/MapList'
+import { Annotation } from './types/map'
 import { 
   saveMap, 
   getPublicMaps, 
@@ -182,7 +183,7 @@ function App() {
       <AuthButton />
       <h1>Moby Talk</h1>
       <h4>Out of the trunk, the branches grow; out of them, the twigs.</h4>
-      
+
       <MapList
         publicMaps={publicMaps}
         userMaps={userMaps}
@@ -192,6 +193,7 @@ function App() {
         onComment={handleCommentMap}
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        onDelete={handleDeleteMap}
       />
 
       {selectedMap && (
@@ -206,7 +208,7 @@ function App() {
         />
       )}
     </div>
-  )
+  );
 }
 
 export default App
