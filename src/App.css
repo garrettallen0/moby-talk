@@ -33,6 +33,7 @@ button {
   background-color: #f8f9fa;
   cursor: pointer;
   transition: border-color 0.25s;
+  min-width: 2.5rem;
 }
 button:hover {
   border-color: #646cff;
@@ -1607,6 +1608,8 @@ button:disabled:hover {
   height: 30px;
   font-size: 11px;
   margin: 1px;
+  justify-content: center;
+  align-items: center;
 }
 
 .divider {
