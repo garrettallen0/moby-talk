@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { MapCard } from './MapCard';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,6 +13,7 @@ interface MapListProps {
   onComment: (mapId: string, text: string) => void;
   activeTab: 'public' | 'my-maps';
   onTabChange: (tab: 'public' | 'my-maps') => void;
+  onDelete?: (mapId: string) => void;
 }
 
 export const MapList = ({
@@ -23,10 +24,17 @@ export const MapList = ({
   onLike,
   onComment,
   activeTab,
-  onTabChange
+  onTabChange,
+  onDelete,
 }: MapListProps) => {
   const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [editableUserMaps, setEditableUserMaps] = useState<ChapterMap[]>([]);
+
+  useEffect(() => {
+    setEditableUserMaps(userMaps);
+  }, [userMaps]);
+
 
   const handleCreateClick = () => {
     if (!user) {
@@ -34,6 +42,12 @@ export const MapList = ({
       return;
     }
     onCreateMap();
+  };
+
+  const handleUpdateMap = (updateMap: ChapterMap) => {
+    setEditableUserMaps((prev) =>
+      prev.map((m) => (m.id === updateMap.id ? updateMap : m)),
+    );
   };
 
   return (
@@ -56,7 +70,7 @@ export const MapList = ({
       <div className="maps-container">
         {activeTab === 'public' ? (
           publicMaps.length > 0 ? (
-            publicMaps.map(map => (
+            publicMaps.map((map) => (
               <MapCard
                 key={map.id}
                 map={map}
@@ -71,8 +85,8 @@ export const MapList = ({
           )
         ) : (
           <>
-            {userMaps.length > 0 ? (
-              userMaps.map(map => (
+            {editableUserMaps.length > 0 ? (
+              editableUserMaps.map((map) => (
                 <MapCard
                   key={map.id}
                   map={map}
@@ -80,11 +94,15 @@ export const MapList = ({
                   onLike={onLike}
                   onComment={onComment}
                   isPublicView={false}
+                  onUpdateMap={handleUpdateMap}
+                  onDelete={onDelete}
                 />
               ))
             ) : (
               <p className="no-maps-message">
-                {user ? "You haven't created any maps yet" : "Sign in to create and view your maps"}
+                {user
+                  ? "You haven't created any maps yet"
+                  : 'Sign in to create and view your maps'}
               </p>
             )}
             {user && (
@@ -100,8 +118,8 @@ export const MapList = ({
       </div>
 
       {showSignInModal && (
-        <SignInModal 
-          onClose={() => setShowSignInModal(false)} 
+        <SignInModal
+          onClose={() => setShowSignInModal(false)}
           onSignIn={() => {
             setShowSignInModal(false);
             onCreateMap();
@@ -110,4 +128,4 @@ export const MapList = ({
       )}
     </div>
   );
-}; 
+};
