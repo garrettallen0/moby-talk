@@ -4,7 +4,6 @@ import { AuthButton } from './components/AuthButton'
 import { useAuth } from './contexts/AuthContext'
 import { ChapterMap } from './types/map'
 import { MapList } from './components/MapList'
-import { Annotation } from './types/map'
 import { 
   saveMap, 
   getPublicMaps, 

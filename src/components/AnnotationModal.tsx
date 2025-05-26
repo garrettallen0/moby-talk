@@ -10,7 +10,6 @@ interface AnnotationModalProps {
 }
 
 export const AnnotationModal = ({
-  chapter,
   chapterTitle,
   annotations: initialAnnotations,
   onClose,
