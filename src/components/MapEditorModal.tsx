@@ -14,7 +14,7 @@ interface MapEditorModalProps {
 const SPECIAL_CHAPTERS = {
   '-1': 'Extracts',
   '0': 'Etymology',
-  '136': 'Epilogue'
+  '136': 'Epilogue',
 } as const;
 
 interface Annotation {
@@ -26,17 +26,30 @@ interface ChapterAnnotations {
   [key: number]: Annotation[];
 }
 
-export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModalProps) => {
+export const MapEditorModal = ({
+  map,
+  onClose,
+  onSave,
+  onDelete,
+}: MapEditorModalProps) => {
   const [name, setName] = useState(map.name);
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);
-  const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set(map.selectedChapters));
+  const [selectedChapters, setSelectedChapters] = useState<Set<number>>(
+    new Set(map.selectedChapters),
+  );
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
-  const [chapterAnnotations, setChapterAnnotations] = useState<ChapterAnnotations>(map.chapterAnnotations || {});
+  const [chapterAnnotations, setChapterAnnotations] =
+    useState<ChapterAnnotations>(map.chapterAnnotations || {});
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
-  const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
+  const allChapters = [
+    -1,
+    0,
+    ...Array.from({ length: 135 }, (_, i) => i + 1),
+    136,
+  ];
 
   const handleChapterClick = (chapter: number) => {
     if (selectedChapters.has(chapter)) {
@@ -48,23 +61,35 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
     }
   };
 
-  const handleAnnotationSave = async (chapter: number, annotations: Annotation[]) => {
+  const handleAnnotationSave = async (
+    chapter: number,
+    annotations: Annotation[],
+  ) => {
+    if (!map.id) {
+      // If it's a new unsaved map, just update local state
+      setChapterAnnotations((prev) => ({
+        ...prev,
+        [chapter]: annotations,
+      }));
+      setSelectedChapter(null);
+      return;
+    }
+
     try {
       await updateChapterAnnotations(map.id, chapter, annotations);
-      setChapterAnnotations(prev => ({
+      setChapterAnnotations((prev) => ({
         ...prev,
-        [chapter]: annotations
+        [chapter]: annotations,
       }));
       setSelectedChapter(null);
     } catch (error) {
       console.error('Error saving annotations:', error);
-      // You might want to show an error message to the user here
     }
   };
 
   const handleSave = () => {
     if (!name.trim() || selectedChapters.size === 0) return;
-    
+
     const updatedMap: ChapterMap = {
       ...map,
       name: name.trim(),
@@ -75,14 +100,16 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
       chapterAnnotations,
       createdAt: map.createdAt,
       updatedAt: new Date(),
-      id: map.id
+      id: map.id,
     };
     onSave(updatedMap);
     onClose();
   };
 
   const getChapterStyle = (chapter: number) => {
-    return selectedChapters.has(chapter) ? "chapter-button selected-primary" : "chapter-button";
+    return selectedChapters.has(chapter)
+      ? 'chapter-button selected-primary'
+      : 'chapter-button';
   };
 
   const handleDeleteClick = () => {
@@ -106,7 +133,9 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             onChange={(e) => setName(e.target.value)}
             className="name-input"
           />
-          <button className="close-button" onClick={onClose}>&times;</button>
+          <button className="close-button" onClick={onClose}>
+            &times;
+          </button>
         </div>
 
         <div className="modal-body">
@@ -148,16 +177,22 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             <div className="selected-chapters-list">
               {Array.from(selectedChapters).length > 0 ? (
                 <div className="chapter-grid">
-                  {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
-                    <button
-                      key={chapter}
-                      className="chapter-button selected-primary"
-                      onClick={() => handleChapterClick(chapter)}
-                      data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]}
-                    >
-                      {chapter}
-                    </button>
-                  ))}
+                  {Array.from(selectedChapters)
+                    .sort((a, b) => a - b)
+                    .map((chapter) => (
+                      <button
+                        key={chapter}
+                        className="chapter-button selected-primary"
+                        onClick={() => handleChapterClick(chapter)}
+                        data-title={
+                          SPECIAL_CHAPTERS[
+                            String(chapter) as keyof typeof SPECIAL_CHAPTERS
+                          ]
+                        }
+                      >
+                        {chapter}
+                      </button>
+                    ))}
                 </div>
               ) : (
                 <p>No chapters selected</p>
@@ -172,12 +207,16 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
             </p>
 
             <div className="chapter-grid">
-              {allChapters.map(chapter => (
+              {allChapters.map((chapter) => (
                 <button
                   key={chapter}
                   className={getChapterStyle(chapter)}
                   onClick={() => handleChapterClick(chapter)}
-                  data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]}
+                  data-title={
+                    SPECIAL_CHAPTERS[
+                      String(chapter) as keyof typeof SPECIAL_CHAPTERS
+                    ]
+                  }
                 >
                   {chapter}
                 </button>
@@ -199,12 +238,18 @@ export const MapEditorModal = ({ map, onClose, onSave, onDelete }: MapEditorModa
       {selectedChapter !== null && (
         <AnnotationModal
           chapter={selectedChapter}
-          chapterTitle={SPECIAL_CHAPTERS[String(selectedChapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${selectedChapter}`}
+          chapterTitle={
+            SPECIAL_CHAPTERS[
+              String(selectedChapter) as keyof typeof SPECIAL_CHAPTERS
+            ] || `Chapter ${selectedChapter}`
+          }
           annotations={chapterAnnotations[selectedChapter] || []}
           onClose={() => setSelectedChapter(null)}
-          onSave={(annotations) => handleAnnotationSave(selectedChapter, annotations)}
+          onSave={(annotations) =>
+            handleAnnotationSave(selectedChapter, annotations)
+          }
         />
       )}
     </div>
   );
-}; 
+};
