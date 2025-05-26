@@ -581,6 +581,7 @@ button:disabled:hover {
 .map-card {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .map-body {
