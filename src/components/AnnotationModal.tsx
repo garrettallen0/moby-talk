@@ -42,21 +42,12 @@ export const AnnotationModal = ({
     onClose();
   };
 
-  const isChapterWithTitle = (chapter: number) =>
-    [-1, 0, 136].includes(chapter);
-
   return (
     <div className="annotation-modal">
       <div className="modal-overlay" onClick={onClose} />
       <div className="modal-content">
         <div className="modal-header">
-          {isChapterWithTitle(chapter) ? (
-            <h2>
-              Chapter {chapter}: {chapterTitle}
-            </h2>
-          ) : (
-            <h2>{chapterTitle}</h2>
-          )}
+          <h2>{chapterTitle}</h2>
           <button className="close-button" onClick={onClose}>
             &times;
           </button>
