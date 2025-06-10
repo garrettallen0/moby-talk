@@ -91,11 +91,12 @@ export function MapDetail() {
 
       <div className="map-navigation">
         <button 
-          className={`nav-button ${selectedChapter === null ? 'active' : ''}`}
+          className={`nav-button summary-button ${selectedChapter === null ? 'active' : ''}`}
           onClick={handleSummaryClick}
         >
           Summary
         </button>
+        <div className="nav-divider" />
         {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
           <button
             key={chapter}
