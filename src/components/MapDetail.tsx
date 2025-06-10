@@ -6,6 +6,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { Timestamp } from 'firebase/firestore';
 import '../styles/MapDetail.css';
 
+const SPECIAL_CHAPTERS = {
+  '-1': 'Extracts',
+  '0': 'Etymology',
+  '136': 'Epilogue',
+} as const;
+
 export function MapDetail() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -48,7 +54,7 @@ export function MapDetail() {
   }, [location.state?.mapId, user, navigate]);
 
   if (!map) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   const formatDate = (date: Date | Timestamp) => {
@@ -66,9 +72,20 @@ export function MapDetail() {
     setSelectedChapter(null);
   };
 
+  const getChapterTitle = (chapter: number) => {
+    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
+  };
+
+  const handleBackClick = () => {
+    navigate('/');
+  };
+
   return (
     <div className="map-detail">
       <div className="map-header">
+        <button className="back-button" onClick={handleBackClick}>
+          ← Back
+        </button>
         <h1>{map.name}</h1>
       </div>
 
@@ -85,22 +102,25 @@ export function MapDetail() {
             className={`nav-button ${selectedChapter === chapter ? 'active' : ''}`}
             onClick={() => handleChapterClick(chapter)}
           >
-            Chapter {chapter}
+            {getChapterTitle(chapter)}
           </button>
         ))}
       </div>
 
       <div className="map-content">
         {selectedChapter === null ? (
-          <div className="map-summary">{map.description || 'No summary available.'}</div>
+          <div className="map-summary">
+            {map.description || 'No summary available.'}
+          </div>
         ) : (
           <div className="chapter-annotation">
+            <h2>{getChapterTitle(selectedChapter)}</h2>
             {map.chapterAnnotations?.[selectedChapter]?.map((annotation, index) => (
               <div key={index} className="annotation">
                 <div className="annotation-passage">{annotation.passage}</div>
                 <div className="annotation-commentary">{annotation.commentary}</div>
               </div>
-            )) || <div>No annotations available for this chapter.</div>}
+            )) || <div className="no-annotations">No annotations available for this chapter.</div>}
           </div>
         )}
       </div>
