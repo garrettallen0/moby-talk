@@ -24,6 +24,22 @@
   color: #333;
 }
 
+.maps-table th:nth-last-child(-n+2) {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.maps-table td:nth-last-child(-n+2) {
+  text-align: center;
+}
+
+.maps-table .chapters-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .maps-table tr.map-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
