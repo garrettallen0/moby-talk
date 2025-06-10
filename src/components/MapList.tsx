@@ -9,6 +9,9 @@ interface MapListProps {
   userMaps: ChapterMap[];
   onMapClick: (map: ChapterMap) => void;
   onCreateMap: () => void;
+  onLike: (mapId: string) => Promise<void>;
+  onComment: (mapId: string, text: string) => Promise<void>;
+  onDelete: (mapId: string) => Promise<void>;
   activeTab: 'public' | 'my-maps';
   onTabChange: (tab: 'public' | 'my-maps') => void;
 }
@@ -18,6 +21,9 @@ export const MapList = ({
   userMaps,
   onMapClick,
   onCreateMap,
+  onLike,
+  onComment,
+  onDelete,
   activeTab,
   onTabChange,
 }: MapListProps) => {
@@ -35,6 +41,35 @@ export const MapList = ({
       return;
     }
     onCreateMap();
+  };
+
+  const handleLike = async (e: React.MouseEvent, mapId: string) => {
+    e.stopPropagation();
+    if (!user) {
+      setShowSignInModal(true);
+      return;
+    }
+    await onLike(mapId);
+  };
+
+  const handleDelete = async (e: React.MouseEvent, mapId: string) => {
+    e.stopPropagation();
+    if (!user) return;
+    if (window.confirm('Are you sure you want to delete this map?')) {
+      await onDelete(mapId);
+    }
+  };
+
+  const handleComment = async (e: React.MouseEvent, mapId: string) => {
+    e.stopPropagation();
+    if (!user) {
+      setShowSignInModal(true);
+      return;
+    }
+    const text = window.prompt('Enter your comment:');
+    if (text) {
+      await onComment(mapId, text);
+    }
   };
 
   const maps = activeTab === 'public' ? publicMaps : editableUserMaps;
@@ -65,8 +100,7 @@ export const MapList = ({
                 <th>Name</th>
                 <th># of Chapters</th>
                 <th>Chapters</th>
-                <th>↑</th>
-                <th>💬</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -82,8 +116,31 @@ export const MapList = ({
                   <td className="chapters-cell">
                     {map.selectedChapters.sort((a, b) => a - b).join(', ')}
                   </td>
-                  <td>{map.likes?.length || 0}</td>
-                  <td>{map.comments?.length || 0}</td>
+                  <td className="actions-cell">
+                    <button 
+                      className="action-button like-button"
+                      onClick={(e) => handleLike(e, map.id)}
+                      title="Like"
+                    >
+                      ↑ {map.likes?.length || 0}
+                    </button>
+                    <button 
+                      className="action-button comment-button"
+                      onClick={(e) => handleComment(e, map.id)}
+                      title="Comment"
+                    >
+                      💬 {map.comments?.length || 0}
+                    </button>
+                    {activeTab === 'my-maps' && (
+                      <button 
+                        className="action-button delete-button"
+                        onClick={(e) => handleDelete(e, map.id)}
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

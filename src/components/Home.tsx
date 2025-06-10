@@ -18,7 +18,6 @@ export function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>('public');
-  const [isCreatingMap, setIsCreatingMap] = useState(false);
   const [publicMaps, setPublicMaps] = useState<ChapterMap[]>([]);
   const [userMaps, setUserMaps] = useState<ChapterMap[]>([]);
   const [selectedMap, setSelectedMap] = useState<ChapterMap | null>(null);
@@ -113,7 +112,6 @@ export function Home() {
     };
     
     setSelectedMap(newMap);
-    setIsCreatingMap(true);
   };
 
   const handleMapClick = (map: ChapterMap) => {
@@ -142,7 +140,6 @@ export function Home() {
           map={selectedMap}
           onClose={() => {
             setSelectedMap(null);
-            setIsCreatingMap(false);
           }}
           onSave={handleCreateMap}
           onDelete={handleDeleteMap}
