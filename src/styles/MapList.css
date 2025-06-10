@@ -1,0 +1,73 @@
+.maps-table-container {
+  margin-top: 20px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.maps-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.maps-table th,
+.maps-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.maps-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.maps-table th:nth-last-child(-n+2) {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.maps-table td:nth-last-child(-n+2) {
+  text-align: center;
+}
+
+.maps-table .chapters-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.maps-table tr.map-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.maps-table tr.map-row:hover {
+  background-color: #f8f9fa;
+}
+
+.add-map-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.add-map-button:hover {
+  background-color: #0056b3;
+}
+
+.no-maps-message {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+} 
