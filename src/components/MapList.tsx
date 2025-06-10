@@ -7,7 +7,7 @@ import { SignInModal } from './SignInModal';
 interface MapListProps {
   publicMaps: ChapterMap[];
   userMaps: ChapterMap[];
-  onEditMap: (map: ChapterMap) => void;
+  onMapClick: (map: ChapterMap) => void;
   onCreateMap: () => void;
   onLike: (mapId: string) => void;
   onComment: (mapId: string, text: string) => void;
@@ -19,7 +19,7 @@ interface MapListProps {
 export const MapList = ({
   publicMaps,
   userMaps,
-  onEditMap,
+  onMapClick,
   onCreateMap,
   onLike,
   onComment,
@@ -34,7 +34,6 @@ export const MapList = ({
   useEffect(() => {
     setEditableUserMaps(userMaps);
   }, [userMaps]);
-
 
   const handleCreateClick = () => {
     if (!user) {
@@ -74,7 +73,7 @@ export const MapList = ({
               <MapCard
                 key={map.id}
                 map={map}
-                onCardClick={() => {}}
+                onCardClick={() => onMapClick(map)}
                 onLike={onLike}
                 onComment={onComment}
                 isPublicView={true}
@@ -90,7 +89,7 @@ export const MapList = ({
                 <MapCard
                   key={map.id}
                   map={map}
-                  onCardClick={onEditMap}
+                  onCardClick={() => onMapClick(map)}
                   onLike={onLike}
                   onComment={onComment}
                   isPublicView={false}
