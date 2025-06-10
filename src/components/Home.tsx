@@ -117,7 +117,7 @@ export function Home() {
   };
 
   const handleMapClick = (map: ChapterMap) => {
-    navigate(`/map/${map.id}`);
+    navigate('/map', { state: { mapId: map.id } });
   };
 
   return (

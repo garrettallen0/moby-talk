@@ -11,7 +11,7 @@ function App() {
         <AuthButton />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/map/:mapId" element={<MapDetail />} />
+          <Route path="/map" element={<MapDetail />} />
         </Routes>
       </div>
     </Router>

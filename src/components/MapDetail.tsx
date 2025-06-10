@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ChapterMap } from '../types/map';
 import { getPublicMaps, getUserMaps } from '../services/mapService';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,12 +7,19 @@ import { Timestamp } from 'firebase/firestore';
 import '../styles/MapDetail.css';
 
 export function MapDetail() {
-  const { mapId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [map, setMap] = useState<ChapterMap | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
 
   useEffect(() => {
+    const mapId = location.state?.mapId;
+    if (!mapId) {
+      navigate('/');
+      return;
+    }
+
     const loadMap = async () => {
       try {
         // First try to find in public maps
@@ -38,7 +45,7 @@ export function MapDetail() {
     };
 
     loadMap();
-  }, [mapId, user]);
+  }, [location.state?.mapId, user, navigate]);
 
   if (!map) {
     return <div>Loading...</div>;
