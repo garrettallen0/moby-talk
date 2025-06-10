@@ -3,11 +3,14 @@ import { useParams } from 'react-router-dom';
 import { ChapterMap } from '../types/map';
 import { getPublicMaps, getUserMaps } from '../services/mapService';
 import { useAuth } from '../contexts/AuthContext';
+import { Timestamp } from 'firebase/firestore';
+import '../styles/MapDetail.css';
 
 export function MapDetail() {
   const { mapId } = useParams();
   const { user } = useAuth();
   const [map, setMap] = useState<ChapterMap | null>(null);
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
 
   useEffect(() => {
     const loadMap = async () => {
@@ -41,10 +44,73 @@ export function MapDetail() {
     return <div>Loading...</div>;
   }
 
+  const formatDate = (date: Date | Timestamp) => {
+    if (date instanceof Timestamp) {
+      return date.toDate().toLocaleDateString();
+    }
+    return date.toLocaleDateString();
+  };
+
+  const handleChapterClick = (chapter: number) => {
+    setSelectedChapter(chapter);
+  };
+
+  const handleSummaryClick = () => {
+    setSelectedChapter(null);
+  };
+
   return (
     <div className="map-detail">
-      <h1>{map.name}</h1>
-      <p>{map.description}</p>
+      <div className="map-header">
+        <h1>{map.name}</h1>
+      </div>
+
+      <div className="map-navigation">
+        <button 
+          className={`nav-button ${selectedChapter === null ? 'active' : ''}`}
+          onClick={handleSummaryClick}
+        >
+          Summary
+        </button>
+        {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
+          <button
+            key={chapter}
+            className={`nav-button ${selectedChapter === chapter ? 'active' : ''}`}
+            onClick={() => handleChapterClick(chapter)}
+          >
+            Chapter {chapter}
+          </button>
+        ))}
+      </div>
+
+      <div className="map-content">
+        {selectedChapter === null ? (
+          <div className="map-summary">{map.description || 'No summary available.'}</div>
+        ) : (
+          <div className="chapter-annotation">
+            {map.chapterAnnotations?.[selectedChapter]?.map((annotation, index) => (
+              <div key={index} className="annotation">
+                <div className="annotation-passage">{annotation.passage}</div>
+                <div className="annotation-commentary">{annotation.commentary}</div>
+              </div>
+            )) || <div>No annotations available for this chapter.</div>}
+          </div>
+        )}
+      </div>
+
+      <div className="map-footer">
+        <div className="map-metadata">
+          <span className="map-date">{formatDate(map.createdAt)}</span>
+        </div>
+        <div className="map-actions">
+          <button className="action-button like-button">
+            ↑ {map.likes?.length || 0}
+          </button>
+          <button className="action-button comment-button">
+            💬 {map.comments?.length || 0}
+          </button>
+        </div>
+      </div>
     </div>
   );
 } 
