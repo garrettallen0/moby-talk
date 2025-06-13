@@ -98,6 +98,7 @@ export const MapList = ({
               <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>Created By</th>
                 <th># of Chapters</th>
                 <th>Chapters</th>
                 <th>Actions</th>
@@ -112,6 +113,7 @@ export const MapList = ({
                 >
                   <td>{index + 1}</td>
                   <td>{map.name}</td>
+                  <td>{map.userName}</td>
                   <td>{map.selectedChapters.length}</td>
                   <td className="chapters-cell">
                     {map.selectedChapters.sort((a, b) => a - b).join(', ')}
