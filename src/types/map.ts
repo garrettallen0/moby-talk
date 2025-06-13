@@ -18,6 +18,7 @@ export interface ChapterMap {
   name: string;
   description?: string;
   userId: string;
+  userName: string;
   selectedChapters: number[];
   isPublic: boolean;
   likes?: string[];

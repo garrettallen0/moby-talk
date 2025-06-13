@@ -20,6 +20,7 @@ const MAPS_COLLECTION = 'maps';
 
 export const saveMap = async (
   userId: string,
+  userName: string,
   name: string,
   selectedChapters: number[],
   description?: string,
@@ -32,6 +33,7 @@ export const saveMap = async (
       name,
       description,
       userId,
+      userName,
       selectedChapters,
       isPublic,
       likes: [],

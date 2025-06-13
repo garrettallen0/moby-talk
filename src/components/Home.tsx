@@ -73,6 +73,7 @@ export function Home() {
     if (user) {
       await saveMap(
         user.uid,
+        user.displayName || 'Anonymous',
         map.name,
         map.selectedChapters,
         map.description,
@@ -92,6 +93,7 @@ export function Home() {
       name: '',
       description: '',
       userId: user.uid,
+      userName: user.displayName || 'Anonymous',
       selectedChapters: [],
       isPublic: false,
       likes: [],

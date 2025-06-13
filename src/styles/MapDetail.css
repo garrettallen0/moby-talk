@@ -166,6 +166,17 @@
 }
 
 .map-metadata {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.map-creator {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.map-date {
   color: #666;
   font-size: 0.9rem;
 }

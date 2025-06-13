@@ -129,6 +129,7 @@ export function MapDetail() {
       <div className="map-footer">
         <div className="map-metadata">
           <span className="map-date">{formatDate(map.createdAt)}</span>
+          <span className="map-creator">{map.userName}</span>
         </div>
         <div className="map-actions">
           <button className="action-button like-button">
