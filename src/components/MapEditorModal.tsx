@@ -3,6 +3,7 @@ import { ChapterMap } from '../types/map';
 import { ConfirmationModal } from './ConfirmationModal';
 import { AnnotationModal } from './AnnotationModal';
 import { updateChapterAnnotations } from '../services/mapService';
+import { AVAILABLE_THEMES } from '../constants/themes';
 
 interface MapEditorModalProps {
   map: ChapterMap;
@@ -35,6 +36,7 @@ export const MapEditorModal = ({
   const [name, setName] = useState(map.name);
   const [description, setDescription] = useState(map.description || '');
   const [isPublic, setIsPublic] = useState(map.isPublic);
+  const [selectedTheme, setSelectedTheme] = useState(map?.theme || "");
   const [selectedChapters, setSelectedChapters] = useState<Set<number>>(
     new Set(map.selectedChapters),
   );
@@ -97,6 +99,7 @@ export const MapEditorModal = ({
       userId: map.userId,
       isPublic,
       selectedChapters: Array.from(selectedChapters),
+      theme: selectedTheme,
       chapterAnnotations,
       createdAt: map.createdAt,
       updatedAt: new Date(),
@@ -146,6 +149,22 @@ export const MapEditorModal = ({
               onChange={(e) => setDescription(e.target.value)}
               className="description-input"
             />
+            <div className="theme-section">
+              <label htmlFor="theme">Theme</label>
+              <select
+                id="theme"
+                className="theme-select"
+                value={selectedTheme}
+                onChange={(e) => setSelectedTheme(e.target.value)}
+              >
+                <option value="" disabled>Select a theme</option>
+                {AVAILABLE_THEMES.map((theme) => (
+                  <option key={theme} value={theme}>
+                    {theme}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="controls-row">
               <div className="visibility-toggle">
                 <label className="toggle-label">

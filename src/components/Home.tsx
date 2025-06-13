@@ -79,6 +79,7 @@ export function Home() {
         map.description,
         map.isPublic,
         map.chapterAnnotations,
+        map.theme
       );
     }
 
@@ -96,6 +97,7 @@ export function Home() {
       userName: user.displayName || 'Anonymous',
       selectedChapters: [],
       isPublic: false,
+      theme: '',
       likes: [],
       createdAt: new Date(),
       updatedAt: new Date(),
