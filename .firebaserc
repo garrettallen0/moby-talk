@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "moby-dick-chapter-viz"
+    "default": "moby-dick-chapter-viz",
+    "development": "moby-dick-chapter-viz-dev"
   }
 }

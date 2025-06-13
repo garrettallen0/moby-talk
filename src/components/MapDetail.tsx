@@ -1,0 +1,144 @@
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ChapterMap } from '../types/map';
+import { getPublicMaps, getUserMaps } from '../services/mapService';
+import { useAuth } from '../contexts/AuthContext';
+import { Timestamp } from 'firebase/firestore';
+import '../styles/MapDetail.css';
+
+const SPECIAL_CHAPTERS = {
+  '-1': 'Extracts',
+  '0': 'Etymology',
+  '136': 'Epilogue',
+} as const;
+
+export function MapDetail() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [map, setMap] = useState<ChapterMap | null>(null);
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
+
+  useEffect(() => {
+    const mapId = location.state?.mapId;
+    if (!mapId) {
+      navigate('/');
+      return;
+    }
+
+    const loadMap = async () => {
+      try {
+        // First try to find in public maps
+        const publicMaps = await getPublicMaps();
+        const foundMap = publicMaps.find(m => m.id === mapId);
+        
+        if (foundMap) {
+          setMap(foundMap);
+          return;
+        }
+
+        // If not found in public maps and user is logged in, try user maps
+        if (user) {
+          const userMaps = await getUserMaps(user.uid);
+          const userMap = userMaps.find(m => m.id === mapId);
+          if (userMap) {
+            setMap(userMap);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading map:', error);
+      }
+    };
+
+    loadMap();
+  }, [location.state?.mapId, user, navigate]);
+
+  if (!map) {
+    return <div className="loading">Loading...</div>;
+  }
+
+  const formatDate = (date: Date | Timestamp) => {
+    if (date instanceof Timestamp) {
+      return date.toDate().toLocaleDateString();
+    }
+    return date.toLocaleDateString();
+  };
+
+  const handleChapterClick = (chapter: number) => {
+    setSelectedChapter(chapter);
+  };
+
+  const handleSummaryClick = () => {
+    setSelectedChapter(null);
+  };
+
+  const getChapterTitle = (chapter: number) => {
+    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
+  };
+
+  const handleBackClick = () => {
+    navigate('/');
+  };
+
+  return (
+    <div className="map-detail">
+      <div className="map-header">
+        <button className="back-button" onClick={handleBackClick}>
+          ← Back
+        </button>
+        <h1>{map.name}</h1>
+      </div>
+
+      <div className="map-navigation">
+        <button 
+          className={`nav-button summary-button ${selectedChapter === null ? 'active' : ''}`}
+          onClick={handleSummaryClick}
+        >
+          Summary
+        </button>
+        <div className="nav-divider" />
+        {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
+          <button
+            key={chapter}
+            className={`nav-button ${selectedChapter === chapter ? 'active' : ''}`}
+            onClick={() => handleChapterClick(chapter)}
+          >
+            {getChapterTitle(chapter)}
+          </button>
+        ))}
+      </div>
+
+      <div className="map-content">
+        {selectedChapter === null ? (
+          <div className="map-summary">
+            {map.description || 'No summary available.'}
+          </div>
+        ) : (
+          <div className="chapter-annotation">
+            <h2>{getChapterTitle(selectedChapter)}</h2>
+            {map.chapterAnnotations?.[selectedChapter]?.map((annotation, index) => (
+              <div key={index} className="annotation">
+                <div className="annotation-passage">{annotation.passage}</div>
+                <div className="annotation-commentary">{annotation.commentary}</div>
+              </div>
+            )) || <div className="no-annotations">No annotations available for this chapter.</div>}
+          </div>
+        )}
+      </div>
+
+      <div className="map-footer">
+        <div className="map-metadata">
+          <span className="map-date">{formatDate(map.createdAt)}</span>
+        </div>
+        <div className="map-actions">
+          <button className="action-button like-button">
+            ↑ {map.likes?.length || 0}
+          </button>
+          <button className="action-button comment-button">
+            💬 {map.comments?.length || 0}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+} 
