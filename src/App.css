@@ -593,13 +593,6 @@ button:disabled:hover {
   box-sizing: border-box;
 }
 
-.map-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
 /* Ensure footer goes full width under both columns */
 .map-footer {
   margin-top: 24px;
@@ -621,10 +614,6 @@ button:disabled:hover {
 }
 
 @media (min-width: 769px) {
-  .map-content {
-    flex-direction: row;
-    min-height: 400px;
-  }
 
   .map-info {
     width: 250px;
@@ -641,10 +630,6 @@ button:disabled:hover {
 
 @media (max-width: 768px) {
   .map-card {
-    gap: 16px;
-  }
-
-  .map-content {
     gap: 16px;
   }
 
