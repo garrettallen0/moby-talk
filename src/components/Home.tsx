@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChapterMap } from '../types/map';
 import { MapList } from './MapList';
-import { 
-  getPublicMaps, 
-  getUserMaps, 
-  deleteMap, 
+import {
+  saveMap,
+  deleteMap,
   toggleLike,
-  addComment 
+  addComment,
 } from '../services/mapService';
 import { useAuth } from '../contexts/AuthContext';
 import { MapEditorModal } from './MapEditorModal';
+import useLoadMaps from '../hooks/useLoadMaps';
 
 type ActiveTab = 'public' | 'my-maps';
 
@@ -18,43 +18,28 @@ export function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>('public');
-  const [publicMaps, setPublicMaps] = useState<ChapterMap[]>([]);
-  const [userMaps, setUserMaps] = useState<ChapterMap[]>([]);
   const [selectedMap, setSelectedMap] = useState<ChapterMap | null>(null);
 
-  useEffect(() => {
-    const loadMaps = async () => {
-      try {
-        const publicMapsList = await getPublicMaps();
-        setPublicMaps(publicMapsList);
+  const {
+    publicMaps,
+    userMaps,
+    fetchPublicMaps,
+    fetchUserMaps,
+    loading, //TODO placeholder to add spinner
+    error, //TODO error handling
+  } = useLoadMaps(user);
 
-        if (user) {
-          const userMapsList = await getUserMaps(user.uid);
-          setUserMaps(userMapsList);
-        } else {
-          setUserMaps([]);
-        }
-      } catch (error) {
-        console.error('Error loading maps:', error);
-      }
-    };
-
-    loadMaps();
-  }, [user]);
+  const handleGlobalRefresh = async () => {
+    await Promise.all([fetchPublicMaps(), fetchUserMaps()]);
+  };
 
   const handleDeleteMap = async (mapId: string) => {
     if (!user) return;
-    
+
     try {
       await deleteMap(mapId);
-      
-      // Reload maps
-      const [newPublicMaps, newUserMaps] = await Promise.all([
-        getPublicMaps(),
-        getUserMaps(user.uid)
-      ]);
-      setPublicMaps(newPublicMaps);
-      setUserMaps(newUserMaps);
+
+      handleGlobalRefresh();
     } catch (error) {
       console.error('Error deleting map:', error);
     }
@@ -62,17 +47,11 @@ export function Home() {
 
   const handleLikeMap = async (mapId: string) => {
     if (!user) return;
-    
+
     try {
       await toggleLike(mapId, user.uid);
-      
-      // Reload maps after like
-      const [newPublicMaps, newUserMaps] = await Promise.all([
-        getPublicMaps(),
-        getUserMaps(user.uid)
-      ]);
-      setPublicMaps(newPublicMaps);
-      setUserMaps(newUserMaps);
+
+      handleGlobalRefresh();
     } catch (error) {
       console.error('Error liking map:', error);
     }
@@ -80,25 +59,34 @@ export function Home() {
 
   const handleCommentMap = async (mapId: string, text: string) => {
     if (!user) return;
-    
+
     try {
       await addComment(mapId, user.uid, user.displayName || 'Anonymous', text);
-      
-      // Reload maps after comment
-      const [newPublicMaps, newUserMaps] = await Promise.all([
-        getPublicMaps(),
-        getUserMaps(user.uid)
-      ]);
-      setPublicMaps(newPublicMaps);
-      setUserMaps(newUserMaps);
+
+      handleGlobalRefresh();
     } catch (error) {
       console.error('Error adding comment:', error);
     }
   };
 
+  const handleSaveMap = async (map: ChapterMap) => {
+    if (user) {
+      await saveMap(
+        user.uid,
+        map.name,
+        map.selectedChapters,
+        map.description,
+        map.isPublic,
+        map.chapterAnnotations,
+      );
+    }
+
+    handleGlobalRefresh();
+  };
+
   const handleCreateMap = () => {
     if (!user) return;
-    
+
     const newMap: ChapterMap = {
       id: '', // Will be set by Firestore
       name: '',
@@ -108,9 +96,9 @@ export function Home() {
       isPublic: false,
       likes: [],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
-    
+
     setSelectedMap(newMap);
   };
 
@@ -141,10 +129,10 @@ export function Home() {
           onClose={() => {
             setSelectedMap(null);
           }}
-          onSave={handleCreateMap}
+          onSave={handleSaveMap}
           onDelete={handleDeleteMap}
         />
       )}
     </div>
   );
-} 
+}
