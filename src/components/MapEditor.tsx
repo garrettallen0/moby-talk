@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
-import { saveMap, getMapById } from '../services/mapService';
+import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapService';
 import { AVAILABLE_THEMES } from '../constants/themes';
 import { AnnotationModal } from './AnnotationModal';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -85,16 +85,29 @@ export function MapEditor() {
     };
 
     try {
-      await saveMap(
-        user.uid,
-        user.displayName || 'Anonymous',
-        updatedMap.name,
-        updatedMap.selectedChapters,
-        updatedMap.description,
-        updatedMap.isPublic,
-        updatedMap.chapterAnnotations,
-        updatedMap.theme
-      );
+      if (id) {
+        // Editing existing map
+        await updateMap(id, {
+          name: updatedMap.name,
+          description: updatedMap.description,
+          isPublic: updatedMap.isPublic,
+          selectedChapters: updatedMap.selectedChapters,
+          theme: updatedMap.theme,
+          chapterAnnotations: updatedMap.chapterAnnotations,
+        });
+      } else {
+        // Creating new map
+        await saveMap(
+          user.uid,
+          user.displayName || 'Anonymous',
+          updatedMap.name,
+          updatedMap.selectedChapters,
+          updatedMap.description,
+          updatedMap.isPublic,
+          updatedMap.chapterAnnotations,
+          updatedMap.theme
+        );
+      }
       navigate('/');
     } catch (error) {
       console.error('Error saving map:', error);
