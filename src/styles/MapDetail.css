@@ -52,6 +52,24 @@
   font-size: 2rem;
 }
 
+.edit-button {
+  position: absolute;
+  right: 0;
+  padding: 0.5rem 1rem;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  background: white;
+  color: #007bff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.edit-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
 .map-navigation {
   display: flex;
   gap: 0.5rem;

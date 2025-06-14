@@ -29,7 +29,6 @@ export const saveMap = async (
   theme?: string
 ): Promise<string> => {
   try {
-    console.log('Saving map with selectedChapters:', selectedChapters);
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
@@ -57,7 +56,6 @@ export const updateMap = async (
   data: Partial<ChapterMap>
 ): Promise<void> => {
   try {
-    console.log('Updating map with data:', data);
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
     const updateData = { ...data };
     delete updateData.id;
@@ -102,7 +100,8 @@ export const updateChapterAnnotations = async (
     
     // If annotations array is empty, remove the chapter entry
     if (annotations.length === 0) {
-      const { [chapter]: removed, ...rest } = currentAnnotations;
+      const rest = { ...currentAnnotations };
+      delete rest[chapter];
       await updateDoc(mapRef, {
         chapterAnnotations: rest,
         updatedAt: serverTimestamp()
@@ -202,6 +201,27 @@ export const addComment = async (mapId: string, userId: string, userName: string
     });
   } catch (error) {
     console.error('Error adding comment:', error);
+    throw error;
+  }
+};
+
+export const getMapById = async (mapId: string): Promise<ChapterMap | null> => {
+  try {
+    const docRef = doc(db, MAPS_COLLECTION, mapId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date()
+      } as ChapterMap;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting map by id:', error);
     throw error;
   }
 }; 

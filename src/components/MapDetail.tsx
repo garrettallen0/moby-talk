@@ -80,6 +80,12 @@ export function MapDetail() {
     navigate('/');
   };
 
+  const handleEditClick = () => {
+    navigate(`/map/${map.id}/edit`);
+  };
+
+  const isOwner = user && map.userId === user.uid;
+
   return (
     <div className="map-detail">
       <div className="map-header">
@@ -87,6 +93,11 @@ export function MapDetail() {
           ← Back
         </button>
         <h1>{map.name}</h1>
+        {isOwner && (
+          <button className="edit-button" onClick={handleEditClick}>
+            Edit Map
+          </button>
+        )}
       </div>
 
       <div className="map-navigation">

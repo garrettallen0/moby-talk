@@ -3,6 +3,7 @@ import './App.css';
 import { AuthButton } from './components/AuthButton';
 import { Home } from './components/Home';
 import { MapDetail } from './components/MapDetail';
+import { MapEditor } from './components/MapEditor';
 
 function App() {
   return (
@@ -11,7 +12,11 @@ function App() {
         <AuthButton />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/map" element={<MapDetail />} />
+          <Route path="/map">
+            <Route index element={<MapDetail />} />
+            <Route path="new" element={<MapEditor />} />
+            <Route path=":id/edit" element={<MapEditor />} />
+          </Route>
         </Routes>
       </div>
     </Router>
