@@ -29,7 +29,6 @@ export const saveMap = async (
   theme?: string
 ): Promise<string> => {
   try {
-    console.log('Saving map with selectedChapters:', selectedChapters);
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
@@ -57,7 +56,6 @@ export const updateMap = async (
   data: Partial<ChapterMap>
 ): Promise<void> => {
   try {
-    console.log('Updating map with data:', data);
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
     const updateData = { ...data };
     delete updateData.id;
@@ -102,7 +100,8 @@ export const updateChapterAnnotations = async (
     
     // If annotations array is empty, remove the chapter entry
     if (annotations.length === 0) {
-      const { [chapter]: removed, ...rest } = currentAnnotations;
+      const rest = { ...currentAnnotations };
+      delete rest[chapter];
       await updateDoc(mapRef, {
         chapterAnnotations: rest,
         updatedAt: serverTimestamp()
