@@ -18,8 +18,10 @@ export interface ChapterMap {
   name: string;
   description?: string;
   userId: string;
+  userName: string;
   selectedChapters: number[];
   isPublic: boolean;
+  theme: string;
   likes?: string[];
   comments?: Comment[];
   chapterAnnotations?: { [key: number]: Annotation[] };

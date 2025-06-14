@@ -98,8 +98,10 @@ export const MapList = ({
               <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>Created By</th>
                 <th># of Chapters</th>
                 <th>Chapters</th>
+                <th>Theme</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -112,10 +114,12 @@ export const MapList = ({
                 >
                   <td>{index + 1}</td>
                   <td>{map.name}</td>
+                  <td>{map.userName}</td>
                   <td>{map.selectedChapters.length}</td>
                   <td className="chapters-cell">
                     {map.selectedChapters.sort((a, b) => a - b).join(', ')}
                   </td>
+                  <td>{map.theme}</td>
                   <td className="actions-cell">
                     <button 
                       className="action-button like-button"

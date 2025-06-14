@@ -20,11 +20,13 @@ const MAPS_COLLECTION = 'maps';
 
 export const saveMap = async (
   userId: string,
+  userName: string,
   name: string,
   selectedChapters: number[],
   description?: string,
   isPublic: boolean = false,
-  chapterAnnotations?: { [key: number]: Annotation[] }
+  chapterAnnotations?: { [key: number]: Annotation[] },
+  theme?: string
 ): Promise<string> => {
   try {
     console.log('Saving map with selectedChapters:', selectedChapters);
@@ -32,10 +34,12 @@ export const saveMap = async (
       name,
       description,
       userId,
+      userName,
       selectedChapters,
       isPublic,
       likes: [],
       chapterAnnotations,
+      theme: theme || '',
       createdAt: serverTimestamp() as Timestamp,
       updatedAt: serverTimestamp() as Timestamp,
     };
