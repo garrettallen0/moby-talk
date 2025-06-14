@@ -204,4 +204,25 @@ export const addComment = async (mapId: string, userId: string, userName: string
     console.error('Error adding comment:', error);
     throw error;
   }
+};
+
+export const getMapById = async (mapId: string): Promise<ChapterMap | null> => {
+  try {
+    const docRef = doc(db, MAPS_COLLECTION, mapId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date()
+      } as ChapterMap;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting map by id:', error);
+    throw error;
+  }
 }; 
