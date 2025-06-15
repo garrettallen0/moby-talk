@@ -5,25 +5,39 @@ import { useAuth } from '../contexts/AuthContext';
 
 export function useLoadMaps() {
   const { user } = useAuth();
-  const [maps, setMaps] = useState<ChapterMap[]>([]);
+  const [publicMaps, setPublicMaps] = useState<ChapterMap[]>([]);
+  const [userMaps, setUserMaps] = useState<ChapterMap[]>([]);
+
+  const fetchPublicMaps = async () => {
+    try {
+      const maps = await getPublicMaps();
+      setPublicMaps(maps);
+    } catch (err) {
+      console.error('Error loading public maps:', err);
+    }
+  };
+
+  const fetchUserMaps = async () => {
+    if (!user) return;
+    try {
+      const maps = await getUserMaps(user.uid);
+      setUserMaps(maps);
+    } catch (err) {
+      console.error('Error loading user maps:', err);
+    }
+  };
 
   useEffect(() => {
-    const loadMaps = async () => {
-      try {
-        const publicMaps = await getPublicMaps();
-        if (user) {
-          const userMaps = await getUserMaps(user.uid);
-          setMaps([...publicMaps, ...userMaps]);
-        } else {
-          setMaps(publicMaps);
-        }
-      } catch (err) {
-        console.error('Error loading maps:', err);
-      }
-    };
-
-    loadMaps();
+    fetchPublicMaps();
+    if (user) {
+      fetchUserMaps();
+    }
   }, [user]);
 
-  return maps;
+  return {
+    publicMaps,
+    userMaps,
+    fetchPublicMaps,
+    fetchUserMaps,
+  };
 }
