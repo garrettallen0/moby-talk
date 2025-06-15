@@ -1,14 +1,11 @@
 .map-editor {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
   background-color: var(--background-color);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 1rem;
   overflow: hidden;
 }
 
@@ -684,6 +681,7 @@
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
+  background-color: white;
 }
 
 .citation-bubble:hover {
