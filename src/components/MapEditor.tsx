@@ -27,6 +27,7 @@ export function MapEditor() {
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [showAnnotationModal, setShowAnnotationModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showChapterSelection, setShowChapterSelection] = useState(false);
   const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, Annotation[]>>({});
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
@@ -57,13 +58,30 @@ export function MapEditor() {
   }, [id, navigate]);
 
   const handleChapterClick = (chapter: number) => {
-    if (selectedChapters.has(chapter)) {
-      setSelectedChapter(chapter);
-    } else {
-      const newSelectedChapters = new Set(selectedChapters);
-      newSelectedChapters.add(chapter);
-      setSelectedChapters(newSelectedChapters);
+    setSelectedChapter(chapter);
+  };
+
+  const handleSummaryClick = () => {
+    setSelectedChapter(null);
+  };
+
+  const handleAddChapter = (chapter: number) => {
+    const newSelectedChapters = new Set(selectedChapters);
+    newSelectedChapters.add(chapter);
+    setSelectedChapters(newSelectedChapters);
+  };
+
+  const handleRemoveChapter = (chapter: number) => {
+    const newSelectedChapters = new Set(selectedChapters);
+    newSelectedChapters.delete(chapter);
+    setSelectedChapters(newSelectedChapters);
+    if (selectedChapter === chapter) {
+      setSelectedChapter(null);
     }
+  };
+
+  const getChapterTitle = (chapter: number) => {
+    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
   };
 
   const handleSave = async () => {
@@ -86,7 +104,6 @@ export function MapEditor() {
 
     try {
       if (id) {
-        // Editing existing map
         await updateMap(id, {
           name: updatedMap.name,
           description: updatedMap.description,
@@ -96,7 +113,6 @@ export function MapEditor() {
           chapterAnnotations: updatedMap.chapterAnnotations,
         });
       } else {
-        // Creating new map
         await saveMap(
           user.uid,
           user.displayName || 'Anonymous',
@@ -122,12 +138,6 @@ export function MapEditor() {
     } catch (error) {
       console.error('Error deleting map:', error);
     }
-  };
-
-  const getChapterStyle = (chapter: number) => {
-    return selectedChapters.has(chapter)
-      ? 'chapter-button selected-primary'
-      : 'chapter-button';
   };
 
   return (
@@ -183,37 +193,56 @@ export function MapEditor() {
           </div>
         </div>
 
-        <div className="chapter-section">
-          <h3>Select Chapters</h3>
-          <div className="chapter-grid">
-            {allChapters.map((chapter) => (
-              <button
-                key={chapter}
-                className={getChapterStyle(chapter)}
-                onClick={() => handleChapterClick(chapter)}
-                data-title={
-                  SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS]
-                }
-              >
-                {chapter}
-              </button>
-            ))}
-          </div>
+        <div className="map-navigation">
+          <button 
+            className={`nav-button summary-button ${selectedChapter === null ? 'active' : ''}`}
+            onClick={handleSummaryClick}
+          >
+            Summary
+          </button>
+          <div className="nav-divider" />
+          {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
+            <button
+              key={chapter}
+              className={`nav-button ${selectedChapter === chapter ? 'active' : ''}`}
+              onClick={() => handleChapterClick(chapter)}
+            >
+              {getChapterTitle(chapter)}
+            </button>
+          ))}
+          <button 
+            className="nav-button add-chapter-button"
+            onClick={() => setShowChapterSelection(true)}
+          >
+            + Add Chapter
+          </button>
         </div>
 
-        {selectedChapter !== null && (
-          <div className="selected-chapter-actions">
-            <h3>{SPECIAL_CHAPTERS[String(selectedChapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${selectedChapter}`}</h3>
-            <button 
-              className="annotation-button"
-              onClick={() => setShowAnnotationModal(true)}
-            >
-              {chapterAnnotations[selectedChapter]?.length 
-                ? `Edit Annotations (${chapterAnnotations[selectedChapter].length})`
-                : 'Add Annotations'}
-            </button>
-          </div>
-        )}
+        <div className="map-content">
+          {selectedChapter === null ? (
+            <div className="map-summary">
+              {description || 'No summary available.'}
+            </div>
+          ) : (
+            <div className="chapter-annotation">
+              <h2>{getChapterTitle(selectedChapter)}</h2>
+              {chapterAnnotations[selectedChapter]?.map((annotation, index) => (
+                <div key={index} className="annotation">
+                  <div className="annotation-passage">{annotation.passage}</div>
+                  <div className="annotation-commentary">{annotation.commentary}</div>
+                </div>
+              )) || <div className="no-annotations">No annotations available for this chapter.</div>}
+              <button 
+                className="annotation-button"
+                onClick={() => setShowAnnotationModal(true)}
+              >
+                {chapterAnnotations[selectedChapter]?.length 
+                  ? `Edit Annotations (${chapterAnnotations[selectedChapter].length})`
+                  : 'Add Annotations'}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="editor-footer">
@@ -239,13 +268,49 @@ export function MapEditor() {
         </div>
       </div>
 
+      {showChapterSelection && (
+        <div className="chapter-selection-modal">
+          <div className="modal-overlay" onClick={() => setShowChapterSelection(false)} />
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Select Chapters</h2>
+              <button className="close-button" onClick={() => setShowChapterSelection(false)}>
+                &times;
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="chapter-grid">
+                {allChapters.map((chapter) => (
+                  <button
+                    key={chapter}
+                    className={`chapter-button ${selectedChapters.has(chapter) ? 'selected-primary' : ''}`}
+                    onClick={() => selectedChapters.has(chapter) 
+                      ? handleRemoveChapter(chapter)
+                      : handleAddChapter(chapter)
+                    }
+                    data-title={getChapterTitle(chapter)}
+                  >
+                    {chapter}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="save-button"
+                onClick={() => setShowChapterSelection(false)}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showAnnotationModal && selectedChapter !== null && (
         <AnnotationModal
           chapter={selectedChapter}
-          chapterTitle={
-            SPECIAL_CHAPTERS[String(selectedChapter) as keyof typeof SPECIAL_CHAPTERS] ||
-            `Chapter ${selectedChapter}`
-          }
+          chapterTitle={getChapterTitle(selectedChapter)}
           annotations={chapterAnnotations[selectedChapter] || []}
           onClose={() => setShowAnnotationModal(false)}
           onSave={(annotations) => {
