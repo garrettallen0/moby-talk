@@ -91,20 +91,34 @@
   font-weight: 500;
 }
 
+.map-theme {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+  margin-top: 1rem;
+}
+
 .theme-select {
+  width: 100%;
   padding: 0.5rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  background-color: white;
-  font-size: 0.9rem;
-  color: #2c3e50;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 1rem;
   cursor: pointer;
 }
 
 .theme-select:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: var(--primary-color);
+}
+
+.theme-select option {
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .visibility-toggle {

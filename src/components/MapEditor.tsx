@@ -164,22 +164,6 @@ export function MapEditor() {
             onChange={(e) => setDescription(e.target.value)}
             className="description-input"
           />
-          <div className="theme-section">
-            <label htmlFor="theme">Theme</label>
-            <select
-              id="theme"
-              className="theme-select"
-              value={selectedTheme}
-              onChange={(e) => setSelectedTheme(e.target.value)}
-            >
-              <option value="" disabled>Select a theme</option>
-              {AVAILABLE_THEMES.map((theme) => (
-                <option key={theme} value={theme}>
-                  {theme}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="visibility-toggle">
             <label className="toggle-label">
               <span>{isPublic ? 'Public' : 'Private'}</span>
@@ -242,6 +226,21 @@ export function MapEditor() {
               </button>
             </div>
           )}
+        </div>
+
+        <div className="map-theme">
+          <select
+            className="theme-select"
+            value={selectedTheme}
+            onChange={(e) => setSelectedTheme(e.target.value)}
+          >
+            <option value="" disabled>Select a theme</option>
+            {AVAILABLE_THEMES.map((theme) => (
+              <option key={theme} value={theme}>
+                {theme}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
