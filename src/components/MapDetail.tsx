@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, ChapterAnnotation } from '../types/map';
 import { getPublicMaps, getUserMaps } from '../services/mapService';
 import { useAuth } from '../contexts/AuthContext';
 import { Timestamp } from 'firebase/firestore';
@@ -18,6 +18,7 @@ export function MapDetail() {
   const { user } = useAuth();
   const [map, setMap] = useState<ChapterMap | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
+  const [selectedCitation, setSelectedCitation] = useState<number | null>(null);
 
   useEffect(() => {
     const mapId = location.state?.mapId;
@@ -86,6 +87,10 @@ export function MapDetail() {
 
   const isOwner = user && map.userId === user.uid;
 
+  const handleCitationClick = (index: number) => {
+    setSelectedCitation(index);
+  };
+
   return (
     <div className="map-detail">
       <div className="map-header">
@@ -126,12 +131,34 @@ export function MapDetail() {
           </div>
         ) : (
           <div className="chapter-annotation">
-            {map.chapterAnnotations?.[selectedChapter]?.map((annotation, index) => (
-              <div key={index} className="annotation">
-                <div className="annotation-passage">{annotation.passage}</div>
-                <div className="annotation-commentary">{annotation.commentary}</div>
+            <div className="annotation">
+              {map.chapterAnnotations?.[selectedChapter]?.annotation || 'No annotation available.'}
+            </div>
+            
+            {selectedCitation !== null && map.chapterAnnotations?.[selectedChapter]?.citations[selectedCitation] && (
+              <div className="citation">
+                <div className="citation-passage">
+                  {map.chapterAnnotations[selectedChapter].citations[selectedCitation].passage}
+                </div>
               </div>
-            )) || <div className="no-annotations">No annotations available for this chapter.</div>}
+            )}
+
+            <div className="citation-footer">
+              <div className="citation-count">
+                <span>Citations</span>
+                <div className="citation-bubbles">
+                  {Array.from({ length: map.chapterAnnotations?.[selectedChapter]?.citations.length || 0 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className={`citation-bubble ${index === selectedCitation ? 'active' : ''}`}
+                      onClick={() => handleCitationClick(index)}
+                    >
+                      {index + 1}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

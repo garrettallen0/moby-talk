@@ -8,23 +8,27 @@ export interface Comment {
   createdAt: Date | Timestamp;
 }
 
-export interface Annotation {
+export interface Citation {
   passage: string;
-  commentary: string;
+}
+
+export interface ChapterAnnotation {
+  annotation: string;
+  citations: Citation[];
 }
 
 export interface ChapterMap {
   id: string;
   name: string;
-  description?: string;
+  description: string;
   userId: string;
   userName: string;
-  selectedChapters: number[];
   isPublic: boolean;
+  selectedChapters: number[];
   theme: string;
+  chapterAnnotations: Record<number, ChapterAnnotation>;
+  createdAt: Date;
+  updatedAt: Date;
   likes?: string[];
-  comments?: Comment[];
-  chapterAnnotations?: { [key: number]: Annotation[] };
-  createdAt: Date | Timestamp;
-  updatedAt: Date | Timestamp;
+  comments?: any[];
 } 

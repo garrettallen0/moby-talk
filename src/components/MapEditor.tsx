@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChapterMap, Annotation } from '../types/map';
+import { ChapterMap, ChapterAnnotation, Citation } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapService';
 import { AVAILABLE_THEMES } from '../constants/themes';
@@ -29,7 +29,8 @@ export function MapEditor() {
   const [showAnnotationModal, setShowAnnotationModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showChapterSelection, setShowChapterSelection] = useState(false);
-  const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, Annotation[]>>({});
+  const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, ChapterAnnotation>>({});
+  const [selectedCitation, setSelectedCitation] = useState<number | null>(null);
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -141,6 +142,56 @@ export function MapEditor() {
     }
   };
 
+  const handleAddCitation = () => {
+    if (selectedChapter === null) return;
+    
+    const currentAnnotation = chapterAnnotations[selectedChapter] || { annotation: '', citations: [] };
+    const newCitation: Citation = { passage: '' };
+    
+    setChapterAnnotations(prev => ({
+      ...prev,
+      [selectedChapter]: {
+        ...currentAnnotation,
+        citations: [...currentAnnotation.citations, newCitation]
+      }
+    }));
+    
+    setSelectedCitation(currentAnnotation.citations.length);
+  };
+
+  const handleCitationChange = (citationIndex: number, passage: string) => {
+    if (selectedChapter === null) return;
+    
+    const currentAnnotation = chapterAnnotations[selectedChapter];
+    const updatedCitations = [...currentAnnotation.citations];
+    updatedCitations[citationIndex] = { ...updatedCitations[citationIndex], passage };
+    
+    setChapterAnnotations(prev => ({
+      ...prev,
+      [selectedChapter]: {
+        ...currentAnnotation,
+        citations: updatedCitations
+      }
+    }));
+  };
+
+  const handleCitationClick = (index: number) => {
+    if (selectedChapter === null) return;
+    setSelectedCitation(index);
+  };
+
+  const handleAnnotationChange = (annotation: string) => {
+    if (selectedChapter === null) return;
+    
+    setChapterAnnotations(prev => ({
+      ...prev,
+      [selectedChapter]: {
+        ...prev[selectedChapter],
+        annotation
+      }
+    }));
+  };
+
   return (
     <div className="map-editor">
       <div className="editor-header">
@@ -216,20 +267,46 @@ export function MapEditor() {
             </div>
           ) : (
             <div className="chapter-annotation">
-              {chapterAnnotations[selectedChapter]?.map((annotation, index) => (
-                <div key={index} className="annotation">
-                  <div className="annotation-passage">{annotation.passage}</div>
-                  <div className="annotation-commentary">{annotation.commentary}</div>
+              <textarea
+                placeholder="Enter chapter annotation..."
+                value={chapterAnnotations[selectedChapter]?.annotation || ''}
+                onChange={(e) => handleAnnotationChange(e.target.value)}
+                className="annotation-input"
+              />
+              
+              {selectedCitation !== null && chapterAnnotations[selectedChapter]?.citations[selectedCitation] && (
+                <div className="citation">
+                  <textarea
+                    placeholder="Enter citation..."
+                    value={chapterAnnotations[selectedChapter].citations[selectedCitation].passage}
+                    onChange={(e) => handleCitationChange(selectedCitation, e.target.value)}
+                    className="citation-input"
+                  />
                 </div>
-              )) || <div className="no-annotations">No annotations available for this chapter.</div>}
-              <button 
-                className="annotation-button"
-                onClick={() => setShowAnnotationModal(true)}
-              >
-                {chapterAnnotations[selectedChapter]?.length 
-                  ? `Edit Annotations (${chapterAnnotations[selectedChapter].length})`
-                  : 'Add Annotations'}
-              </button>
+              )}
+
+              <div className="citation-footer">
+                <div className="citation-count">
+                  <span>Citations</span>
+                  <div className="citation-bubbles">
+                    {Array.from({ length: chapterAnnotations[selectedChapter]?.citations.length || 0 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className={`citation-bubble ${index === selectedCitation ? 'active' : ''}`}
+                        onClick={() => handleCitationClick(index)}
+                      >
+                        {index + 1}
+                      </div>
+                    ))}
+                    <div
+                      className="citation-bubble add-bubble"
+                      onClick={handleAddCitation}
+                    >
+                      +
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
