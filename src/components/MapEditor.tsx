@@ -4,7 +4,6 @@ import { ChapterMap, ChapterAnnotation, Citation } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapService';
 import { AVAILABLE_THEMES } from '../constants/themes';
-import { AnnotationModal } from './AnnotationModal';
 import { ConfirmationModal } from './ConfirmationModal';
 import { Timestamp } from 'firebase/firestore';
 import '../styles/MapEditor.css';
@@ -26,7 +25,6 @@ export function MapEditor() {
   const [selectedTheme, setSelectedTheme] = useState('');
   const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set());
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
-  const [showAnnotationModal, setShowAnnotationModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showChapterSelection, setShowChapterSelection] = useState(false);
   const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, ChapterAnnotation>>({});
@@ -147,23 +145,24 @@ export function MapEditor() {
     
     const currentAnnotation = chapterAnnotations[selectedChapter] || { annotation: '', citations: [] };
     const newCitation: Citation = { passage: '' };
+    const currentCitations = currentAnnotation.citations || [];
     
     setChapterAnnotations(prev => ({
       ...prev,
       [selectedChapter]: {
         ...currentAnnotation,
-        citations: [...currentAnnotation.citations, newCitation]
+        citations: [...currentCitations, newCitation]
       }
     }));
     
-    setSelectedCitation(currentAnnotation.citations.length);
+    setSelectedCitation(currentCitations.length);
   };
 
   const handleCitationChange = (citationIndex: number, passage: string) => {
     if (selectedChapter === null) return;
     
-    const currentAnnotation = chapterAnnotations[selectedChapter];
-    const updatedCitations = [...currentAnnotation.citations];
+    const currentAnnotation = chapterAnnotations[selectedChapter] || { annotation: '', citations: [] };
+    const updatedCitations = [...(currentAnnotation.citations || [])];
     updatedCitations[citationIndex] = { ...updatedCitations[citationIndex], passage };
     
     setChapterAnnotations(prev => ({
@@ -290,7 +289,7 @@ export function MapEditor() {
                 <div className="citation-count">
                   <span>Citations</span>
                   <div className="citation-bubbles">
-                    {Array.from({ length: chapterAnnotations[selectedChapter]?.citations.length || 0 }).map((_, index) => (
+                    {Array.from({ length: (chapterAnnotations[selectedChapter]?.citations || []).length }).map((_, index) => (
                       <div
                         key={index}
                         className={`citation-bubble ${index === selectedCitation ? 'active' : ''}`}
@@ -396,22 +395,6 @@ export function MapEditor() {
             </div>
           </div>
         </div>
-      )}
-
-      {showAnnotationModal && selectedChapter !== null && (
-        <AnnotationModal
-          chapter={selectedChapter}
-          chapterTitle={getChapterTitle(selectedChapter)}
-          annotations={chapterAnnotations[selectedChapter] || []}
-          onClose={() => setShowAnnotationModal(false)}
-          onSave={(annotations) => {
-            setChapterAnnotations((prev) => ({
-              ...prev,
-              [selectedChapter]: annotations,
-            }));
-            setShowAnnotationModal(false);
-          }}
-        />
       )}
 
       {showDeleteConfirmation && (

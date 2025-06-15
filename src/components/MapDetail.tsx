@@ -168,8 +168,7 @@ export function MapDetail() {
                 <div className="citation-bubbles">
                   {Array.from({
                     length:
-                      map.chapterAnnotations?.[selectedChapter]?.citations.length ||
-                      0,
+                      (map.chapterAnnotations?.[selectedChapter]?.citations || []).length,
                   }).map((_, index) => (
                     <div
                       key={index}
