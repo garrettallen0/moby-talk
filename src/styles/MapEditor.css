@@ -10,15 +10,17 @@
 .editor-header {
   display: flex;
   align-items: center;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
   gap: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e0e0e0;
 }
 
 .editor-header h1 {
   margin: 0;
-  color: #2c3e50;
-  font-size: 2rem;
+  flex: 1;
+  font-size: 1.5rem;
+  color: var(--text-color);
 }
 
 .back-button {
@@ -225,62 +227,100 @@
 
 .editor-footer {
   display: flex;
-  justify-content: flex-end;
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
 }
 
-.action-buttons {
+.map-metadata {
   display: flex;
   gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
-.save-button,
-.delete-button,
-.cancel-button {
+.map-date {
+  color: var(--text-secondary);
+}
+
+.map-creator {
+  color: var(--text-secondary);
+}
+
+.map-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.action-button:hover {
+  color: var(--primary-color);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.editor-actions .save-button,
+.editor-actions .delete-button,
+.editor-actions .cancel-button {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
-.save-button {
+.editor-actions .save-button {
   background-color: #007bff;
   color: white;
   border: none;
 }
 
-.save-button:hover {
-  background-color: #0056b3;
-}
-
-.save-button:disabled {
-  background-color: #e9ecef;
-  color: #6c757d;
+.editor-actions .save-button:disabled {
+  background-color: #6c757d;
   cursor: not-allowed;
 }
 
-.delete-button {
-  background-color: #dc3545;
+.editor-actions .save-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.editor-actions .delete-button {
+  background-color: red;
   color: white;
   border: none;
 }
 
-.delete-button:hover {
-  background-color: #c82333;
+.editor-actions .delete-button:hover {
+  background-color: darkred;
 }
 
-.cancel-button {
-  background-color: white;
-  color: #6c757d;
-  border: 1px solid #e0e0e0;
-}
-
-.cancel-button:hover {
+.editor-actions .cancel-button {
   background-color: #f8f9fa;
-  border-color: #007bff;
-  color: #007bff;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.editor-actions .cancel-button:hover {
+  background-color: #e9ecef;
+  border-color: #ced4da;
 }
 
 @media (max-width: 768px) {

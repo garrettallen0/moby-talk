@@ -6,6 +6,7 @@ import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapServic
 import { AVAILABLE_THEMES } from '../constants/themes';
 import { AnnotationModal } from './AnnotationModal';
 import { ConfirmationModal } from './ConfirmationModal';
+import { Timestamp } from 'firebase/firestore';
 import '../styles/MapEditor.css';
 
 const SPECIAL_CHAPTERS = {
@@ -147,6 +148,26 @@ export function MapEditor() {
           ← Back
         </button>
         <h1>{id ? 'Edit Map' : 'Create New Map'}</h1>
+        <div className="editor-actions">
+          <button
+            className="save-button"
+            onClick={handleSave}
+            disabled={!name.trim() || selectedChapters.size === 0}
+          >
+            {id ? 'Save' : 'Create Map'}
+          </button>
+          <button className="cancel-button" onClick={() => navigate('/')}>
+            Cancel
+          </button>
+          {id && (
+            <button
+              className="delete-button"
+              onClick={() => setShowDeleteConfirmation(true)}
+            >
+              Delete
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="editor-content">
@@ -245,24 +266,21 @@ export function MapEditor() {
       </div>
 
       <div className="editor-footer">
-        <div className="action-buttons">
-          <button
-            className="save-button"
-            onClick={handleSave}
-            disabled={!name.trim() || selectedChapters.size === 0}
-          >
-            {id ? 'Save Changes' : 'Create Map'}
+        <div className="map-metadata">
+          <span className="map-date">
+            {map ? (map.createdAt instanceof Timestamp 
+              ? map.createdAt.toDate().toLocaleDateString()
+              : new Date(map.createdAt).toLocaleDateString()
+            ) : 'New Map'}
+          </span>
+          <span className="map-creator">{user?.displayName || 'Anonymous'}</span>
+        </div>
+        <div className="map-actions">
+          <button className="action-button like-button">
+            ↑ {map?.likes?.length || 0}
           </button>
-          {id && (
-            <button
-              className="delete-button"
-              onClick={() => setShowDeleteConfirmation(true)}
-            >
-              Delete
-            </button>
-          )}
-          <button className="cancel-button" onClick={() => navigate('/')}>
-            Cancel
+          <button className="action-button comment-button">
+            💬 {map?.comments?.length || 0}
           </button>
         </div>
       </div>
