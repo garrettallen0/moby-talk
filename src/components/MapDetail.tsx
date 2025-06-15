@@ -137,6 +137,10 @@ export function MapDetail() {
         )}
       </div>
 
+      <div className="map-theme">
+        <p>{map.theme || 'No theme specified.'}</p>
+      </div>
+
       <div className="map-footer">
         <div className="map-metadata">
           <span className="map-date">{formatDate(map.createdAt)}</span>
