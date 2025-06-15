@@ -216,7 +216,6 @@ export function MapEditor() {
             </div>
           ) : (
             <div className="chapter-annotation">
-              <h2>{getChapterTitle(selectedChapter)}</h2>
               {chapterAnnotations[selectedChapter]?.map((annotation, index) => (
                 <div key={index} className="annotation">
                   <div className="annotation-passage">{annotation.passage}</div>
