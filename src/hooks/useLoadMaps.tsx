@@ -1,55 +1,29 @@
 import { useState, useEffect } from 'react';
 import { ChapterMap } from '../types/map';
 import { getPublicMaps, getUserMaps } from '../services/mapService';
-import { User } from 'firebase/auth';
+import { useAuth } from '../contexts/AuthContext';
 
-const useLoadMaps = (user: User | null) => {
-  const [publicMaps, setPublicMaps] = useState<ChapterMap[]>([]);
-  const [userMaps, setUserMaps] = useState<ChapterMap[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+export function useLoadMaps() {
+  const { user } = useAuth();
+  const [maps, setMaps] = useState<ChapterMap[]>([]);
 
   useEffect(() => {
-    fetchPublicMaps();
-    fetchUserMaps();
-  });
-
-  const fetchPublicMaps = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const publicMapsList = await getPublicMaps();
-      setPublicMaps(publicMapsList);
-    } catch (error) {
-      setError(error as Error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUserMaps = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      if (user) {
-        const userMapsList = await getUserMaps(user.uid);
-        setUserMaps(userMapsList);
-      } else {
-        setUserMaps([]);
+    const loadMaps = async () => {
+      try {
+        const publicMaps = await getPublicMaps();
+        if (user) {
+          const userMaps = await getUserMaps(user.uid);
+          setMaps([...publicMaps, ...userMaps]);
+        } else {
+          setMaps(publicMaps);
+        }
+      } catch (err) {
+        console.error('Error loading maps:', err);
       }
-    } catch (error) {
-      setError(error as Error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  return {
-    publicMaps,
-    userMaps,
-    fetchPublicMaps,
-    fetchUserMaps,
-  };
-};
+    loadMaps();
+  }, [user]);
 
-export default useLoadMaps;
+  return maps;
+}
