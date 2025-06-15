@@ -147,7 +147,15 @@ export function MapEditor() {
         <button className="back-button" onClick={() => navigate('/')}>
           ← Back
         </button>
-        <h1>{id ? 'Edit Map' : 'Create New Map'}</h1>
+        <div className="header-content">
+          <input
+            type="text"
+            placeholder="Map Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="name-input"
+          />
+        </div>
         <div className="editor-actions">
           <button
             className="save-button"
@@ -171,33 +179,6 @@ export function MapEditor() {
       </div>
 
       <div className="editor-content">
-        <div className="editor-section">
-          <input
-            type="text"
-            placeholder="Map Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="name-input"
-          />
-          <textarea
-            placeholder="Description (optional)"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="description-input"
-          />
-          <div className="visibility-toggle">
-            <label className="toggle-label">
-              <span>{isPublic ? 'Public' : 'Private'}</span>
-              <div
-                className={`toggle-switch ${isPublic ? 'active' : ''}`}
-                onClick={() => setIsPublic(!isPublic)}
-              >
-                <div className="toggle-slider" />
-              </div>
-            </label>
-          </div>
-        </div>
-
         <div className="map-navigation">
           <button 
             className={`nav-button summary-button ${selectedChapter === null ? 'active' : ''}`}
@@ -226,7 +207,12 @@ export function MapEditor() {
         <div className="map-content">
           {selectedChapter === null ? (
             <div className="map-summary">
-              {description || 'No summary available.'}
+              <textarea
+                placeholder="Enter map description..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="summary-input"
+              />
             </div>
           ) : (
             <div className="chapter-annotation">
@@ -275,6 +261,17 @@ export function MapEditor() {
           </span>
           <span className="map-creator">{user?.displayName || 'Anonymous'}</span>
         </div>
+        <div className="visibility-toggle">
+            <label className="toggle-label">
+              <span>{isPublic ? 'Public' : 'Private'}</span>
+              <div
+                className={`toggle-switch ${isPublic ? 'active' : ''}`}
+                onClick={() => setIsPublic(!isPublic)}
+              >
+                <div className="toggle-slider" />
+              </div>
+            </label>
+          </div>
         <div className="map-actions">
           <button className="action-button like-button">
             ↑ {map?.likes?.length || 0}
