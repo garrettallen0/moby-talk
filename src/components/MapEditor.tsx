@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, Annotation } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapService';
 import { AVAILABLE_THEMES } from '../constants/themes';
@@ -27,7 +27,7 @@ export function MapEditor() {
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [showAnnotationModal, setShowAnnotationModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, any[]>>({});
+  const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, Annotation[]>>({});
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -200,6 +200,20 @@ export function MapEditor() {
             ))}
           </div>
         </div>
+
+        {selectedChapter !== null && (
+          <div className="selected-chapter-actions">
+            <h3>{SPECIAL_CHAPTERS[String(selectedChapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${selectedChapter}`}</h3>
+            <button 
+              className="annotation-button"
+              onClick={() => setShowAnnotationModal(true)}
+            >
+              {chapterAnnotations[selectedChapter]?.length 
+                ? `Edit Annotations (${chapterAnnotations[selectedChapter].length})`
+                : 'Add Annotations'}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="editor-footer">
