@@ -5,6 +5,12 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 1rem;
+  overflow: hidden;
 }
 
 .loading {
@@ -116,14 +122,17 @@
 }
 
 .map-content {
-  display: flex;
   flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
   flex-direction: column;
-  min-height: 300px;
-  padding: 1.5rem;
-  gap: 24px;
+  min-height: 0;
+  background-color: white;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 1rem;
 }
 
 .map-theme {
@@ -154,10 +163,9 @@
 }
 
 .map-summary {
-  font-size: 1.1rem;
+  color: var(--text-color);
+  font-size: 1rem;
   line-height: 1.6;
-  color: #333;
-  white-space: pre-wrap;
 }
 
 .chapter-annotation {
@@ -165,16 +173,19 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
 
 .annotation {
   padding: 1.5rem;
   background-color: var(--background-color);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1.6;
 }
 
@@ -183,6 +194,7 @@
   background-color: var(--background-color);
   border: 1px solid var(--border-color);
   border-radius: 4px;
+  margin-bottom: 1rem;
 }
 
 .citation-passage {
@@ -192,10 +204,9 @@
 }
 
 .citation-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
 }
 
 .citation-count {

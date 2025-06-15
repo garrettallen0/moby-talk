@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ChapterMap, ChapterAnnotation } from '../types/map';
-import { getPublicMaps, getUserMaps } from '../services/mapService';
-import { useAuth } from '../contexts/AuthContext';
-import { Timestamp } from 'firebase/firestore';
-import '../styles/MapDetail.css';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ChapterMap, ChapterAnnotation } from "../types/map";
+import { getPublicMaps, getUserMaps } from "../services/mapService";
+import { useAuth } from "../contexts/AuthContext";
+import { Timestamp } from "firebase/firestore";
+import "../styles/MapDetail.css";
 
 const SPECIAL_CHAPTERS = {
-  '-1': 'Extracts',
-  '0': 'Etymology',
-  '136': 'Epilogue',
+  "-1": "Extracts",
+  "0": "Etymology",
+  "136": "Epilogue",
 } as const;
 
 export function MapDetail() {
@@ -23,7 +23,7 @@ export function MapDetail() {
   useEffect(() => {
     const mapId = location.state?.mapId;
     if (!mapId) {
-      navigate('/');
+      navigate("/");
       return;
     }
 
@@ -31,8 +31,8 @@ export function MapDetail() {
       try {
         // First try to find in public maps
         const publicMaps = await getPublicMaps();
-        const foundMap = publicMaps.find(m => m.id === mapId);
-        
+        const foundMap = publicMaps.find((m) => m.id === mapId);
+
         if (foundMap) {
           setMap(foundMap);
           return;
@@ -41,13 +41,13 @@ export function MapDetail() {
         // If not found in public maps and user is logged in, try user maps
         if (user) {
           const userMaps = await getUserMaps(user.uid);
-          const userMap = userMaps.find(m => m.id === mapId);
+          const userMap = userMaps.find((m) => m.id === mapId);
           if (userMap) {
             setMap(userMap);
           }
         }
       } catch (error) {
-        console.error('Error loading map:', error);
+        console.error("Error loading map:", error);
       }
     };
 
@@ -74,11 +74,14 @@ export function MapDetail() {
   };
 
   const getChapterTitle = (chapter: number) => {
-    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
+    return (
+      SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] ||
+      `Chapter ${chapter}`
+    );
   };
 
   const handleBackClick = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const handleEditClick = () => {
@@ -106,51 +109,73 @@ export function MapDetail() {
       </div>
 
       <div className="map-navigation">
-        <button 
-          className={`nav-button summary-button ${selectedChapter === null ? 'active' : ''}`}
+        <button
+          className={`nav-button summary-button ${
+            selectedChapter === null ? "active" : ""
+          }`}
           onClick={handleSummaryClick}
         >
           Summary
         </button>
         <div className="nav-divider" />
-        {map.selectedChapters.sort((a, b) => a - b).map(chapter => (
-          <button
-            key={chapter}
-            className={`nav-button ${selectedChapter === chapter ? 'active' : ''}`}
-            onClick={() => handleChapterClick(chapter)}
-          >
-            {getChapterTitle(chapter)}
-          </button>
-        ))}
+        {map.selectedChapters
+          .sort((a, b) => a - b)
+          .map((chapter) => (
+            <button
+              key={chapter}
+              className={`nav-button ${
+                selectedChapter === chapter ? "active" : ""
+              }`}
+              onClick={() => handleChapterClick(chapter)}
+            >
+              {getChapterTitle(chapter)}
+            </button>
+          ))}
       </div>
 
       <div className="map-content">
         {selectedChapter === null ? (
           <div className="map-summary">
-            {map.description || 'No summary available.'}
+            {map.description || "No summary available."}
           </div>
         ) : (
-          <div className="chapter-annotation">
-            <div className="annotation">
-              {map.chapterAnnotations?.[selectedChapter]?.annotation || 'No annotation available.'}
-            </div>
-            
-            {selectedCitation !== null && map.chapterAnnotations?.[selectedChapter]?.citations[selectedCitation] && (
-              <div className="citation">
-                <div className="citation-passage">
-                  {map.chapterAnnotations[selectedChapter].citations[selectedCitation].passage}
-                </div>
+          <>
+            <div className="chapter-annotation">
+              <div className="annotation">
+                {map.chapterAnnotations?.[selectedChapter]?.annotation ||
+                  "No annotation available."}
               </div>
-            )}
+
+              {selectedCitation !== null &&
+                map.chapterAnnotations?.[selectedChapter]?.citations[
+                  selectedCitation
+                ] && (
+                  <div className="citation">
+                    <div className="citation-passage">
+                      {
+                        map.chapterAnnotations[selectedChapter].citations[
+                          selectedCitation
+                        ].passage
+                      }
+                    </div>
+                  </div>
+                )}
+            </div>
 
             <div className="citation-footer">
               <div className="citation-count">
                 <span>Citations</span>
                 <div className="citation-bubbles">
-                  {Array.from({ length: map.chapterAnnotations?.[selectedChapter]?.citations.length || 0 }).map((_, index) => (
+                  {Array.from({
+                    length:
+                      map.chapterAnnotations?.[selectedChapter]?.citations.length ||
+                      0,
+                  }).map((_, index) => (
                     <div
                       key={index}
-                      className={`citation-bubble ${index === selectedCitation ? 'active' : ''}`}
+                      className={`citation-bubble ${
+                        index === selectedCitation ? "active" : ""
+                      }`}
                       onClick={() => handleCitationClick(index)}
                     >
                       {index + 1}
@@ -159,12 +184,12 @@ export function MapDetail() {
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
 
       <div className="map-theme">
-        <p>{map.theme || 'No theme specified.'}</p>
+        <p>{map.theme || "No theme specified."}</p>
       </div>
 
       <div className="map-footer">
@@ -183,4 +208,4 @@ export function MapDetail() {
       </div>
     </div>
   );
-} 
+}
