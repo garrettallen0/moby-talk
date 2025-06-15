@@ -272,6 +272,7 @@ export function MapEditor() {
                 value={chapterAnnotations[selectedChapter]?.annotation || ''}
                 onChange={(e) => handleAnnotationChange(e.target.value)}
                 className="annotation-input"
+                required
               />
               
               {selectedCitation !== null && chapterAnnotations[selectedChapter]?.citations[selectedCitation] && (

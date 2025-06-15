@@ -401,11 +401,11 @@
 
 .map-navigation {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 1rem;
   align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+  gap: 0.5rem;
 }
 
 .nav-button {
@@ -602,21 +602,21 @@
 
 .annotation-input {
   width: 100%;
-  min-height: 150px;
+  min-height: 100px;
   padding: 1rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--background-color);
+  background-color: white;
   color: var(--text-color);
   font-size: 1rem;
   line-height: 1.5;
   resize: vertical;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .annotation-input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .citation {
