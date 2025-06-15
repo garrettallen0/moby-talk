@@ -8,7 +8,7 @@ import {
   addComment,
 } from '../services/mapService';
 import { useAuth } from '../contexts/AuthContext';
-import useLoadMaps from '../hooks/useLoadMaps';
+import { useLoadMaps } from '../hooks/useLoadMaps';
 
 type ActiveTab = 'public' | 'my-maps';
 
@@ -22,7 +22,7 @@ export function Home() {
     userMaps,
     fetchPublicMaps,
     fetchUserMaps,
-  } = useLoadMaps(user);
+  } = useLoadMaps();
 
   const handleGlobalRefresh = async () => {
     await Promise.all([fetchPublicMaps(), fetchUserMaps()]);

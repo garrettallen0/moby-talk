@@ -10,11 +10,10 @@ import {
   updateDoc, 
   arrayUnion, 
   arrayRemove, 
-  Timestamp,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ChapterMap, Annotation } from '../types/map';
+import { ChapterMap, ChapterAnnotation } from '../types/map';
 
 const MAPS_COLLECTION = 'maps';
 
@@ -23,10 +22,10 @@ export const saveMap = async (
   userName: string,
   name: string,
   selectedChapters: number[],
-  description?: string,
+  description: string = '',
   isPublic: boolean = false,
-  chapterAnnotations?: { [key: number]: Annotation[] },
-  theme?: string
+  chapterAnnotations: Record<number, ChapterAnnotation> = {},
+  theme: string = ''
 ): Promise<string> => {
   try {
     const mapData: Omit<ChapterMap, 'id'> = {
@@ -38,9 +37,9 @@ export const saveMap = async (
       isPublic,
       likes: [],
       chapterAnnotations,
-      theme: theme || '',
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp,
+      theme,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const docRef = await addDoc(collection(db, MAPS_COLLECTION), mapData);
@@ -85,7 +84,7 @@ export const deleteMap = async (mapId: string): Promise<void> => {
 export const updateChapterAnnotations = async (
   mapId: string,
   chapter: number,
-  annotations: Annotation[]
+  annotation: ChapterAnnotation
 ): Promise<void> => {
   try {
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
@@ -98,8 +97,8 @@ export const updateChapterAnnotations = async (
     const mapData = mapDoc.data() as ChapterMap;
     const currentAnnotations = mapData.chapterAnnotations || {};
     
-    // If annotations array is empty, remove the chapter entry
-    if (annotations.length === 0) {
+    // If annotation is empty, remove the chapter entry
+    if (!annotation.annotation && (!annotation.citations || annotation.citations.length === 0)) {
       const rest = { ...currentAnnotations };
       delete rest[chapter];
       await updateDoc(mapRef, {
@@ -107,9 +106,9 @@ export const updateChapterAnnotations = async (
         updatedAt: serverTimestamp()
       });
     } else {
-      // Update or add the chapter's annotations
+      // Update or add the chapter's annotation
       await updateDoc(mapRef, {
-        [`chapterAnnotations.${chapter}`]: annotations,
+        [`chapterAnnotations.${chapter}`]: annotation,
         updatedAt: serverTimestamp()
       });
     }

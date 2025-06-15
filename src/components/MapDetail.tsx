@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChapterMap, ChapterAnnotation } from "../types/map";
+import { ChapterMap } from "../types/map";
 import { getPublicMaps, getUserMaps } from "../services/mapService";
 import { useAuth } from "../contexts/AuthContext";
 import { Timestamp } from "firebase/firestore";
@@ -168,8 +168,7 @@ export function MapDetail() {
                 <div className="citation-bubbles">
                   {Array.from({
                     length:
-                      map.chapterAnnotations?.[selectedChapter]?.citations.length ||
-                      0,
+                      (map.chapterAnnotations?.[selectedChapter]?.citations || []).length,
                   }).map((_, index) => (
                     <div
                       key={index}

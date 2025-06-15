@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, ChapterAnnotation } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { CommentModal } from './CommentModal';
-import { AnnotationModal } from './AnnotationModal';
 import { ConfirmationModal } from './ConfirmationModal';
 import trashIcon from '../assets/trashIcon.png';
 
@@ -14,17 +13,7 @@ interface MapCardProps {
   onLike?: (mapId: string) => void;
   onComment?: (mapId: string, text: string) => void;
   isPublicView?: boolean;
-  onUpdateMap?: (updatedMap: ChapterMap) => void;
   onDelete?: (mapId: string) => void;
-}
-
-interface Annotation {
-  passage: string;
-  commentary: string;
-}
-
-interface ChapterAnnotations {
-  [key: number]: Annotation[];
 }
 
 const SPECIAL_CHAPTERS = {
@@ -39,20 +28,18 @@ export const MapCard = ({
   onLike,
   onComment,
   isPublicView = false,
-  onUpdateMap,
   onDelete,
 }: MapCardProps) => {
   const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
-  const [showAnnotationModal, setShowAnnotationModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [selectedCitation, setSelectedCitation] = useState<number | null>(null);
 
-  const [chapterAnnotations, setChapterAnnotations] =
-    useState<ChapterAnnotations>(() => {
-      return map.chapterAnnotations || {};
-    });
+  const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, ChapterAnnotation>>(() => {
+    return map.chapterAnnotations || {};
+  });
 
   useEffect(() => {
     setChapterAnnotations(map.chapterAnnotations || {});
@@ -92,12 +79,11 @@ export const MapCard = ({
   const handleChapterClick = (e: React.MouseEvent, chapter: number) => {
     e.stopPropagation();
     setSelectedChapter((prev) => (prev === chapter ? null : chapter));
+    setSelectedCitation(null);
   };
 
-  const handleAnnotationClick = () => {
-    if (selectedChapter !== null) {
-      setShowAnnotationModal(true);
-    }
+  const handleCitationClick = (index: number) => {
+    setSelectedCitation(index);
   };
 
   const getChapterTitle = (chapter: number) => {
@@ -171,40 +157,52 @@ export const MapCard = ({
             <div
               className={`map-commentary ${
                 selectedChapter !== null &&
-                (map.chapterAnnotations?.[selectedChapter]?.length ?? 0) > 0
+                chapterAnnotations[selectedChapter]?.annotation
                   ? 'has-annotations'
                   : ''
               }`}
-              onClick={() => handleAnnotationClick()}
               role="button"
               tabIndex={0}
             >
               {selectedChapter !== null ? (
-                (map.chapterAnnotations?.[selectedChapter] || []).length > 0 ? (
+                chapterAnnotations[selectedChapter] ? (
                   <div className="chapter-annotations">
                     <h3>{getChapterTitle(selectedChapter)}</h3>
-                    <div className="annotations-list">
-                      {(map.chapterAnnotations?.[selectedChapter] ?? []).map(
-                        (annotation, index) => (
-                          <div key={index} className="annotation-item">
-                            <div className="annotation-content">
-                              <div className="annotation-field">
-                                <label>Passage</label>
-                                <div className="annotation-text">
-                                  {annotation.passage}
-                                </div>
-                              </div>
-                              <div className="annotation-field">
-                                <label>Commentary</label>
-                                <div className="annotation-text">
-                                  {annotation.commentary}
-                                </div>
-                              </div>
-                            </div>
+                    <div className="annotation-content">
+                      <div className="annotation-field">
+                        <label>Annotation</label>
+                        <div className="annotation-text">
+                          {chapterAnnotations[selectedChapter].annotation}
+                        </div>
+                      </div>
+                      {selectedCitation !== null && 
+                       chapterAnnotations[selectedChapter].citations[selectedCitation] && (
+                        <div className="citation-field">
+                          <label>Citation</label>
+                          <div className="citation-text">
+                            {chapterAnnotations[selectedChapter].citations[selectedCitation].passage}
                           </div>
-                        ),
+                        </div>
                       )}
                     </div>
+                    {chapterAnnotations[selectedChapter].citations.length > 0 && (
+                      <div className="citation-footer">
+                        <div className="citation-count">
+                          <span>Citations</span>
+                          <div className="citation-bubbles">
+                            {chapterAnnotations[selectedChapter].citations.map((_, index) => (
+                              <div
+                                key={index}
+                                className={`citation-bubble ${index === selectedCitation ? 'active' : ''}`}
+                                onClick={() => handleCitationClick(index)}
+                              >
+                                {index + 1}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="map-commentary-placeholder">
@@ -272,31 +270,6 @@ export const MapCard = ({
           map={map}
           onClose={() => setShowCommentModal(false)}
           onComment={onComment || (() => {})}
-        />
-      )}
-
-      {showAnnotationModal && selectedChapter !== null && (
-        <AnnotationModal
-          chapter={selectedChapter}
-          chapterTitle={
-            SPECIAL_CHAPTERS[
-              String(selectedChapter) as keyof typeof SPECIAL_CHAPTERS
-            ] || `Chapter ${selectedChapter}`
-          }
-          annotations={chapterAnnotations[selectedChapter] || []}
-          onClose={() => setShowAnnotationModal(false)}
-          onSave={(annotations) => {
-            const updatedAnnotations = {
-              ...chapterAnnotations,
-              [selectedChapter]: annotations,
-            };
-            setChapterAnnotations(updatedAnnotations);
-            onUpdateMap?.({
-              ...map,
-              chapterAnnotations: updatedAnnotations,
-            });
-            setShowAnnotationModal(false);
-          }}
         />
       )}
 
