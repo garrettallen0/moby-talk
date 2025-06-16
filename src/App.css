@@ -189,27 +189,6 @@ button:disabled:hover {
   background-color: #ccc;
 }
 
-.relationships-list {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-.relationships-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-
 .toggle-pill {
   width: 40px;
   height: 20px;
@@ -237,59 +216,6 @@ button:disabled:hover {
 
 .toggle-pill.active::after {
   transform: translateX(20px);
-}
-
-.relationships-content {
-  margin-top: 1rem;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.relationships-content.closed {
-  max-height: 0;
-  margin-top: 0;
-}
-
-.relationships-content>div {
-  margin: 0.5rem 0;
-  color: #495057;
-}
-
-.relationships-header h3 {
-  margin: 0;
-  color: #2c3e50;
-  font-weight: 500;
-}
-
-.graph-container {
-  background-color: #ffffff;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 600px;
-}
-
-.relationship-item {
-  padding: 0.75rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background-color: white;
-  margin: 0.5rem 0;
-  border: 1px solid #dee2e6;
-}
-
-.relationship-item:hover {
-  background-color: #e9ecef;
-}
-
-.relationship-item.editing {
-  background-color: #e8f4f8;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .special-chapters, .special-chapter {
