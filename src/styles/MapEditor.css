@@ -200,15 +200,6 @@
   font-size: 1.2rem;
 }
 
-.chapter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-  gap: 0.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
 .chapter-button {
   padding: 0.5rem;
   border: 1px solid #e0e0e0;
@@ -399,32 +390,6 @@
   background: #0056b3;
 }
 
-.map-navigation {
-  display: flex;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: white;
-  border-bottom: 1px solid var(--border-color);
-  gap: 0.5rem;
-}
-
-.nav-button {
-  padding: 0.5rem 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.nav-button.summary-button {
-  padding: 0.7rem 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
 .nav-button.add-chapter-button {
   color: #007bff;
   border-color: #007bff;
@@ -433,25 +398,6 @@
 .nav-button.add-chapter-button:hover {
   background-color: #007bff;
   color: white;
-}
-
-.nav-divider {
-  width: 1px;
-  height: 24px;
-  background-color: #e0e0e0;
-  margin: 0 1rem;
-}
-
-.nav-button:hover {
-  background-color: #f8f9fa;
-  border-color: #007bff;
-  color: #007bff;
-}
-
-.nav-button.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
 }
 
 .chapter-selection-modal {
@@ -552,20 +498,6 @@
   background-color: #007bff;
   color: white;
   border-color: #007bff;
-}
-
-.map-content {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  background-color: white;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 1rem;
 }
 
 .map-summary {
