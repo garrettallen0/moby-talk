@@ -78,11 +78,11 @@
 
 .map-navigation {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 1rem;
   align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+  gap: 0.5rem;
 }
 
 .nav-button {
@@ -145,13 +145,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin: 1rem auto;
   width: fit-content;
-}
-
-.map-theme h3 {
-  margin: 0;
-  color: #6a1b9a;
-  font-size: 1rem;
-  font-weight: 500;
 }
 
 .map-theme p {
