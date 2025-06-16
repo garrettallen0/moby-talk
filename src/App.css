@@ -92,27 +92,6 @@ h1 {
   }
 }
 
-.chapter-bank {
-  background-color: #f8f9fa;
-  padding: 2rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.chapter-bank h3 {
-  color: #2c3e50;
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.instructions {
-  color: #666;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
 .chapter-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
@@ -187,35 +166,6 @@ button:disabled {
 
 button:disabled:hover {
   background-color: #ccc;
-}
-
-.toggle-pill {
-  width: 40px;
-  height: 20px;
-  background-color: #e9ecef;
-  border-radius: 10px;
-  position: relative;
-  transition: background-color 0.2s;
-}
-
-.toggle-pill.active {
-  background-color: #28a745;
-}
-
-.toggle-pill::after {
-  content: '';
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background-color: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.2s;
-}
-
-.toggle-pill.active::after {
-  transform: translateX(20px);
 }
 
 .auth-button {
@@ -495,18 +445,6 @@ button:disabled:hover {
   gap: 10px;
 }
 
-.selected-chapter-item {
-  padding: 0.5rem 1rem;
-  background-color: #e9ecef;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.selected-chapter-item:hover {
-  background-color: #d6d8db;
-}
-
 /* Mini chapter list styles */
 .selected-chapters-mini {
   margin-top: 8px;
@@ -571,37 +509,4 @@ button:disabled:hover {
 .chapter-summary {
   margin-top: 10px;
   font-size: 14px;
-}
-
-.selected-chapters-summary {
-  background-color: #f8f9fa;
-  padding: 2rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.selected-chapters-summary h3 {
-  color: #2c3e50;
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.selected-chapters-list {
-  margin-top: 1rem;
-}
-
-.selected-chapters-list .chapter-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-  padding: 5px;
-}
-
-.selected-chapters-list p {
-  margin: 0;
-  line-height: 1.4;
-  color: #666;
 }
