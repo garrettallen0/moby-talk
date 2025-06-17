@@ -10,34 +10,36 @@ import {
   updateDoc, 
   arrayUnion, 
   arrayRemove, 
-  Timestamp,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ChapterMap, Annotation } from '../types/map';
+import { ChapterMap, ChapterAnnotation } from '../types/map';
 
 const MAPS_COLLECTION = 'maps';
 
 export const saveMap = async (
   userId: string,
+  userName: string,
   name: string,
   selectedChapters: number[],
-  description?: string,
+  description: string = '',
   isPublic: boolean = false,
-  chapterAnnotations?: { [key: number]: Annotation[] }
+  chapterAnnotations: Record<number, ChapterAnnotation> = {},
+  theme: string = ''
 ): Promise<string> => {
   try {
-    console.log('Saving map with selectedChapters:', selectedChapters);
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
       userId,
+      userName,
       selectedChapters,
       isPublic,
       likes: [],
       chapterAnnotations,
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp,
+      theme,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const docRef = await addDoc(collection(db, MAPS_COLLECTION), mapData);
@@ -53,7 +55,6 @@ export const updateMap = async (
   data: Partial<ChapterMap>
 ): Promise<void> => {
   try {
-    console.log('Updating map with data:', data);
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
     const updateData = { ...data };
     delete updateData.id;
@@ -83,7 +84,7 @@ export const deleteMap = async (mapId: string): Promise<void> => {
 export const updateChapterAnnotations = async (
   mapId: string,
   chapter: number,
-  annotations: Annotation[]
+  annotation: ChapterAnnotation
 ): Promise<void> => {
   try {
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
@@ -96,17 +97,18 @@ export const updateChapterAnnotations = async (
     const mapData = mapDoc.data() as ChapterMap;
     const currentAnnotations = mapData.chapterAnnotations || {};
     
-    // If annotations array is empty, remove the chapter entry
-    if (annotations.length === 0) {
-      const { [chapter]: removed, ...rest } = currentAnnotations;
+    // If annotation is empty, remove the chapter entry
+    if (!annotation.annotation && (!annotation.citations || annotation.citations.length === 0)) {
+      const rest = { ...currentAnnotations };
+      delete rest[chapter];
       await updateDoc(mapRef, {
         chapterAnnotations: rest,
         updatedAt: serverTimestamp()
       });
     } else {
-      // Update or add the chapter's annotations
+      // Update or add the chapter's annotation
       await updateDoc(mapRef, {
-        [`chapterAnnotations.${chapter}`]: annotations,
+        [`chapterAnnotations.${chapter}`]: annotation,
         updatedAt: serverTimestamp()
       });
     }
@@ -198,6 +200,27 @@ export const addComment = async (mapId: string, userId: string, userName: string
     });
   } catch (error) {
     console.error('Error adding comment:', error);
+    throw error;
+  }
+};
+
+export const getMapById = async (mapId: string): Promise<ChapterMap | null> => {
+  try {
+    const docRef = doc(db, MAPS_COLLECTION, mapId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date()
+      } as ChapterMap;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting map by id:', error);
     throw error;
   }
 }; 

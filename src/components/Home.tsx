@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { ChapterMap } from '../types/map';
 import { MapList } from './MapList';
 import {
-  saveMap,
   deleteMap,
   toggleLike,
   addComment,
 } from '../services/mapService';
 import { useAuth } from '../contexts/AuthContext';
-import { MapEditorModal } from './MapEditorModal';
-import useLoadMaps from '../hooks/useLoadMaps';
+import { useLoadMaps } from '../hooks/useLoadMaps';
 
 type ActiveTab = 'public' | 'my-maps';
 
@@ -18,16 +16,13 @@ export function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>('public');
-  const [selectedMap, setSelectedMap] = useState<ChapterMap | null>(null);
 
   const {
     publicMaps,
     userMaps,
     fetchPublicMaps,
     fetchUserMaps,
-    loading, //TODO placeholder to add spinner
-    error, //TODO error handling
-  } = useLoadMaps(user);
+  } = useLoadMaps();
 
   const handleGlobalRefresh = async () => {
     await Promise.all([fetchPublicMaps(), fetchUserMaps()]);
@@ -38,7 +33,6 @@ export function Home() {
 
     try {
       await deleteMap(mapId);
-
       handleGlobalRefresh();
     } catch (error) {
       console.error('Error deleting map:', error);
@@ -50,7 +44,6 @@ export function Home() {
 
     try {
       await toggleLike(mapId, user.uid);
-
       handleGlobalRefresh();
     } catch (error) {
       console.error('Error liking map:', error);
@@ -62,44 +55,15 @@ export function Home() {
 
     try {
       await addComment(mapId, user.uid, user.displayName || 'Anonymous', text);
-
       handleGlobalRefresh();
     } catch (error) {
       console.error('Error adding comment:', error);
     }
   };
 
-  const handleSaveMap = async (map: ChapterMap) => {
-    if (user) {
-      await saveMap(
-        user.uid,
-        map.name,
-        map.selectedChapters,
-        map.description,
-        map.isPublic,
-        map.chapterAnnotations,
-      );
-    }
-
-    handleGlobalRefresh();
-  };
-
   const handleCreateMap = () => {
     if (!user) return;
-
-    const newMap: ChapterMap = {
-      id: '', // Will be set by Firestore
-      name: '',
-      description: '',
-      userId: user.uid,
-      selectedChapters: [],
-      isPublic: false,
-      likes: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    setSelectedMap(newMap);
+    navigate('/map/new', { replace: true });
   };
 
   const handleMapClick = (map: ChapterMap) => {
@@ -122,17 +86,6 @@ export function Home() {
         onTabChange={setActiveTab}
         onDelete={handleDeleteMap}
       />
-
-      {selectedMap && (
-        <MapEditorModal
-          map={selectedMap}
-          onClose={() => {
-            setSelectedMap(null);
-          }}
-          onSave={handleSaveMap}
-          onDelete={handleDeleteMap}
-        />
-      )}
     </div>
   );
 }
