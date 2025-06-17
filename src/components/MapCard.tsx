@@ -1,0 +1,71 @@
+import { ChapterMap } from '../types/map';
+
+interface MapCardProps {
+  map: ChapterMap;
+  onMapClick: (map: ChapterMap) => void;
+  onLike: (e: React.MouseEvent, mapId: string) => Promise<void>;
+  onComment: (e: React.MouseEvent, mapId: string) => Promise<void>;
+  onDelete?: (e: React.MouseEvent, mapId: string) => Promise<void>;
+  showDelete?: boolean;
+}
+
+export const MapCard = ({
+  map,
+  onMapClick,
+  onLike,
+  onComment,
+  onDelete,
+  showDelete = false,
+}: MapCardProps) => {
+  return (
+    <div 
+      className="map-card"
+      onClick={() => onMapClick(map)}
+    >
+      <div className="card-header">
+        <h3 className="card-title">{map.name}</h3>
+        {map.theme && <div className="map-theme">{map.theme}</div>}
+      </div>
+      <div className="card-content">
+        <div className="card-field">
+          <label># of Chapters</label>
+          <span>{map.selectedChapters.length}</span>
+        </div>
+        <div className="card-field">
+          <label>Chapters</label>
+          <span className="chapters-list">
+            {map.selectedChapters.sort((a, b) => a - b).join(', ')}
+          </span>
+        </div>
+      </div>
+      <div className="card-footer">
+        <span className="card-user">{map.userName}</span>
+        <div className="card-actions">
+            <button 
+            className="action-button like-button"
+            onClick={(e) => onLike(e, map.id)}
+            title="Like"
+            >
+            ↑ {map.likes?.length || 0}
+            </button>
+            <button 
+            className="action-button comment-button"
+            onClick={(e) => onComment(e, map.id)}
+            title="Comment"
+            >
+            💬 {map.comments?.length || 0}
+            </button>
+            {showDelete && onDelete && (
+            <button 
+                className="action-button delete-button"
+                onClick={(e) => onDelete(e, map.id)}
+                title="Delete"
+            >
+                🗑️
+            </button>
+            )}
+        </div>
+      </div>
+    </div>
+  );
+}; 
