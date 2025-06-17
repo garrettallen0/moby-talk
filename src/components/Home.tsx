@@ -72,9 +72,6 @@ export function Home() {
 
   return (
     <div className="home">
-      <h1>Moby Talk</h1>
-      <h4>Out of the trunk, the branches grow; out of them, the twigs.</h4>
-
       <MapList
         publicMaps={publicMaps}
         userMaps={userMaps}
