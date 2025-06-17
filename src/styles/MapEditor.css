@@ -147,8 +147,6 @@
 .visibility-toggle {
   display: flex;
   align-items: center;
-  padding-right: 1rem;
-  border-right: 1px solid var(--border-color);
 }
 
 .toggle-label {
