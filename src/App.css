@@ -5,14 +5,32 @@
   color-scheme: light;
   color: #213547;
   background-color: #ffffff;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
+.main-content {
+  flex: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+}
 
 a {
   font-weight: 500;
@@ -34,7 +52,6 @@ button {
   background-color: #f8f9fa;
   cursor: pointer;
   transition: border-color 0.25s;
-  min-width: 2.5rem;
 }
 
 button:hover {
@@ -44,19 +61,6 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-@media (max-width: 768px) {
-  #root {
-    padding: .5rem;
-  }
 }
 
 body {
@@ -381,7 +385,6 @@ button:disabled:hover {
 .user-dropdown-divider {
   height: 1px;
   background-color: #dadce0;
-  margin: 8px 0;
 }
 
 .user-dropdown-item {
@@ -405,6 +408,7 @@ button:disabled:hover {
 
 .user-dropdown-item.logout {
   color: #ea4335;
+  border-radius: 0 0 8px 8px;
 }
 
 .user-dropdown-item.logout:hover {
