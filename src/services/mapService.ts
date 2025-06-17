@@ -10,31 +10,36 @@ import {
   updateDoc, 
   arrayUnion, 
   arrayRemove, 
-  Timestamp,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, ChapterAnnotation } from '../types/map';
 
 const MAPS_COLLECTION = 'maps';
 
 export const saveMap = async (
   userId: string,
+  userName: string,
   name: string,
-  relationships: { sourceChapter: number; relatedChapters: number[] }[],
-  description?: string,
-  isPublic: boolean = false
+  selectedChapters: number[],
+  description: string = '',
+  isPublic: boolean = false,
+  chapterAnnotations: Record<number, ChapterAnnotation> = {},
+  theme: string = ''
 ): Promise<string> => {
   try {
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
       userId,
-      relationships,
+      userName,
+      selectedChapters,
       isPublic,
       likes: [],
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp,
+      chapterAnnotations,
+      theme,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const docRef = await addDoc(collection(db, MAPS_COLLECTION), mapData);
@@ -72,6 +77,43 @@ export const deleteMap = async (mapId: string): Promise<void> => {
     await deleteDoc(mapRef);
   } catch (error) {
     console.error('Error deleting map:', error);
+    throw error;
+  }
+};
+
+export const updateChapterAnnotations = async (
+  mapId: string,
+  chapter: number,
+  annotation: ChapterAnnotation
+): Promise<void> => {
+  try {
+    const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    const mapDoc = await getDoc(mapRef);
+    
+    if (!mapDoc.exists()) {
+      throw new Error('Map not found');
+    }
+
+    const mapData = mapDoc.data() as ChapterMap;
+    const currentAnnotations = mapData.chapterAnnotations || {};
+    
+    // If annotation is empty, remove the chapter entry
+    if (!annotation.annotation && (!annotation.citations || annotation.citations.length === 0)) {
+      const rest = { ...currentAnnotations };
+      delete rest[chapter];
+      await updateDoc(mapRef, {
+        chapterAnnotations: rest,
+        updatedAt: serverTimestamp()
+      });
+    } else {
+      // Update or add the chapter's annotation
+      await updateDoc(mapRef, {
+        [`chapterAnnotations.${chapter}`]: annotation,
+        updatedAt: serverTimestamp()
+      });
+    }
+  } catch (error) {
+    console.error('Error updating chapter annotations:', error);
     throw error;
   }
 };
@@ -158,6 +200,27 @@ export const addComment = async (mapId: string, userId: string, userName: string
     });
   } catch (error) {
     console.error('Error adding comment:', error);
+    throw error;
+  }
+};
+
+export const getMapById = async (mapId: string): Promise<ChapterMap | null> => {
+  try {
+    const docRef = doc(db, MAPS_COLLECTION, mapId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date()
+      } as ChapterMap;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting map by id:', error);
     throw error;
   }
 }; 

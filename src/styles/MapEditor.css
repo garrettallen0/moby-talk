@@ -1,0 +1,703 @@
+.map-editor {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 1rem;
+  overflow: hidden;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+  gap: 1rem;
+}
+
+.header-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.editor-header h1 {
+  margin: 0;
+  flex: 1;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.back-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.back-button:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.editor-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 2rem;
+}
+
+.editor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.name-input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.name-input:focus {
+  outline: none;
+}
+
+.name-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.description-input {
+  min-height: 100px;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.description-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.theme-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.theme-section label {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.map-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  background: #f3e5f5;
+  border-radius: 50px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 1rem auto;
+  width: fit-content;
+}
+
+.theme-select {
+  background: none;
+  border: none;
+  color: #4a148c;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.theme-select:focus {
+  outline: none;
+}
+
+.theme-select option {
+  background-color: white;
+  color: #4a148c;
+}
+
+.map-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.visibility-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 18px;
+  background-color: #e9ecef;
+  border-radius: 18px;
+  transition: all 0.2s ease;
+}
+
+.toggle-switch.active {
+  background-color: #007bff;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.toggle-switch.active .toggle-slider {
+  left: 20px;
+}
+
+.chapter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chapter-section h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.chapter-button {
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: #666;
+  position: relative;
+}
+
+.chapter-button:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.chapter-button.selected-primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.chapter-button[data-title]:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.5rem;
+  background: #2c3e50;
+  color: white;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.editor-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.map-metadata {
+  display: flex;
+  gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.map-date {
+  color: var(--text-secondary);
+}
+
+.map-creator {
+  color: var(--text-secondary);
+}
+
+.map-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.action-button:hover {
+  color: var(--primary-color);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.editor-actions .save-button,
+.editor-actions .delete-button,
+.editor-actions .cancel-button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.editor-actions .save-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.editor-actions .save-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.editor-actions .save-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.editor-actions .delete-button {
+  background-color: red;
+  color: white;
+  border: none;
+}
+
+.editor-actions .delete-button:hover {
+  background-color: darkred;
+}
+
+.editor-actions .cancel-button {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.editor-actions .cancel-button:hover {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+}
+
+@media (max-width: 768px) {
+  .map-editor {
+    padding: 1rem;
+  }
+
+  .editor-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .chapter-grid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .save-button,
+  .delete-button,
+  .cancel-button {
+    width: 100%;
+  }
+}
+
+.selected-chapter-actions {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.selected-chapter-actions h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.annotation-button {
+  padding: 0.75rem 1.5rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.annotation-button:hover {
+  background: #0056b3;
+}
+
+.nav-button.add-chapter-button {
+  color: #007bff;
+  border-color: #007bff;
+}
+
+.nav-button.add-chapter-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.chapter-selection-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.modal-body {
+  margin-bottom: 1.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.chapter-button {
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+}
+
+.chapter-button:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.chapter-button.selected-primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.map-summary {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.summary-input {
+  width: 100%;
+  min-height: 200px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.summary-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.chapter-annotation {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.annotation-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  color: var(--text-color);
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.annotation-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.citation {
+  padding: 1rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.citation-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.citation-input:focus {
+  outline: none;
+}
+
+.citation-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.citation-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.citation-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.citation-count span {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.citation-bubbles {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.citation-bubble {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.citation-bubble:hover {
+  background-color: var(--background-color);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.citation-bubble.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.citation-bubble.add-bubble {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.add-citation-button {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.add-citation-button:hover {
+  background-color: var(--background-hover);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.chapter-annotation h2 {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  font-size: 1.5rem;
+}
+
+.annotation {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.annotation-passage {
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.annotation-commentary {
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.no-annotations {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--background-color);
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+}
+
+.annotation-button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.annotation-button:hover {
+  background-color: var(--background-hover);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+} 
