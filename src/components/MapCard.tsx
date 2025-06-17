@@ -30,10 +30,6 @@ export const MapCard = ({
       </div>
       <div className="card-content">
         <div className="card-field">
-          <label>Created By</label>
-          <span>{map.userName}</span>
-        </div>
-        <div className="card-field">
           <label># of Chapters</label>
           <span>{map.selectedChapters.length}</span>
         </div>
@@ -48,30 +44,35 @@ export const MapCard = ({
           <span>{map.theme}</span>
         </div>
       </div>
-      <div className="card-actions">
-        <button 
-          className="action-button like-button"
-          onClick={(e) => onLike(e, map.id)}
-          title="Like"
-        >
-          ↑ {map.likes?.length || 0}
-        </button>
-        <button 
-          className="action-button comment-button"
-          onClick={(e) => onComment(e, map.id)}
-          title="Comment"
-        >
-          💬 {map.comments?.length || 0}
-        </button>
-        {showDelete && onDelete && (
-          <button 
-            className="action-button delete-button"
-            onClick={(e) => onDelete(e, map.id)}
-            title="Delete"
-          >
-            🗑️
-          </button>
-        )}
+      <div className="card-footer">
+        <div className="card-field">
+            <span>{map.userName}</span>
+        </div>
+        <div className="card-actions">
+            <button 
+            className="action-button like-button"
+            onClick={(e) => onLike(e, map.id)}
+            title="Like"
+            >
+            ↑ {map.likes?.length || 0}
+            </button>
+            <button 
+            className="action-button comment-button"
+            onClick={(e) => onComment(e, map.id)}
+            title="Comment"
+            >
+            💬 {map.comments?.length || 0}
+            </button>
+            {showDelete && onDelete && (
+            <button 
+                className="action-button delete-button"
+                onClick={(e) => onDelete(e, map.id)}
+                title="Delete"
+            >
+                🗑️
+            </button>
+            )}
+        </div>
       </div>
     </div>
   );

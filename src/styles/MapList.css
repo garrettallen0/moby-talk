@@ -188,9 +188,15 @@
   text-overflow: ellipsis;
 }
 
-.card-actions {
+.card-footer {
   padding: 1rem;
   border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.card-actions {
   display: flex;
   gap: 0.5rem;
 }
@@ -383,7 +389,6 @@
   }
 
   .action-button {
-    flex: 1;
     min-height: 44px;
     display: flex;
     align-items: center;
