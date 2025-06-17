@@ -25,7 +25,6 @@ export const MapCard = ({
       onClick={() => onMapClick(map)}
     >
       <div className="card-header">
-        <span className="card-number">#{index + 1}</span>
         <h3 className="card-title">{map.name}</h3>
       </div>
       <div className="card-content">
@@ -45,9 +44,7 @@ export const MapCard = ({
         </div>
       </div>
       <div className="card-footer">
-        <div className="card-field">
-            <span>{map.userName}</span>
-        </div>
+        <span className="card-user">{map.userName}</span>
         <div className="card-actions">
             <button 
             className="action-button like-button"
