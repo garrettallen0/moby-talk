@@ -1,17 +1,200 @@
+.map-list-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.map-tabs {
+  display: flex;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #dee2e6;
+  padding-bottom: 0.5rem;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: none;
+  font-size: 1.1rem;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin: 0;
+}
+
+.tab-button:hover {
+  color: #4285f4;
+}
+
+.tab-button.active {
+  color: #4285f4;
+  font-weight: 500;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #4285f4;
+}
+
+.view-toggle {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.toggle-button:hover {
+  border-color: #4285f4;
+  color: #4285f4;
+}
+
+.toggle-button.active {
+  background-color: #4285f4;
+  color: white;
+  border-color: #4285f4;
+}
+
+.toggle-button .icon {
+  font-size: 1.1rem;
+}
+
+/* Card View Styles */
+.maps-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.map-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.map-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-number {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+.card-field {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+.card-field:last-child {
+  margin-bottom: 0;
+}
+
+.card-field label {
+  width: 40%;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.card-field span {
+  flex: 1;
+  color: #2c3e50;
+}
+
+.chapters-list {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-actions {
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Table View Styles */
 .maps-table-container {
   margin-top: 20px;
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
 .maps-table {
   width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
   background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Add a shadow to indicate scrollable content */
+.maps-table-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.maps-table-container:hover::after {
+  opacity: 1;
 }
 
 .maps-table th,
@@ -116,47 +299,48 @@
   color: #f44336;
 }
 
-.map-list-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 2rem auto;
-}
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .view-toggle {
+    display: none; /* Hide the toggle on mobile */
+  }
 
-.map-tabs {
-  display: flex;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #dee2e6;
-  padding-bottom: 0.5rem;
-}
+  .maps-container {
+    display: block !important; /* Force block display */
+  }
 
-.tab-button {
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  background: none;
-  font-size: 1.1rem;
-  color: #6c757d;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  margin: 0;
-}
+  .maps-cards {
+    grid-template-columns: 1fr;
+    padding: 0.5rem;
+  }
 
-.tab-button:hover {
-  color: #4285f4;
-}
+  .maps-table-container {
+    display: none !important; /* Hide table view on mobile */
+  }
 
-.tab-button.active {
-  color: #4285f4;
-  font-weight: 500;
-}
+  .map-card {
+    margin-bottom: 1rem;
+  }
 
-.tab-button.active::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #4285f4;
+  .card-field {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .card-field label {
+    width: 100%;
+    font-weight: 500;
+  }
+
+  .card-actions {
+    flex-wrap: wrap;
+  }
+
+  .action-button {
+    flex: 1;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 } 
