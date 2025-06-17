@@ -385,7 +385,6 @@ button:disabled:hover {
 .user-dropdown-divider {
   height: 1px;
   background-color: #dadce0;
-  margin: 8px 0;
 }
 
 .user-dropdown-item {
@@ -409,6 +408,7 @@ button:disabled:hover {
 
 .user-dropdown-item.logout {
   color: #ea4335;
+  border-radius: 0 0 8px 8px;
 }
 
 .user-dropdown-item.logout:hover {
