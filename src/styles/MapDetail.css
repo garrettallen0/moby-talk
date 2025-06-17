@@ -142,8 +142,8 @@
   background: #f3e5f5;
   border-radius: 50px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin: 1rem auto;
   width: fit-content;
+  align-self: center;
 }
 
 .map-theme p {

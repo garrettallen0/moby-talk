@@ -142,11 +142,10 @@ export const MapList = ({
           {maps.length > 0 ? (
             viewMode === 'cards' ? (
               <div className="maps-cards">
-                {maps.map((map, index) => (
+                {maps.map((map) => (
                   <MapCard
                     key={map.id}
                     map={map}
-                    index={index}
                     onMapClick={onMapClick}
                     onLike={handleLike}
                     onComment={handleComment}

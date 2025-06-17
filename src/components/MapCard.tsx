@@ -2,7 +2,6 @@ import { ChapterMap } from '../types/map';
 
 interface MapCardProps {
   map: ChapterMap;
-  index: number;
   onMapClick: (map: ChapterMap) => void;
   onLike: (e: React.MouseEvent, mapId: string) => Promise<void>;
   onComment: (e: React.MouseEvent, mapId: string) => Promise<void>;
@@ -12,7 +11,6 @@ interface MapCardProps {
 
 export const MapCard = ({
   map,
-  index,
   onMapClick,
   onLike,
   onComment,
@@ -26,6 +24,7 @@ export const MapCard = ({
     >
       <div className="card-header">
         <h3 className="card-title">{map.name}</h3>
+        {map.theme && <div className="map-theme">{map.theme}</div>}
       </div>
       <div className="card-content">
         <div className="card-field">
@@ -37,10 +36,6 @@ export const MapCard = ({
           <span className="chapters-list">
             {map.selectedChapters.sort((a, b) => a - b).join(', ')}
           </span>
-        </div>
-        <div className="card-field">
-          <label>Theme</label>
-          <span>{map.theme}</span>
         </div>
       </div>
       <div className="card-footer">
