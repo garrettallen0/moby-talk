@@ -4,7 +4,6 @@ import { ChapterMap } from "../types/map";
 import { getPublicMaps, getUserMaps } from "../services/mapService";
 import { useAuth } from "../contexts/AuthContext";
 import { Timestamp } from "firebase/firestore";
-import "../styles/MapDetail.css";
 
 const SPECIAL_CHAPTERS = {
   "-1": "Extracts",
@@ -55,7 +54,11 @@ export function MapDetail() {
   }, [location.state?.mapId, user, navigate]);
 
   if (!map) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-48 text-xl text-gray-600">
+        Loading...
+      </div>
+    );
   }
 
   const formatDate = (date: Date | Timestamp) => {
@@ -95,36 +98,44 @@ export function MapDetail() {
   };
 
   return (
-    <div className="map-detail">
-      <div className="map-header">
-        <button className="back-button" onClick={handleBackClick}>
+    <div className="max-w-6xl mx-auto p-8 md:p-4 flex flex-col gap-8 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+      <div className="border-b-2 border-gray-200 pb-4 flex relative items-center gap-4">
+        <button 
+          className="relative px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
+          onClick={handleBackClick}
+        >
           ← Back
         </button>
-        <h1>{map.name}</h1>
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 m-0 text-gray-800 text-3xl md:text-2xl font-medium">
+          {map.name}
+        </h1>
         {isOwner && (
-          <button className="edit-button" onClick={handleEditClick}>
+          <button 
+            className="absolute right-0 px-4 py-2 border border-blue-500 rounded bg-white text-blue-500 cursor-pointer transition-all duration-200 text-sm hover:bg-blue-500 hover:text-white" 
+            onClick={handleEditClick}
+          >
             Edit Map
           </button>
         )}
       </div>
 
-      <div className="map-navigation">
+      <div className="flex items-center px-8 md:px-4 py-4 bg-white border-b border-gray-200 gap-2 overflow-x-auto">
         <button
-          className={`nav-button summary-button ${
-            selectedChapter === null ? "active" : ""
+          className={`px-6 py-3 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-lg font-medium text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 ${
+            selectedChapter === null ? "bg-blue-500 text-white border-blue-500" : ""
           }`}
           onClick={handleSummaryClick}
         >
           Summary
         </button>
-        <div className="nav-divider" />
+        <div className="w-px h-6 bg-gray-300 mx-4"></div>
         {map.selectedChapters
           .sort((a, b) => a - b)
           .map((chapter) => (
             <button
               key={chapter}
-              className={`nav-button ${
-                selectedChapter === chapter ? "active" : ""
+              className={`px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 whitespace-nowrap ${
+                selectedChapter === chapter ? "bg-blue-500 text-white border-blue-500" : ""
               }`}
               onClick={() => handleChapterClick(chapter)}
             >
@@ -133,15 +144,15 @@ export function MapDetail() {
           ))}
       </div>
 
-      <div className="map-content">
+      <div className="flex-1 p-8 md:p-4 overflow-y-auto flex flex-col min-h-0 bg-white border border-gray-200 rounded-lg shadow-sm mx-4">
         {selectedChapter === null ? (
-          <div className="map-summary">
+          <div className="text-gray-900 text-base leading-relaxed">
             {map.description || "No summary available."}
           </div>
         ) : (
           <>
-            <div className="chapter-annotation">
-              <div className="annotation">
+            <div className="max-w-4xl mx-auto flex flex-col flex-1 min-h-0 w-full">
+              <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg mb-4 text-gray-900 text-base leading-relaxed">
                 {map.chapterAnnotations?.[selectedChapter]?.annotation ||
                   "No annotation available."}
               </div>
@@ -150,8 +161,8 @@ export function MapDetail() {
                 map.chapterAnnotations?.[selectedChapter]?.citations[
                   selectedCitation
                 ] && (
-                  <div className="citation">
-                    <div className="citation-passage">
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded mb-4">
+                    <div className="italic text-gray-600 leading-relaxed">
                       {
                         map.chapterAnnotations[selectedChapter].citations[
                           selectedCitation
@@ -162,18 +173,18 @@ export function MapDetail() {
                 )}
             </div>
 
-            <div className="citation-footer">
-              <div className="citation-count">
-                <span>Citations</span>
-                <div className="citation-bubbles">
+            <div className="mt-auto pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Citations</span>
+                <div className="flex gap-2">
                   {Array.from({
                     length:
                       (map.chapterAnnotations?.[selectedChapter]?.citations || []).length,
                   }).map((_, index) => (
                     <div
                       key={index}
-                      className={`citation-bubble ${
-                        index === selectedCitation ? "active" : ""
+                      className={`w-6 h-6 border border-gray-300 rounded-full flex items-center justify-center text-xs text-gray-600 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 ${
+                        index === selectedCitation ? "bg-blue-500 border-blue-500 text-white" : ""
                       }`}
                       onClick={() => handleCitationClick(index)}
                     >
@@ -187,20 +198,22 @@ export function MapDetail() {
         )}
       </div>
 
-      <div className="map-theme">
-        <p>{map.theme || "No theme specified."}</p>
+      <div className="inline-flex items-center gap-3 px-5 py-2 bg-purple-100 rounded-full shadow-sm w-fit self-center">
+        <p className="m-0 text-purple-800 leading-relaxed text-base whitespace-nowrap">
+          {map.theme || "No theme specified."}
+        </p>
       </div>
 
-      <div className="map-footer">
-        <div className="map-metadata">
-          <span className="map-date">{formatDate(map.createdAt)}</span>
-          <span className="map-creator">{map.userName}</span>
+      <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+        <div className="flex items-center gap-4">
+          <span className="text-gray-600 text-sm">{formatDate(map.createdAt)}</span>
+          <span className="text-gray-800 font-medium">{map.userName}</span>
         </div>
-        <div className="map-actions">
-          <button className="action-button like-button">
+        <div className="flex gap-4">
+          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500">
             ↑ {map.likes?.length || 0}
           </button>
-          <button className="action-button comment-button">
+          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500">
             💬 {map.comments?.length || 0}
           </button>
         </div>
