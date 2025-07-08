@@ -236,8 +236,10 @@ export function MapEditor() {
       <div className="flex flex-col flex-1 min-h-0 gap-8">
         <div className="flex items-center gap-2 p-4 border-b border-gray-200 overflow-x-auto">
           <button 
-            className={`px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 whitespace-nowrap ${
-              selectedChapter === null ? 'bg-blue-500 text-white border-blue-500' : ''
+            className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
+              selectedChapter === null 
+                ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
+                : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
             }`}
             onClick={handleSummaryClick}
           >
@@ -247,8 +249,10 @@ export function MapEditor() {
           {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
             <button
               key={chapter}
-              className={`px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 whitespace-nowrap ${
-                selectedChapter === chapter ? 'bg-blue-500 text-white border-blue-500' : ''
+              className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
+                selectedChapter === chapter 
+                  ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
+                  : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
               }`}
               onClick={() => handleChapterClick(chapter)}
             >
@@ -391,8 +395,10 @@ export function MapEditor() {
                 {allChapters.map((chapter) => (
                   <button
                     key={chapter}
-                    className={`p-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 text-center hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 relative ${
-                      selectedChapters.has(chapter) ? 'bg-blue-500 text-white border-blue-500' : ''
+                    className={`p-2 rounded cursor-pointer transition-all duration-200 text-sm text-center relative ${
+                      selectedChapters.has(chapter) 
+                        ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
+                        : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
                     }`}
                     onClick={() => selectedChapters.has(chapter) 
                       ? handleRemoveChapter(chapter)
