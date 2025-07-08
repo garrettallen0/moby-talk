@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
+import { MapCard } from './MapCard';
+import { MapTable } from './MapTable';
 import '../styles/MapList.css';
 
 interface MapListProps {
@@ -30,10 +32,25 @@ export const MapList = ({
   const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [editableUserMaps, setEditableUserMaps] = useState<ChapterMap[]>([]);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     setEditableUserMaps(userMaps);
   }, [userMaps]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setViewMode('cards');
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleCreateClick = () => {
     if (!user) {
@@ -73,97 +90,96 @@ export const MapList = ({
   };
 
   const maps = activeTab === 'public' ? publicMaps : editableUserMaps;
+  const showDelete = activeTab === 'my-maps';
 
   return (
     <div className="map-list-container">
-      <div className="map-tabs">
-        <button
-          className={`tab-button ${activeTab === 'public' ? 'active' : ''}`}
-          onClick={() => onTabChange('public')}
-        >
-          Public Maps
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'my-maps' ? 'active' : ''}`}
-          onClick={() => onTabChange('my-maps')}
-        >
-          My Maps
-        </button>
-      </div>
+      {!isMobile && (
+        <div className="control-panel">
+          <h3>Controls</h3>
+          <div className="control-section">
+            <h4>View Options</h4>
+            <div className="view-toggle">
+              <button
+                className={`toggle-button ${viewMode === 'cards' ? 'active' : ''}`}
+                onClick={() => setViewMode('cards')}
+                title="Card View"
+              >
+                <span className="icon">⊞</span>
+                Cards
+              </button>
+              <button
+                className={`toggle-button ${viewMode === 'table' ? 'active' : ''}`}
+                onClick={() => setViewMode('table')}
+                title="Table View"
+              >
+                <span className="icon">≡</span>
+                Table
+              </button>
+            </div>
+          </div>
+          {/* Future filter controls will go here */}
+        </div>
+      )}
 
-      <div className="maps-table-container">
-        {maps.length > 0 ? (
-          <table className="maps-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Created By</th>
-                <th># of Chapters</th>
-                <th>Chapters</th>
-                <th>Theme</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {maps.map((map, index) => (
-                <tr 
-                  key={map.id} 
-                  onClick={() => onMapClick(map)}
-                  className="map-row"
-                >
-                  <td>{index + 1}</td>
-                  <td>{map.name}</td>
-                  <td>{map.userName}</td>
-                  <td>{map.selectedChapters.length}</td>
-                  <td className="chapters-cell">
-                    {map.selectedChapters.sort((a, b) => a - b).join(', ')}
-                  </td>
-                  <td>{map.theme}</td>
-                  <td className="actions-cell">
-                    <button 
-                      className="action-button like-button"
-                      onClick={(e) => handleLike(e, map.id)}
-                      title="Like"
-                    >
-                      ↑ {map.likes?.length || 0}
-                    </button>
-                    <button 
-                      className="action-button comment-button"
-                      onClick={(e) => handleComment(e, map.id)}
-                      title="Comment"
-                    >
-                      💬 {map.comments?.length || 0}
-                    </button>
-                    {activeTab === 'my-maps' && (
-                      <button 
-                        className="action-button delete-button"
-                        onClick={(e) => handleDelete(e, map.id)}
-                        title="Delete"
-                      >
-                        🗑️
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p className="no-maps-message">
-            {activeTab === 'public' 
-              ? 'No public maps available'
-              : user
-                ? "You haven't created any maps yet"
-                : 'Sign in to create and view your maps'
-            }
-          </p>
-        )}
-        {user && activeTab === 'my-maps' && (
-          <button className="add-map-button" onClick={handleCreateClick}>
-            Create New Map
+      <div className="main-content">
+        <div className="map-tabs">
+          <button
+            className={`tab-button ${activeTab === 'public' ? 'active' : ''}`}
+            onClick={() => onTabChange('public')}
+          >
+            Public Maps
           </button>
-        )}
+          <button
+            className={`tab-button ${activeTab === 'my-maps' ? 'active' : ''}`}
+            onClick={() => onTabChange('my-maps')}
+          >
+            My Maps
+          </button>
+        </div>
+
+        <div className={`maps-container ${viewMode}`}>
+          {maps.length > 0 ? (
+            viewMode === 'cards' ? (
+              <div className="maps-cards">
+                {maps.map((map) => (
+                  <MapCard
+                    key={map.id}
+                    map={map}
+                    onMapClick={onMapClick}
+                    onLike={handleLike}
+                    onComment={handleComment}
+                    onDelete={handleDelete}
+                    showDelete={showDelete}
+                  />
+                ))}
+              </div>
+            ) : (
+              <MapTable
+                maps={maps}
+                onMapClick={onMapClick}
+                onLike={handleLike}
+                onComment={handleComment}
+                onDelete={handleDelete}
+                showDelete={showDelete}
+              />
+            )
+          ) : (
+            <p className="no-maps-message">
+              {activeTab === 'public' 
+                ? 'No public maps available'
+                : user
+                  ? "You haven't created any maps yet"
+                  : 'Sign in to create and view your maps'
+              }
+            </p>
+          )}
+          {user && activeTab === 'my-maps' && (
+            <button className="add-map-button" onClick={handleCreateClick}>
+              Create New Map
+            </button>
+          )}
+        </div>
       </div>
 
       {showSignInModal && (
