@@ -121,8 +121,10 @@ export function MapDetail() {
 
       <div className="flex items-center px-8 md:px-4 py-4 bg-white border-b border-gray-200 gap-2 overflow-x-auto">
         <button
-          className={`px-6 py-3 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-lg font-medium text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 ${
-            selectedChapter === null ? "bg-blue-500 text-white border-blue-500" : ""
+          className={`px-6 py-3 rounded cursor-pointer transition-all duration-200 text-lg font-medium ${
+            selectedChapter === null 
+              ? "bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600" 
+              : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
           }`}
           onClick={handleSummaryClick}
         >
@@ -134,8 +136,10 @@ export function MapDetail() {
           .map((chapter) => (
             <button
               key={chapter}
-              className={`px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 whitespace-nowrap ${
-                selectedChapter === chapter ? "bg-blue-500 text-white border-blue-500" : ""
+              className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
+                selectedChapter === chapter 
+                  ? "bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600" 
+                  : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
               }`}
               onClick={() => handleChapterClick(chapter)}
             >
