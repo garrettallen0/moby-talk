@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { MapCard } from './MapCard';
 import { MapTable } from './MapTable';
-import '../styles/MapList.css';
 
 interface MapListProps {
   publicMaps: ChapterMap[];
@@ -93,27 +92,31 @@ export const MapList = ({
   const showDelete = activeTab === 'my-maps';
 
   return (
-    <div className="map-list-container">
+    <div className="w-full mx-auto my-8 flex gap-8 md:flex-col md:gap-4">
       {!isMobile && (
-        <div className="control-panel">
-          <h3>Controls</h3>
-          <div className="control-section">
-            <h4>View Options</h4>
-            <div className="view-toggle">
+        <div className="w-64 flex-shrink-0 bg-white rounded-lg shadow-sm p-6 md:w-full md:p-4">
+          <h3 className="m-0 mb-4 text-gray-800 text-lg font-medium">Controls</h3>
+          <div className="mb-6 last:mb-0">
+            <h4 className="m-0 mb-3 text-gray-600 text-sm font-medium">View Options</h4>
+            <div className="flex gap-2">
               <button
-                className={`toggle-button ${viewMode === 'cards' ? 'active' : ''}`}
+                className={`flex items-center gap-2 px-4 py-3 border rounded-md bg-white text-gray-600 cursor-pointer transition-all duration-200 text-sm w-full hover:border-blue-500 hover:text-blue-500 ${
+                  viewMode === 'cards' ? 'bg-blue-500 text-white border-blue-500' : 'border-gray-300'
+                }`}
                 onClick={() => setViewMode('cards')}
                 title="Card View"
               >
-                <span className="icon">⊞</span>
+                <span className="text-lg">⊞</span>
                 Cards
               </button>
               <button
-                className={`toggle-button ${viewMode === 'table' ? 'active' : ''}`}
+                className={`flex items-center gap-2 px-4 py-3 border rounded-md bg-white text-gray-600 cursor-pointer transition-all duration-200 text-sm w-full hover:border-blue-500 hover:text-blue-500 ${
+                  viewMode === 'table' ? 'bg-blue-500 text-white border-blue-500' : 'border-gray-300'
+                }`}
                 onClick={() => setViewMode('table')}
                 title="Table View"
               >
-                <span className="icon">≡</span>
+                <span className="text-lg">≡</span>
                 Table
               </button>
             </div>
@@ -122,26 +125,36 @@ export const MapList = ({
         </div>
       )}
 
-      <div className="main-content">
-        <div className="map-tabs">
+      <div className="flex-1 min-w-0">
+        <div className="flex mb-4 border-b-2 border-gray-300 pb-2">
           <button
-            className={`tab-button ${activeTab === 'public' ? 'active' : ''}`}
+            className={`flex-1 px-6 py-3 border-none bg-transparent text-lg text-gray-600 cursor-pointer transition-all duration-200 relative m-0 hover:text-blue-500 ${
+              activeTab === 'public' ? 'text-blue-500 font-medium' : ''
+            }`}
             onClick={() => onTabChange('public')}
           >
             Public Maps
+            {activeTab === 'public' && (
+              <div className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-blue-500"></div>
+            )}
           </button>
           <button
-            className={`tab-button ${activeTab === 'my-maps' ? 'active' : ''}`}
+            className={`flex-1 px-6 py-3 border-none bg-transparent text-lg text-gray-600 cursor-pointer transition-all duration-200 relative m-0 hover:text-blue-500 ${
+              activeTab === 'my-maps' ? 'text-blue-500 font-medium' : ''
+            }`}
             onClick={() => onTabChange('my-maps')}
           >
             My Maps
+            {activeTab === 'my-maps' && (
+              <div className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-blue-500"></div>
+            )}
           </button>
         </div>
 
-        <div className={`maps-container ${viewMode}`}>
+        <div className={viewMode}>
           {maps.length > 0 ? (
             viewMode === 'cards' ? (
-              <div className="maps-cards">
+              <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4 md:p-2">
                 {maps.map((map) => (
                   <MapCard
                     key={map.id}
@@ -165,7 +178,7 @@ export const MapList = ({
               />
             )
           ) : (
-            <p className="no-maps-message">
+            <p className="text-center py-10 text-gray-600 italic">
               {activeTab === 'public' 
                 ? 'No public maps available'
                 : user
@@ -175,7 +188,10 @@ export const MapList = ({
             </p>
           )}
           {user && activeTab === 'my-maps' && (
-            <button className="add-map-button" onClick={handleCreateClick}>
+            <button 
+              className="mt-5 px-5 py-2.5 bg-blue-500 text-white border-none rounded cursor-pointer text-sm transition-colors duration-200 hover:bg-blue-700" 
+              onClick={handleCreateClick}
+            >
               Create New Map
             </button>
           )}
