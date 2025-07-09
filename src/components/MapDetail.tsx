@@ -12,7 +12,7 @@ export function MapDetail() {
   const { user } = useAuth();
   const [map, setMap] = useState<ChapterMap | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
-  const [selectedCitation, setSelectedCitation] = useState<number | null>(null);
+  const [selectedCitations, setSelectedCitations] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const mapId = location.state?.mapId;
@@ -84,7 +84,15 @@ export function MapDetail() {
   const isOwner = user && map.userId === user.uid;
 
   const handleCitationClick = (index: number) => {
-    setSelectedCitation(index);
+    setSelectedCitations(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
   };
 
   return (
@@ -130,20 +138,20 @@ export function MapDetail() {
                   "No annotation available."}
               </div>
 
-              {selectedCitation !== null &&
-                map.chapterAnnotations?.[selectedChapter]?.citations[
-                  selectedCitation
-                ] && (
-                  <div className="p-4 bg-gray-50 border border-gray-200 rounded mb-4">
-                    <div className="italic text-gray-600 leading-relaxed">
-                      {
-                        map.chapterAnnotations[selectedChapter].citations[
-                          selectedCitation
-                        ].passage
-                      }
-                    </div>
-                  </div>
-                )}
+              {selectedCitations.size > 0 &&
+                map.chapterAnnotations?.[selectedChapter]?.citations &&
+                Array.from(selectedCitations)
+                  .sort((a, b) => a - b)
+                  .map((citationIndex) => {
+                    const citation = map.chapterAnnotations[selectedChapter].citations[citationIndex];
+                    return citation ? (
+                      <div key={citationIndex} className="p-4 bg-gray-50 border border-gray-200 rounded mb-4">
+                        <div className="italic text-gray-600 leading-relaxed">
+                          {citation.passage}
+                        </div>
+                      </div>
+                    ) : null;
+                  })}
             </div>
 
             <div className="mt-auto pt-4 border-t border-gray-200">
@@ -157,7 +165,7 @@ export function MapDetail() {
                     <div
                       key={index}
                       className={`w-6 h-6 border rounded-full flex items-center justify-center text-xs cursor-pointer transition-all duration-200 ${
-                        index === selectedCitation 
+                        selectedCitations.has(index)
                           ? "bg-blue-500 border-blue-500 text-white" 
                           : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
                       }`}

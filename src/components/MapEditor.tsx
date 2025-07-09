@@ -22,7 +22,7 @@ export function MapEditor() {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showChapterSelection, setShowChapterSelection] = useState(false);
   const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, ChapterAnnotation>>({});
-  const [selectedCitation, setSelectedCitation] = useState<number | null>(null);
+  const [selectedCitations, setSelectedCitations] = useState<Set<number>>(new Set());
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -147,7 +147,7 @@ export function MapEditor() {
       }
     }));
     
-    setSelectedCitation(currentCitations.length);
+    setSelectedCitations(prev => new Set([...prev, currentCitations.length]));
   };
 
   const handleCitationChange = (citationIndex: number, passage: string) => {
@@ -168,7 +168,15 @@ export function MapEditor() {
 
   const handleCitationClick = (index: number) => {
     if (selectedChapter === null) return;
-    setSelectedCitation(index);
+    setSelectedCitations(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
   };
 
   const handleAnnotationChange = (annotation: string) => {
@@ -256,16 +264,22 @@ export function MapEditor() {
                 required
               />
               
-              {selectedCitation !== null && chapterAnnotations[selectedChapter]?.citations[selectedCitation] && (
-                <div className="p-4 bg-gray-50 border border-gray-200 rounded">
-                  <textarea
-                    placeholder="Enter citation..."
-                    value={chapterAnnotations[selectedChapter].citations[selectedCitation].passage}
-                    onChange={(e) => handleCitationChange(selectedCitation, e.target.value)}
-                    className="w-full min-h-24 p-2 border-none bg-transparent text-gray-900 text-base leading-relaxed resize-y focus:outline-none placeholder-gray-500"
-                  />
-                </div>
-              )}
+              {selectedCitations.size > 0 && chapterAnnotations[selectedChapter]?.citations &&
+                Array.from(selectedCitations)
+                  .sort((a, b) => a - b)
+                  .map((citationIndex) => {
+                    const citation = chapterAnnotations[selectedChapter].citations[citationIndex];
+                    return citation ? (
+                      <div key={citationIndex} className="p-4 bg-gray-50 border border-gray-200 rounded">
+                        <textarea
+                          placeholder="Enter citation..."
+                          value={citation.passage}
+                          onChange={(e) => handleCitationChange(citationIndex, e.target.value)}
+                          className="w-full min-h-24 p-2 border-none bg-transparent text-gray-900 text-base leading-relaxed resize-y focus:outline-none placeholder-gray-500"
+                        />
+                      </div>
+                    ) : null;
+                  })}
 
               <div className="mt-auto pt-4 border-t border-gray-200">
                 <div className="flex items-center gap-2">
@@ -275,7 +289,7 @@ export function MapEditor() {
                       <div
                         key={index}
                         className={`w-6 h-6 border rounded-full flex items-center justify-center text-xs cursor-pointer transition-all duration-200 ${
-                          index === selectedCitation 
+                          selectedCitations.has(index)
                             ? 'bg-blue-500 border-blue-500 text-white' 
                             : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
                         }`}
