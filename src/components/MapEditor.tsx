@@ -234,7 +234,7 @@ export function MapEditor() {
       </div>
 
       <div className="flex flex-col flex-1 min-h-0 gap-8">
-        <div className="flex items-center gap-2 p-4 border-b border-gray-200 overflow-x-auto">
+        <div className="flex flex-wrap items-center gap-2 p-4 border-b border-gray-200">
           <button 
             className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
               selectedChapter === null 

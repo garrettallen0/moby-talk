@@ -119,7 +119,7 @@ export function MapDetail() {
         )}
       </div>
 
-      <div className="flex items-center px-8 md:px-4 py-4 bg-white border-b border-gray-200 gap-2 overflow-x-auto">
+      <div className="flex flex-wrap items-center px-8 md:px-4 py-4 bg-white border-b border-gray-200 gap-2">
         <button
           className={`px-6 py-3 rounded cursor-pointer transition-all duration-200 text-lg font-medium ${
             selectedChapter === null 
