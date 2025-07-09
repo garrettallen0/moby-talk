@@ -3,16 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ChapterMap, ChapterAnnotation, Citation } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapService';
-import { AVAILABLE_THEMES } from '../constants/themes';
+import { AVAILABLE_THEMES, SPECIAL_CHAPTERS } from '../constants/themes';
 import { ConfirmationModal } from './ConfirmationModal';
+import { ChapterNavigation } from './ChapterNavigation';
 import { Timestamp } from 'firebase/firestore';
-import '../styles/MapEditor.css';
-
-const SPECIAL_CHAPTERS = {
-  '-1': 'Extracts',
-  '0': 'Etymology',
-  '136': 'Epilogue',
-} as const;
 
 export function MapEditor() {
   const navigate = useNavigate();
@@ -28,7 +22,7 @@ export function MapEditor() {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showChapterSelection, setShowChapterSelection] = useState(false);
   const [chapterAnnotations, setChapterAnnotations] = useState<Record<number, ChapterAnnotation>>({});
-  const [selectedCitation, setSelectedCitation] = useState<number | null>(null);
+  const [selectedCitations, setSelectedCitations] = useState<Set<number>>(new Set());
 
   // Generate array of all chapters in sequence (-1, 0, 1-135, 136)
   const allChapters = [-1, 0, ...Array.from({ length: 135 }, (_, i) => i + 1), 136];
@@ -80,9 +74,7 @@ export function MapEditor() {
     }
   };
 
-  const getChapterTitle = (chapter: number) => {
-    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
-  };
+
 
   const handleSave = async () => {
     if (!user || !name.trim() || selectedChapters.size === 0) return;
@@ -155,7 +147,7 @@ export function MapEditor() {
       }
     }));
     
-    setSelectedCitation(currentCitations.length);
+    setSelectedCitations(prev => new Set([...prev, currentCitations.length]));
   };
 
   const handleCitationChange = (citationIndex: number, passage: string) => {
@@ -176,7 +168,15 @@ export function MapEditor() {
 
   const handleCitationClick = (index: number) => {
     if (selectedChapter === null) return;
-    setSelectedCitation(index);
+    setSelectedCitations(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
   };
 
   const handleAnnotationChange = (annotation: string) => {
@@ -192,34 +192,40 @@ export function MapEditor() {
   };
 
   return (
-    <div className="map-editor">
-      <div className="editor-header">
-        <button className="back-button" onClick={() => navigate('/')}>
+    <div className="flex flex-col bg-white border border-gray-200 rounded-xl shadow-lg mx-auto overflow-hidden max-w-6xl">
+      <div className="flex items-center p-4 bg-white border-b border-gray-200 gap-4">
+        <button 
+          className="px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
+          onClick={() => navigate('/')}
+        >
           ← Back
         </button>
-        <div className="header-content">
+        <div className="flex items-center gap-4 flex-1">
           <input
             type="text"
             placeholder="Map Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="name-input"
+            className="flex-1 p-2 text-2xl border-none bg-transparent text-gray-900 font-medium focus:outline-none placeholder-gray-500"
           />
         </div>
-        <div className="editor-actions">
+        <div className="flex gap-2 ml-auto">
           <button
-            className="save-button"
+            className="px-4 py-2 bg-blue-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-blue-600 disabled:bg-gray-500 disabled:cursor-not-allowed"
             onClick={handleSave}
             disabled={!name.trim() || selectedChapters.size === 0}
           >
             {id ? 'Save' : 'Create Map'}
           </button>
-          <button className="cancel-button" onClick={() => navigate('/')}>
+          <button 
+            className="px-4 py-2 bg-gray-100 text-gray-600 border border-gray-300 rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-gray-200 hover:border-gray-400" 
+            onClick={() => navigate('/')}
+          >
             Cancel
           </button>
           {id && (
             <button
-              className="delete-button"
+              className="px-4 py-2 bg-red-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-red-600"
               onClick={() => setShowDeleteConfirmation(true)}
             >
               Delete
@@ -228,78 +234,72 @@ export function MapEditor() {
         </div>
       </div>
 
-      <div className="editor-content">
-        <div className="map-navigation">
-          <button 
-            className={`nav-button summary-button ${selectedChapter === null ? 'active' : ''}`}
-            onClick={handleSummaryClick}
-          >
-            Summary
-          </button>
-          <div className="nav-divider" />
-          {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
-            <button
-              key={chapter}
-              className={`nav-button ${selectedChapter === chapter ? 'active' : ''}`}
-              onClick={() => handleChapterClick(chapter)}
-            >
-              {getChapterTitle(chapter)}
-            </button>
-          ))}
-          <button 
-            className="nav-button add-chapter-button"
-            onClick={() => setShowChapterSelection(true)}
-          >
-            + Add Chapter
-          </button>
-        </div>
+      <div className="flex flex-col flex-1 min-h-0 gap-8">
+        <ChapterNavigation
+          selectedChapter={selectedChapter}
+          chapters={Array.from(selectedChapters)}
+          onChapterClick={handleChapterClick}
+          onSummaryClick={handleSummaryClick}
+          variant="editor"
+          onAddChapter={() => setShowChapterSelection(true)}
+        />
 
-        <div className="map-content">
+        <div className="flex-1 p-4">
           {selectedChapter === null ? (
-            <div className="map-summary">
+            <div className="max-w-4xl mx-auto">
               <textarea
                 placeholder="Enter map description..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="summary-input"
+                className="w-full min-h-48 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               />
             </div>
           ) : (
-            <div className="chapter-annotation">
+            <div className="max-w-4xl mx-auto flex flex-col gap-4">
               <textarea
                 placeholder="Enter chapter annotation..."
                 value={chapterAnnotations[selectedChapter]?.annotation || ''}
                 onChange={(e) => handleAnnotationChange(e.target.value)}
-                className="annotation-input"
+                className="w-full min-h-24 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                 required
               />
               
-              {selectedCitation !== null && chapterAnnotations[selectedChapter]?.citations[selectedCitation] && (
-                <div className="citation">
-                  <textarea
-                    placeholder="Enter citation..."
-                    value={chapterAnnotations[selectedChapter].citations[selectedCitation].passage}
-                    onChange={(e) => handleCitationChange(selectedCitation, e.target.value)}
-                    className="citation-input"
-                  />
-                </div>
-              )}
+              {selectedCitations.size > 0 && chapterAnnotations[selectedChapter]?.citations &&
+                Array.from(selectedCitations)
+                  .sort((a, b) => a - b)
+                  .map((citationIndex) => {
+                    const citation = chapterAnnotations[selectedChapter].citations[citationIndex];
+                    return citation ? (
+                      <div key={citationIndex} className="p-4 bg-gray-50 border border-gray-200 rounded">
+                        <textarea
+                          placeholder="Enter citation..."
+                          value={citation.passage}
+                          onChange={(e) => handleCitationChange(citationIndex, e.target.value)}
+                          className="w-full min-h-24 p-2 border-none bg-transparent text-gray-900 text-base leading-relaxed resize-y focus:outline-none placeholder-gray-500"
+                        />
+                      </div>
+                    ) : null;
+                  })}
 
-              <div className="citation-footer">
-                <div className="citation-count">
-                  <span>Citations</span>
-                  <div className="citation-bubbles">
+              <div className="mt-auto pt-4 border-t border-gray-200">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Citations</span>
+                  <div className="flex gap-2">
                     {Array.from({ length: (chapterAnnotations[selectedChapter]?.citations || []).length }).map((_, index) => (
                       <div
                         key={index}
-                        className={`citation-bubble ${index === selectedCitation ? 'active' : ''}`}
+                        className={`w-6 h-6 border rounded-full flex items-center justify-center text-xs cursor-pointer transition-all duration-200 ${
+                          selectedCitations.has(index)
+                            ? 'bg-blue-500 border-blue-500 text-white' 
+                            : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
+                        }`}
                         onClick={() => handleCitationClick(index)}
                       >
                         {index + 1}
                       </div>
                     ))}
                     <div
-                      className="citation-bubble add-bubble"
+                      className="w-6 h-6 border border-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-gray-600 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
                       onClick={handleAddCitation}
                     >
                       +
@@ -311,83 +311,96 @@ export function MapEditor() {
           )}
         </div>
 
-        <div className="map-theme">
-          <select
-            className="theme-select"
-            value={selectedTheme}
-            onChange={(e) => setSelectedTheme(e.target.value)}
-          >
-            <option value="" disabled>Select a theme</option>
-            {AVAILABLE_THEMES.map((theme) => (
-              <option key={theme} value={theme}>
-                {theme}
-              </option>
-            ))}
-          </select>
+        <div className="flex justify-center p-4 border-t border-gray-200">
+          <div className="inline-flex items-center gap-3 px-5 py-2 bg-purple-100 rounded-full shadow-sm w-fit self-center">
+            <select
+              className="bg-transparent border-none text-purple-800 text-base cursor-pointer font-medium focus:outline-none"
+              value={selectedTheme}
+              onChange={(e) => setSelectedTheme(e.target.value)}
+            >
+              <option value="" disabled>Select a theme</option>
+              {AVAILABLE_THEMES.map((theme) => (
+                <option key={theme} value={theme} className="bg-white text-purple-800">
+                  {theme}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      <div className="editor-footer">
-        <div className="map-metadata">
-          <span className="map-date">
+      <div className="flex justify-between items-center p-4 bg-white border-t border-gray-200">
+        <div className="flex gap-4 text-gray-500 text-sm">
+          <span className="text-gray-500">
             {map ? (map.createdAt instanceof Timestamp 
               ? map.createdAt.toDate().toLocaleDateString()
               : new Date(map.createdAt).toLocaleDateString()
             ) : 'New Map'}
           </span>
-          <span className="map-creator">{user?.displayName || 'Anonymous'}</span>
+          <span className="text-gray-500">{user?.displayName || 'Anonymous'}</span>
         </div>
-        <div className="visibility-toggle">
-            <label className="toggle-label">
-              <span>{isPublic ? 'Public' : 'Private'}</span>
-              <div
-                className={`toggle-switch ${isPublic ? 'active' : ''}`}
-                onClick={() => setIsPublic(!isPublic)}
-              >
-                <div className="toggle-slider" />
-              </div>
-            </label>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">{isPublic ? 'Public' : 'Private'}</span>
+            <div
+              className={`relative w-9 h-5 rounded-full cursor-pointer transition-all duration-200 ${
+                isPublic ? 'bg-blue-500' : 'bg-gray-300'
+              }`}
+              onClick={() => setIsPublic(!isPublic)}
+            >
+              <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all duration-200 ${
+                isPublic ? 'left-4' : 'left-0.5'
+              }`} />
+            </div>
           </div>
-        <div className="map-actions">
-          <button className="action-button like-button">
-            ↑ {map?.likes?.length || 0}
-          </button>
-          <button className="action-button comment-button">
-            💬 {map?.comments?.length || 0}
-          </button>
+          <div className="flex gap-2">
+            <button className="bg-transparent border-none text-gray-500 cursor-pointer p-2 text-base flex items-center gap-1 hover:text-blue-500">
+              ↑ {map?.likes?.length || 0}
+            </button>
+            <button className="bg-transparent border-none text-gray-500 cursor-pointer p-2 text-base flex items-center gap-1 hover:text-blue-500">
+              💬 {map?.comments?.length || 0}
+            </button>
+          </div>
         </div>
       </div>
 
       {showChapterSelection && (
-        <div className="chapter-selection-modal">
-          <div className="modal-overlay" onClick={() => setShowChapterSelection(false)} />
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Select Chapters</h2>
-              <button className="close-button" onClick={() => setShowChapterSelection(false)}>
+        <div className="fixed inset-0 z-50 flex justify-center items-center">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowChapterSelection(false)} />
+          <div className="relative bg-white rounded-lg p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="m-0 text-gray-800 text-2xl font-medium">Select Chapters</h2>
+              <button 
+                className="bg-transparent border-none text-2xl text-gray-600 cursor-pointer p-2 hover:text-gray-800" 
+                onClick={() => setShowChapterSelection(false)}
+              >
                 &times;
               </button>
             </div>
-            <div className="modal-body">
-              <div className="chapter-grid">
+            <div className="mb-6">
+              <div className="grid grid-cols-8 md:grid-cols-12 lg:grid-cols-16 gap-2 mt-4">
                 {allChapters.map((chapter) => (
                   <button
                     key={chapter}
-                    className={`chapter-button ${selectedChapters.has(chapter) ? 'selected-primary' : ''}`}
+                    className={`p-2 rounded cursor-pointer transition-all duration-200 text-sm text-center relative ${
+                      selectedChapters.has(chapter) 
+                        ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
+                        : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
+                    }`}
                     onClick={() => selectedChapters.has(chapter) 
                       ? handleRemoveChapter(chapter)
                       : handleAddChapter(chapter)
                     }
-                    data-title={getChapterTitle(chapter)}
+                    data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`}
                   >
                     {chapter}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="modal-footer">
+            <div className="flex justify-end gap-4">
               <button 
-                className="save-button"
+                className="px-4 py-2 bg-blue-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-blue-600"
                 onClick={() => setShowChapterSelection(false)}
               >
                 Done

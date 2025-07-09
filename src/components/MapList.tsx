@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
-import '../styles/MapList.css';
+import { MapCard } from './MapCard';
 
 interface MapListProps {
   publicMaps: ChapterMap[];
@@ -73,97 +73,71 @@ export const MapList = ({
   };
 
   const maps = activeTab === 'public' ? publicMaps : editableUserMaps;
+  const showDelete = activeTab === 'my-maps';
 
   return (
-    <div className="map-list-container">
-      <div className="map-tabs">
-        <button
-          className={`tab-button ${activeTab === 'public' ? 'active' : ''}`}
-          onClick={() => onTabChange('public')}
-        >
-          Public Maps
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'my-maps' ? 'active' : ''}`}
-          onClick={() => onTabChange('my-maps')}
-        >
-          My Maps
-        </button>
-      </div>
-
-      <div className="maps-table-container">
-        {maps.length > 0 ? (
-          <table className="maps-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Created By</th>
-                <th># of Chapters</th>
-                <th>Chapters</th>
-                <th>Theme</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {maps.map((map, index) => (
-                <tr 
-                  key={map.id} 
-                  onClick={() => onMapClick(map)}
-                  className="map-row"
-                >
-                  <td>{index + 1}</td>
-                  <td>{map.name}</td>
-                  <td>{map.userName}</td>
-                  <td>{map.selectedChapters.length}</td>
-                  <td className="chapters-cell">
-                    {map.selectedChapters.sort((a, b) => a - b).join(', ')}
-                  </td>
-                  <td>{map.theme}</td>
-                  <td className="actions-cell">
-                    <button 
-                      className="action-button like-button"
-                      onClick={(e) => handleLike(e, map.id)}
-                      title="Like"
-                    >
-                      ↑ {map.likes?.length || 0}
-                    </button>
-                    <button 
-                      className="action-button comment-button"
-                      onClick={(e) => handleComment(e, map.id)}
-                      title="Comment"
-                    >
-                      💬 {map.comments?.length || 0}
-                    </button>
-                    {activeTab === 'my-maps' && (
-                      <button 
-                        className="action-button delete-button"
-                        onClick={(e) => handleDelete(e, map.id)}
-                        title="Delete"
-                      >
-                        🗑️
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p className="no-maps-message">
-            {activeTab === 'public' 
-              ? 'No public maps available'
-              : user
-                ? "You haven't created any maps yet"
-                : 'Sign in to create and view your maps'
-            }
-          </p>
-        )}
-        {user && activeTab === 'my-maps' && (
-          <button className="add-map-button" onClick={handleCreateClick}>
-            Create New Map
+    <div className="w-full mx-auto my-8 flex gap-8 md:flex-col md:gap-4 lg:px-16">
+      <div className="flex-1 min-w-0">
+        <div className="flex mb-4 border-b-2 border-gray-300 pb-2">
+          <button
+            className={`flex-1 px-6 py-3 border-none bg-transparent text-lg text-gray-600 cursor-pointer transition-all duration-200 relative m-0 hover:text-blue-500 ${
+              activeTab === 'public' ? 'text-blue-500 font-medium' : ''
+            }`}
+            onClick={() => onTabChange('public')}
+          >
+            Public Maps
+            {activeTab === 'public' && (
+              <div className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-blue-500"></div>
+            )}
           </button>
-        )}
+          <button
+            className={`flex-1 px-6 py-3 border-none bg-transparent text-lg text-gray-600 cursor-pointer transition-all duration-200 relative m-0 hover:text-blue-500 ${
+              activeTab === 'my-maps' ? 'text-blue-500 font-medium' : ''
+            }`}
+            onClick={() => onTabChange('my-maps')}
+          >
+            My Maps
+            {activeTab === 'my-maps' && (
+              <div className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-blue-500"></div>
+            )}
+          </button>
+        </div>
+
+        <div>
+          {maps.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 p-4 md:p-2">
+              {maps.map((map, index) => (
+                <MapCard
+                  key={map.id}
+                  map={map}
+                  onMapClick={onMapClick}
+                  onLike={handleLike}
+                  onComment={handleComment}
+                  onDelete={handleDelete}
+                  showDelete={showDelete}
+                  index={index}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center py-10 text-gray-600 italic">
+              {activeTab === 'public' 
+                ? 'No public maps available'
+                : user
+                  ? "You haven't created any maps yet"
+                  : 'Sign in to create and view your maps'
+              }
+            </p>
+          )}
+          {user && activeTab === 'my-maps' && (
+            <button 
+              className="mt-5 px-5 py-2.5 bg-blue-500 text-white border-none rounded cursor-pointer text-sm transition-colors duration-200 hover:bg-blue-700" 
+              onClick={handleCreateClick}
+            >
+              Create New Map
+            </button>
+          )}
+        </div>
       </div>
 
       {showSignInModal && (
