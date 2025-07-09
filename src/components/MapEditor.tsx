@@ -234,7 +234,7 @@ export function MapEditor() {
       </div>
 
       <div className="flex flex-col flex-1 min-h-0 gap-8">
-        <div className="flex flex-wrap items-center gap-2 p-4 border-b border-gray-200">
+        <div className="flex items-center gap-4 p-4 border-b border-gray-200">
           <button 
             className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
               selectedChapter === null 
@@ -246,19 +246,21 @@ export function MapEditor() {
             Summary
           </button>
           <div className="w-px h-6 bg-gray-300"></div>
-          {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
-            <button
-              key={chapter}
-              className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
-                selectedChapter === chapter 
-                  ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
-                  : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
-              }`}
-              onClick={() => handleChapterClick(chapter)}
-            >
-              {getChapterTitle(chapter)}
-            </button>
-          ))}
+          <div className="flex flex-wrap items-center gap-2 flex-1">
+            {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
+              <button
+                key={chapter}
+                className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
+                  selectedChapter === chapter 
+                    ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
+                    : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
+                }`}
+                onClick={() => handleChapterClick(chapter)}
+              >
+                {getChapterTitle(chapter)}
+              </button>
+            ))}
+          </div>
           <button 
             className="px-4 py-2 border border-blue-500 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-blue-500 hover:bg-blue-500 hover:text-white whitespace-nowrap"
             onClick={() => setShowChapterSelection(true)}

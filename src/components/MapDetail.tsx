@@ -119,7 +119,7 @@ export function MapDetail() {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center px-8 md:px-4 py-4 bg-white border-b border-gray-200 gap-2">
+      <div className="flex items-center px-8 md:px-4 py-4 bg-white border-b border-gray-200 gap-4">
         <button
           className={`px-6 py-3 rounded cursor-pointer transition-all duration-200 text-lg font-medium ${
             selectedChapter === null 
@@ -130,22 +130,24 @@ export function MapDetail() {
         >
           Summary
         </button>
-        <div className="w-px h-6 bg-gray-300 mx-4"></div>
-        {map.selectedChapters
-          .sort((a, b) => a - b)
-          .map((chapter) => (
-            <button
-              key={chapter}
-              className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
-                selectedChapter === chapter 
-                  ? "bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600" 
-                  : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
-              }`}
-              onClick={() => handleChapterClick(chapter)}
-            >
-              {getChapterTitle(chapter)}
-            </button>
-          ))}
+        <div className="w-px h-6 bg-gray-300"></div>
+        <div className="flex flex-wrap items-center gap-2 flex-1">
+          {map.selectedChapters
+            .sort((a, b) => a - b)
+            .map((chapter) => (
+              <button
+                key={chapter}
+                className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
+                  selectedChapter === chapter 
+                    ? "bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600" 
+                    : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
+                }`}
+                onClick={() => handleChapterClick(chapter)}
+              >
+                {getChapterTitle(chapter)}
+              </button>
+            ))}
+        </div>
       </div>
 
       <div className="flex-1 p-8 md:p-4 overflow-y-auto flex flex-col min-h-0 bg-white border border-gray-200 rounded-lg shadow-sm mx-4">
