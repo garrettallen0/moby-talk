@@ -4,12 +4,7 @@ import { ChapterMap } from "../types/map";
 import { getPublicMaps, getUserMaps } from "../services/mapService";
 import { useAuth } from "../contexts/AuthContext";
 import { Timestamp } from "firebase/firestore";
-
-const SPECIAL_CHAPTERS = {
-  "-1": "Extracts",
-  "0": "Etymology",
-  "136": "Epilogue",
-} as const;
+import { ChapterNavigation } from "./ChapterNavigation";
 
 export function MapDetail() {
   const location = useLocation();
@@ -76,12 +71,7 @@ export function MapDetail() {
     setSelectedChapter(null);
   };
 
-  const getChapterTitle = (chapter: number) => {
-    return (
-      SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] ||
-      `Chapter ${chapter}`
-    );
-  };
+
 
   const handleBackClick = () => {
     navigate("/");
@@ -119,36 +109,13 @@ export function MapDetail() {
         )}
       </div>
 
-      <div className="flex items-center px-8 md:px-4 py-4 bg-white border-b border-gray-200 gap-4">
-        <button
-          className={`px-6 py-3 rounded cursor-pointer transition-all duration-200 text-lg font-medium ${
-            selectedChapter === null 
-              ? "bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600" 
-              : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
-          }`}
-          onClick={handleSummaryClick}
-        >
-          Summary
-        </button>
-        <div className="w-px h-6 bg-gray-300"></div>
-        <div className="flex flex-wrap items-center gap-2 flex-1">
-          {map.selectedChapters
-            .sort((a, b) => a - b)
-            .map((chapter) => (
-              <button
-                key={chapter}
-                className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
-                  selectedChapter === chapter 
-                    ? "bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600" 
-                    : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
-                }`}
-                onClick={() => handleChapterClick(chapter)}
-              >
-                {getChapterTitle(chapter)}
-              </button>
-            ))}
-        </div>
-      </div>
+      <ChapterNavigation
+        selectedChapter={selectedChapter}
+        chapters={map.selectedChapters}
+        onChapterClick={handleChapterClick}
+        onSummaryClick={handleSummaryClick}
+        variant="detail"
+      />
 
       <div className="flex-1 p-8 md:p-4 overflow-y-auto flex flex-col min-h-0 bg-white border border-gray-200 rounded-lg shadow-sm mx-4">
         {selectedChapter === null ? (

@@ -3,15 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ChapterMap, ChapterAnnotation, Citation } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapService';
-import { AVAILABLE_THEMES } from '../constants/themes';
+import { AVAILABLE_THEMES, SPECIAL_CHAPTERS } from '../constants/themes';
 import { ConfirmationModal } from './ConfirmationModal';
+import { ChapterNavigation } from './ChapterNavigation';
 import { Timestamp } from 'firebase/firestore';
-
-const SPECIAL_CHAPTERS = {
-  '-1': 'Extracts',
-  '0': 'Etymology',
-  '136': 'Epilogue',
-} as const;
 
 export function MapEditor() {
   const navigate = useNavigate();
@@ -79,9 +74,7 @@ export function MapEditor() {
     }
   };
 
-  const getChapterTitle = (chapter: number) => {
-    return SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`;
-  };
+
 
   const handleSave = async () => {
     if (!user || !name.trim() || selectedChapters.size === 0) return;
@@ -234,40 +227,14 @@ export function MapEditor() {
       </div>
 
       <div className="flex flex-col flex-1 min-h-0 gap-8">
-        <div className="flex items-center gap-4 p-4 border-b border-gray-200">
-          <button 
-            className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
-              selectedChapter === null 
-                ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
-                : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
-            }`}
-            onClick={handleSummaryClick}
-          >
-            Summary
-          </button>
-          <div className="w-px h-6 bg-gray-300"></div>
-          <div className="flex flex-wrap items-center gap-2 flex-1">
-            {Array.from(selectedChapters).sort((a, b) => a - b).map(chapter => (
-              <button
-                key={chapter}
-                className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
-                  selectedChapter === chapter 
-                    ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
-                    : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
-                }`}
-                onClick={() => handleChapterClick(chapter)}
-              >
-                {getChapterTitle(chapter)}
-              </button>
-            ))}
-          </div>
-          <button 
-            className="px-4 py-2 border border-blue-500 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-blue-500 hover:bg-blue-500 hover:text-white whitespace-nowrap"
-            onClick={() => setShowChapterSelection(true)}
-          >
-            + Add Chapter
-          </button>
-        </div>
+        <ChapterNavigation
+          selectedChapter={selectedChapter}
+          chapters={Array.from(selectedChapters)}
+          onChapterClick={handleChapterClick}
+          onSummaryClick={handleSummaryClick}
+          variant="editor"
+          onAddChapter={() => setShowChapterSelection(true)}
+        />
 
         <div className="flex-1 p-4">
           {selectedChapter === null ? (
@@ -408,7 +375,7 @@ export function MapEditor() {
                       ? handleRemoveChapter(chapter)
                       : handleAddChapter(chapter)
                     }
-                    data-title={getChapterTitle(chapter)}
+                    data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`}
                   >
                     {chapter}
                   </button>
