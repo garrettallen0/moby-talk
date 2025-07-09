@@ -327,18 +327,20 @@ export function MapEditor() {
         </div>
 
         <div className="p-4 border-t border-gray-200">
-          <select
-            className="bg-transparent border-none text-purple-800 text-base cursor-pointer p-0 font-medium focus:outline-none"
-            value={selectedTheme}
-            onChange={(e) => setSelectedTheme(e.target.value)}
-          >
-            <option value="" disabled>Select a theme</option>
-            {AVAILABLE_THEMES.map((theme) => (
-              <option key={theme} value={theme} className="bg-white text-purple-800">
-                {theme}
-              </option>
-            ))}
-          </select>
+          <div className="inline-flex items-center gap-3 px-5 py-2 bg-purple-100 rounded-full shadow-sm w-fit self-center">
+            <select
+              className="bg-transparent border-none text-purple-800 text-base cursor-pointer font-medium focus:outline-none"
+              value={selectedTheme}
+              onChange={(e) => setSelectedTheme(e.target.value)}
+            >
+              <option value="" disabled>Select a theme</option>
+              {AVAILABLE_THEMES.map((theme) => (
+                <option key={theme} value={theme} className="bg-white text-purple-800">
+                  {theme}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
