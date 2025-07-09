@@ -76,7 +76,7 @@ export const MapList = ({
   const showDelete = activeTab === 'my-maps';
 
   return (
-    <div className="w-full mx-auto my-8 flex gap-8 md:flex-col md:gap-4">
+    <div className="w-full mx-auto my-8 flex gap-8 md:flex-col md:gap-4 lg:px-16">
       <div className="flex-1 min-w-0">
         <div className="flex mb-4 border-b-2 border-gray-300 pb-2">
           <button
@@ -105,7 +105,7 @@ export const MapList = ({
 
         <div>
           {maps.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4 md:p-2">
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 p-4 md:p-2">
               {maps.map((map, index) => (
                 <MapCard
                   key={map.id}
