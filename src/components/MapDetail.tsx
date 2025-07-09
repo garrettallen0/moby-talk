@@ -156,8 +156,10 @@ export function MapDetail() {
                   }).map((_, index) => (
                     <div
                       key={index}
-                      className={`w-6 h-6 border border-gray-300 rounded-full flex items-center justify-center text-xs text-gray-600 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 ${
-                        index === selectedCitation ? "bg-blue-500 border-blue-500 text-white" : ""
+                      className={`w-6 h-6 border rounded-full flex items-center justify-center text-xs cursor-pointer transition-all duration-200 ${
+                        index === selectedCitation 
+                          ? "bg-blue-500 border-blue-500 text-white" 
+                          : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
                       }`}
                       onClick={() => handleCitationClick(index)}
                     >
