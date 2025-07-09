@@ -356,13 +356,13 @@ export function MapEditor() {
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">{isPublic ? 'Public' : 'Private'}</span>
             <div
-              className={`relative w-9 h-5 bg-gray-300 rounded-full cursor-pointer transition-all duration-200 ${
-                isPublic ? 'bg-blue-500' : ''
+              className={`relative w-9 h-5 rounded-full cursor-pointer transition-all duration-200 ${
+                isPublic ? 'bg-blue-500' : 'bg-gray-300'
               }`}
               onClick={() => setIsPublic(!isPublic)}
             >
-              <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-all duration-200 ${
-                isPublic ? 'translate-x-4' : ''
+              <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all duration-200 ${
+                isPublic ? 'left-4' : 'left-0.5'
               }`} />
             </div>
           </div>
