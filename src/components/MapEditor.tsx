@@ -326,7 +326,7 @@ export function MapEditor() {
           )}
         </div>
 
-        <div className="p-4 border-t border-gray-200">
+        <div className="flex justify-center p-4 border-t border-gray-200">
           <div className="inline-flex items-center gap-3 px-5 py-2 bg-purple-100 rounded-full shadow-sm w-fit self-center">
             <select
               className="bg-transparent border-none text-purple-800 text-base cursor-pointer font-medium focus:outline-none"
