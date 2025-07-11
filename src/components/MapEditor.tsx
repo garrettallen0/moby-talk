@@ -196,6 +196,40 @@ export function MapEditor() {
     }));
   };
 
+  const handleDeleteCitation = (citationIndex: number) => {
+    if (selectedChapter === null) return;
+    
+    // Update local state to reflect the deletion
+    setChapterAnnotations(prev => {
+      const currentAnnotation = prev[selectedChapter];
+      if (!currentAnnotation) return prev;
+      
+      const updatedCitations = currentAnnotation.citations?.filter((_, index) => index !== citationIndex) || [];
+      
+      // If no citations remain and no annotation, remove the chapter entry
+      if (updatedCitations.length === 0 && !currentAnnotation.annotation) {
+        const rest = { ...prev };
+        delete rest[selectedChapter];
+        return rest;
+      }
+      
+      return {
+        ...prev,
+        [selectedChapter]: {
+          ...currentAnnotation,
+          citations: updatedCitations
+        }
+      };
+    });
+    
+    // Remove from selected citations if it was selected
+    setSelectedCitations(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(citationIndex);
+      return newSet;
+    });
+  };
+
   return (
     <div className="flex flex-col bg-white border border-gray-200 rounded-xl shadow-lg mx-auto overflow-hidden max-w-6xl">
       <div className="flex items-center p-4 bg-white border-b border-gray-200 gap-4">
@@ -298,12 +332,19 @@ export function MapEditor() {
                   .map((citationIndex) => {
                     const citation = chapterAnnotations[selectedChapter].citations[citationIndex];
                     return citation ? (
-                      <div key={citationIndex} className="p-4 bg-gray-50 border border-gray-200 rounded">
+                      <div key={citationIndex} className="p-4 bg-gray-50 border border-gray-200 rounded relative">
+                        <button
+                          onClick={() => handleDeleteCitation(citationIndex)}
+                          className="absolute top-2 right-2 p-1 text-gray-600 hover:text-red-500 transition-colors duration-200"
+                          title="Delete citation"
+                        >
+                          🗑️
+                        </button>
                         <textarea
                           placeholder="Enter citation..."
                           value={citation.passage}
                           onChange={(e) => handleCitationChange(citationIndex, e.target.value)}
-                          className="w-full min-h-24 p-2 border-none bg-transparent text-gray-900 text-base leading-relaxed resize-y focus:outline-none placeholder-gray-500"
+                          className="w-full min-h-24 p-2 pr-8 border-none bg-transparent text-gray-900 text-base leading-relaxed resize-y focus:outline-none placeholder-gray-500"
                         />
                       </div>
                     ) : null;
