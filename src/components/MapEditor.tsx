@@ -314,10 +314,13 @@ export function MapEditor() {
                       </div>
                     ))}
                     <div
-                      className="w-6 h-6 border border-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-gray-600 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
+                      className="w-6 h-6 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
                       onClick={handleAddCitation}
                     >
-                      +
+                      <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="2" fill="none" className="text-gray-600">
+                        <line x1="6" y1="2" x2="6" y2="10"/>
+                        <line x1="2" y1="6" x2="10" y2="6"/>
+                      </svg>
                     </div>
                   </div>
                 </div>
