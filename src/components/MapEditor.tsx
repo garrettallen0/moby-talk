@@ -15,6 +15,7 @@ export function MapEditor() {
   const [map, setMap] = useState<ChapterMap | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState('');
   const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set());
@@ -36,6 +37,7 @@ export function MapEditor() {
             setMap(loadedMap);
             setName(loadedMap.name);
             setDescription(loadedMap.description || '');
+            setShortDescription(loadedMap.shortDescription || '');
             setIsPublic(loadedMap.isPublic);
             setSelectedTheme(loadedMap.theme || '');
             setSelectedChapters(new Set(loadedMap.selectedChapters));
@@ -84,6 +86,7 @@ export function MapEditor() {
       id: map?.id || '',
       name: name.trim(),
       description,
+      shortDescription,
       userId: user.uid,
       userName: user.displayName || 'Anonymous',
       isPublic,
@@ -99,6 +102,7 @@ export function MapEditor() {
         await updateMap(id, {
           name: updatedMap.name,
           description: updatedMap.description,
+          shortDescription: updatedMap.shortDescription,
           isPublic: updatedMap.isPublic,
           selectedChapters: updatedMap.selectedChapters,
           theme: updatedMap.theme,
@@ -111,6 +115,7 @@ export function MapEditor() {
           updatedMap.name,
           updatedMap.selectedChapters,
           updatedMap.description,
+          updatedMap.shortDescription,
           updatedMap.isPublic,
           updatedMap.chapterAnnotations,
           updatedMap.theme
@@ -246,13 +251,23 @@ export function MapEditor() {
 
         <div className="flex-1 p-4">
           {selectedChapter === null ? (
-            <div className="max-w-4xl mx-auto">
-              <textarea
-                placeholder="Enter map description..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full min-h-48 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
+            <div className="max-w-4xl mx-auto space-y-4">
+              <div>
+                <textarea
+                  placeholder="Summary..."
+                  value={shortDescription}
+                  onChange={(e) => setShortDescription(e.target.value)}
+                  className="w-full min-h-20 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                />
+              </div>
+              <div>
+                <textarea
+                  placeholder="Description..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full min-h-48 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                />
+              </div>
             </div>
           ) : (
             <div className="max-w-4xl mx-auto flex flex-col gap-4">

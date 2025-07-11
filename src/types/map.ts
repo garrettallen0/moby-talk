@@ -21,6 +21,7 @@ export interface ChapterMap {
   id: string;
   name: string;
   description: string;
+  shortDescription: string;
   userId: string;
   userName: string;
   isPublic: boolean;

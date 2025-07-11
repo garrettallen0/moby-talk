@@ -36,6 +36,9 @@ export const CommentModal = ({ map, onClose, onComment }: CommentModalProps) => 
 
         <div className="theme-summary">
           <h3>Theme Info</h3>
+          {map.shortDescription && (
+            <p className="summary-brief">{map.shortDescription}</p>
+          )}
           <p>{map.description || 'No description provided'}</p>
           {map.selectedChapters.length > 0 ? (
             <div className="selected-chapters-mini">
