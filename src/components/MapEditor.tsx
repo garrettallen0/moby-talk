@@ -253,11 +253,24 @@ export function MapEditor() {
           {selectedChapter === null ? (
             <div className="max-w-4xl mx-auto space-y-4">
               <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-sm font-medium text-gray-700">Summary</label>
+                  <span className={`text-xs ${shortDescription.length > 160 ? 'text-red-500' : 'text-gray-500'}`}>
+                    {shortDescription.length}/160
+                  </span>
+                </div>
                 <textarea
                   placeholder="Summary..."
                   value={shortDescription}
-                  onChange={(e) => setShortDescription(e.target.value)}
-                  className="w-full min-h-20 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length <= 160) {
+                      setShortDescription(value);
+                    }
+                  }}
+                  className={`w-full min-h-20 p-4 border rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                    shortDescription.length > 160 ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
+                  }`}
                 />
               </div>
               <div>
