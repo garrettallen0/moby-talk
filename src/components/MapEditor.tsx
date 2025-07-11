@@ -15,6 +15,7 @@ export function MapEditor() {
   const [map, setMap] = useState<ChapterMap | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState('');
   const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set());
@@ -36,6 +37,7 @@ export function MapEditor() {
             setMap(loadedMap);
             setName(loadedMap.name);
             setDescription(loadedMap.description || '');
+            setShortDescription(loadedMap.shortDescription || '');
             setIsPublic(loadedMap.isPublic);
             setSelectedTheme(loadedMap.theme || '');
             setSelectedChapters(new Set(loadedMap.selectedChapters));
@@ -84,6 +86,7 @@ export function MapEditor() {
       id: map?.id || '',
       name: name.trim(),
       description,
+      shortDescription,
       userId: user.uid,
       userName: user.displayName || 'Anonymous',
       isPublic,
@@ -99,6 +102,7 @@ export function MapEditor() {
         await updateMap(id, {
           name: updatedMap.name,
           description: updatedMap.description,
+          shortDescription: updatedMap.shortDescription,
           isPublic: updatedMap.isPublic,
           selectedChapters: updatedMap.selectedChapters,
           theme: updatedMap.theme,
@@ -111,6 +115,7 @@ export function MapEditor() {
           updatedMap.name,
           updatedMap.selectedChapters,
           updatedMap.description,
+          updatedMap.shortDescription,
           updatedMap.isPublic,
           updatedMap.chapterAnnotations,
           updatedMap.theme
@@ -191,6 +196,40 @@ export function MapEditor() {
     }));
   };
 
+  const handleDeleteCitation = (citationIndex: number) => {
+    if (selectedChapter === null) return;
+    
+    // Update local state to reflect the deletion
+    setChapterAnnotations(prev => {
+      const currentAnnotation = prev[selectedChapter];
+      if (!currentAnnotation) return prev;
+      
+      const updatedCitations = currentAnnotation.citations?.filter((_, index) => index !== citationIndex) || [];
+      
+      // If no citations remain and no annotation, remove the chapter entry
+      if (updatedCitations.length === 0 && !currentAnnotation.annotation) {
+        const rest = { ...prev };
+        delete rest[selectedChapter];
+        return rest;
+      }
+      
+      return {
+        ...prev,
+        [selectedChapter]: {
+          ...currentAnnotation,
+          citations: updatedCitations
+        }
+      };
+    });
+    
+    // Remove from selected citations if it was selected
+    setSelectedCitations(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(citationIndex);
+      return newSet;
+    });
+  };
+
   return (
     <div className="flex flex-col bg-white border border-gray-200 rounded-xl shadow-lg mx-auto overflow-hidden max-w-6xl">
       <div className="flex items-center p-4 bg-white border-b border-gray-200 gap-4">
@@ -246,13 +285,36 @@ export function MapEditor() {
 
         <div className="flex-1 p-4">
           {selectedChapter === null ? (
-            <div className="max-w-4xl mx-auto">
-              <textarea
-                placeholder="Enter map description..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full min-h-48 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
+            <div className="max-w-4xl mx-auto space-y-4">
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-sm font-medium text-gray-700">Summary</label>
+                  <span className={`text-xs ${shortDescription.length > 160 ? 'text-red-500' : 'text-gray-500'}`}>
+                    {shortDescription.length}/160
+                  </span>
+                </div>
+                <textarea
+                  placeholder="Summary..."
+                  value={shortDescription}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length <= 160) {
+                      setShortDescription(value);
+                    }
+                  }}
+                  className={`w-full min-h-20 p-4 border rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                    shortDescription.length > 160 ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'
+                  }`}
+                />
+              </div>
+              <div>
+                <textarea
+                  placeholder="Description..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full min-h-48 p-4 border border-gray-300 rounded bg-white text-gray-900 text-base leading-relaxed resize-y focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                />
+              </div>
             </div>
           ) : (
             <div className="max-w-4xl mx-auto flex flex-col gap-4">
@@ -270,12 +332,19 @@ export function MapEditor() {
                   .map((citationIndex) => {
                     const citation = chapterAnnotations[selectedChapter].citations[citationIndex];
                     return citation ? (
-                      <div key={citationIndex} className="p-4 bg-gray-50 border border-gray-200 rounded">
+                      <div key={citationIndex} className="p-4 bg-gray-50 border border-gray-200 rounded relative">
+                        <button
+                          onClick={() => handleDeleteCitation(citationIndex)}
+                          className="absolute top-2 right-2 p-1 text-gray-600 hover:text-red-500 transition-colors duration-200"
+                          title="Delete citation"
+                        >
+                          🗑️
+                        </button>
                         <textarea
                           placeholder="Enter citation..."
                           value={citation.passage}
                           onChange={(e) => handleCitationChange(citationIndex, e.target.value)}
-                          className="w-full min-h-24 p-2 border-none bg-transparent text-gray-900 text-base leading-relaxed resize-y focus:outline-none placeholder-gray-500"
+                          className="w-full min-h-24 p-2 pr-8 border-none bg-transparent text-gray-900 text-base leading-relaxed resize-y focus:outline-none placeholder-gray-500"
                         />
                       </div>
                     ) : null;
@@ -299,10 +368,13 @@ export function MapEditor() {
                       </div>
                     ))}
                     <div
-                      className="w-6 h-6 border border-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-gray-600 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
+                      className="w-6 h-6 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
                       onClick={handleAddCitation}
                     >
-                      +
+                      <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="2" fill="none" className="text-gray-600">
+                        <line x1="6" y1="2" x2="6" y2="10"/>
+                        <line x1="2" y1="6" x2="10" y2="6"/>
+                      </svg>
                     </div>
                   </div>
                 </div>
