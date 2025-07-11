@@ -15,6 +15,24 @@ import {
 import { db } from '../firebase';
 import { ChapterMap, ChapterAnnotation } from '../types/map';
 
+// Utility function to clean chapter annotations by removing empty citations
+const cleanChapterAnnotations = (annotations: Record<number, ChapterAnnotation>): Record<number, ChapterAnnotation> => {
+  const cleaned: Record<number, ChapterAnnotation> = {};
+  
+  Object.entries(annotations).forEach(([chapter, annotation]) => {
+    const filteredCitations = annotation.citations?.filter(citation => 
+      citation.passage && citation.passage.trim() !== ''
+    ) || [];
+    
+    cleaned[Number(chapter)] = {
+      ...annotation,
+      citations: filteredCitations
+    };
+  });
+  
+  return cleaned;
+};
+
 const MAPS_COLLECTION = 'maps';
 
 export const saveMap = async (
@@ -38,7 +56,7 @@ export const saveMap = async (
       selectedChapters,
       isPublic,
       likes: [],
-      chapterAnnotations,
+      chapterAnnotations: cleanChapterAnnotations(chapterAnnotations),
       theme,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -62,6 +80,11 @@ export const updateMap = async (
     delete updateData.id;
     delete updateData.createdAt;
     delete updateData.updatedAt;
+    
+    // Clean chapter annotations if they exist in the update data
+    if (updateData.chapterAnnotations) {
+      updateData.chapterAnnotations = cleanChapterAnnotations(updateData.chapterAnnotations);
+    }
     
     await updateDoc(mapRef, {
       ...updateData,
