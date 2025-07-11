@@ -127,8 +127,21 @@ export function MapDetail() {
 
       <div className="flex-1 p-8 md:p-4 overflow-y-auto flex flex-col min-h-0 bg-white border border-gray-200 rounded-lg shadow-sm mx-4">
         {selectedChapter === null ? (
-          <div className="text-gray-900 text-base leading-relaxed">
-            {map.description || "No summary available."}
+          <div className="space-y-4">
+            {map.shortDescription && (
+              <div className="p-4 border rounded-lg">
+                <h3 className="text-sm font-bold mb-2">Summary</h3>
+                <div className="text-base leading-relaxed">
+                  {map.shortDescription}
+                </div>
+              </div>
+            )}
+            <div className="p-4 border rounded-lg">
+              <h3 className="text-sm font-bold mb-2">Description</h3>
+              <div className="text-base leading-relaxed">
+                {map.description || "No summary available."}
+              </div>
+            </div>
           </div>
         ) : (
           <>

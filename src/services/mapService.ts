@@ -23,6 +23,7 @@ export const saveMap = async (
   name: string,
   selectedChapters: number[],
   description: string = '',
+  shortDescription: string = '',
   isPublic: boolean = false,
   chapterAnnotations: Record<number, ChapterAnnotation> = {},
   theme: string = ''
@@ -31,6 +32,7 @@ export const saveMap = async (
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
+      shortDescription,
       userId,
       userName,
       selectedChapters,
