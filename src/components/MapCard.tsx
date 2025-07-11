@@ -38,6 +38,12 @@ export const MapCard = ({
         )}
       </div>
       <div className="p-4">
+        {map.shortDescription && (
+          <div className="flex mb-3 last:mb-0">
+          <label className="w-2/5 text-gray-600 text-sm">Summary</label>
+          <span className="flex-1 text-gray-800">{map.shortDescription}</span>
+        </div>
+        )}
         <div className="flex mb-3 last:mb-0">
           <label className="w-2/5 text-gray-600 text-sm"># of Chapters</label>
           <span className="flex-1 text-gray-800">{map.selectedChapters.length}</span>
