@@ -216,10 +216,19 @@ export const addComment = async (mapId: string, userId: string, userName: string
       userId,
       userName,
       text,
-      createdAt: serverTimestamp()
+      createdAt: new Date()
     };
 
-    const mapRef = doc(db, 'maps', mapId);
+    const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    
+    // First, get the current document to check if comments array exists
+    const mapDoc = await getDoc(mapRef);
+    const mapData = mapDoc.data();
+    
+    if (!mapData) {
+      throw new Error('Map not found');
+    }
+
     await updateDoc(mapRef, {
       comments: arrayUnion(comment)
     });

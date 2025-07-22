@@ -7,6 +7,7 @@ import { Timestamp } from "firebase/firestore";
 import { ChapterNavigation } from "./ChapterNavigation";
 import { SummaryView } from "./SummaryView";
 import { ChapterView } from "./ChapterView";
+import { CommentModal } from "./CommentModal";
 
 export function MapDetail() {
   const location = useLocation();
@@ -15,6 +16,7 @@ export function MapDetail() {
   const [map, setMap] = useState<ChapterMap | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [selectedCitations, setSelectedCitations] = useState<Set<number>>(new Set());
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
 
   useEffect(() => {
     const mapId = location.state?.mapId;
@@ -81,6 +83,24 @@ export function MapDetail() {
 
   const handleEditClick = () => {
     navigate(`/map/${map.id}/edit`);
+  };
+
+  const handleCommentClick = () => {
+    if (!user) {
+      // You might want to show a sign-in modal here
+      return;
+    }
+    setIsCommentModalOpen(true);
+  };
+
+  const handleCommentModalClose = () => {
+    setIsCommentModalOpen(false);
+  };
+
+  const handleCommentAdded = () => {
+    // Refresh the map data to show the new comment
+    // This is a simple approach - you might want to implement a more sophisticated refresh
+    window.location.reload();
   };
 
   const isOwner = user && map.userId === user.uid;
@@ -155,11 +175,23 @@ export function MapDetail() {
           <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500">
             ↑ {map.likes?.length || 0}
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500">
+          <button 
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
+            onClick={handleCommentClick}
+          >
             💬 {map.comments?.length || 0}
           </button>
         </div>
       </div>
+
+      {map && (
+        <CommentModal
+          isOpen={isCommentModalOpen}
+          onClose={handleCommentModalClose}
+          map={map}
+          onCommentAdded={handleCommentAdded}
+        />
+      )}
     </div>
   );
 }

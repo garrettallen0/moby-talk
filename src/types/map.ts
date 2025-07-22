@@ -31,5 +31,5 @@ export interface ChapterMap {
   createdAt: Date;
   updatedAt: Date;
   likes?: string[];
-  comments?: any[];
+  comments?: Comment[];
 } 
