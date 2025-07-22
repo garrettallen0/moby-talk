@@ -216,7 +216,8 @@ export const addComment = async (mapId: string, userId: string, userName: string
       userId,
       userName,
       text,
-      createdAt: new Date()
+      createdAt: new Date(),
+      likes: []
     };
 
     const mapRef = doc(db, MAPS_COLLECTION, mapId);
@@ -234,6 +235,46 @@ export const addComment = async (mapId: string, userId: string, userName: string
     });
   } catch (error) {
     console.error('Error adding comment:', error);
+    throw error;
+  }
+};
+
+export const toggleCommentLike = async (mapId: string, commentId: string, userId: string): Promise<void> => {
+  try {
+    const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    const mapDoc = await getDoc(mapRef);
+    const mapData = mapDoc.data();
+    
+    if (!mapData) {
+      throw new Error('Map not found');
+    }
+
+    const comments = mapData.comments || [];
+    const commentIndex = comments.findIndex((comment: any) => comment.id === commentId);
+    
+    if (commentIndex === -1) {
+      throw new Error('Comment not found');
+    }
+
+    const comment = comments[commentIndex];
+    const likes = comment.likes || [];
+    const hasLiked = likes.includes(userId);
+
+    // Create updated comment
+    const updatedComment = {
+      ...comment,
+      likes: hasLiked ? likes.filter((id: string) => id !== userId) : [...likes, userId]
+    };
+
+    // Create updated comments array
+    const updatedComments = [...comments];
+    updatedComments[commentIndex] = updatedComment;
+
+    await updateDoc(mapRef, {
+      comments: updatedComments
+    });
+  } catch (error) {
+    console.error('Error toggling comment like:', error);
     throw error;
   }
 };

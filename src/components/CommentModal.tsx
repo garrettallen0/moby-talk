@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
-import { addComment } from '../services/mapService';
+import { addComment, toggleCommentLike } from '../services/mapService';
 
 interface CommentModalProps {
   isOpen: boolean;
@@ -50,7 +50,8 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
         userId: user.uid,
         userName: user.displayName || 'Anonymous',
         text: commentText.trim(),
-        createdAt: new Date()
+        createdAt: new Date(),
+        likes: []
       };
       
       const updatedMap = {
@@ -74,6 +75,38 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
       return date.toDate().toLocaleDateString();
     }
     return 'Unknown date';
+  };
+
+  const handleCommentLike = async (commentId: string) => {
+    if (!user) return;
+    
+    try {
+      await toggleCommentLike(map.id, commentId, user.uid);
+      
+      // Update the map locally to reflect the like change
+      const updatedComments = map.comments?.map(comment => {
+        if (comment.id === commentId) {
+          const likes = comment.likes || [];
+          const hasLiked = likes.includes(user.uid);
+          return {
+            ...comment,
+            likes: hasLiked 
+              ? likes.filter(id => id !== user.uid)
+              : [...likes, user.uid]
+          };
+        }
+        return comment;
+      }) || [];
+      
+      const updatedMap = {
+        ...map,
+        comments: updatedComments
+      };
+      
+      onCommentAdded?.(updatedMap);
+    } catch (error) {
+      console.error('Error toggling comment like:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -161,42 +194,46 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
           {/* Existing Comments */}
           <div className="space-y-6">
             {map.comments && map.comments.length > 0 ? (
-              map.comments.map((comment: any, index: number) => (
-                <div key={index} className="p-4 pl-0 border-b pb-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="flex items-center gap-2">
-                        <span className="relative flex shrink-0 overflow-hidden rounded-full h-6 w-6">
-                          <span className="flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-gray-600 text-xs font-medium">
-                            {comment.userName?.charAt(0)?.toUpperCase() || 'U'}
+              map.comments.map((comment: any, index: number) => {
+                const hasLiked = comment.likes?.includes(user?.uid) || false;
+                return (
+                  <div key={index} className="p-4 pl-0 border-b pb-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="relative flex shrink-0 overflow-hidden rounded-full h-6 w-6">
+                            <span className="flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-gray-600 text-xs font-medium">
+                              {comment.userName?.charAt(0)?.toUpperCase() || 'U'}
+                            </span>
                           </span>
+                          <span className="text-sm font-medium">{comment.userName}</span>
+                        </div>
+                        <span className="text-xs text-gray-500">•</span>
+                        <span className="text-xs text-gray-500">
+                          {formatDate(comment.createdAt)}
                         </span>
-                        <span className="text-sm font-medium">{comment.userName}</span>
                       </div>
-                      <span className="text-xs text-gray-500">•</span>
-                      <span className="text-xs text-gray-500">
-                        {formatDate(comment.createdAt)}
-                      </span>
+                    </div>
+                    <p className="text-sm mb-6 break-words">{comment.text}</p>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-4">
+                        <button 
+                          onClick={() => handleCommentLike(comment.id)}
+                          disabled={!user}
+                          className={`flex items-center gap-1.5 text-xs transition-colors rounded px-2 py-1 ${
+                            hasLiked 
+                              ? 'text-blue-500 hover:text-blue-600' 
+                              : 'hover:text-blue-500'
+                          } ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <span>↑</span>
+                          <span className="text-xs text-gray-500">{comment.likes?.length || 0}</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <p className="text-sm mb-6 break-words">{comment.text}</p>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                      <button className="flex items-center gap-1.5 text-xs hover:text-blue-500 transition-colors rounded px-2 py-1">
-                        <span>↑</span>
-                        <span className="text-xs text-gray-500">0</span>
-                      </button>
-                      <button className="flex items-center gap-0.2 text-xs hover:text-blue-500 transition-colors">
-                        <span className="mr-2">💬</span>
-                        <span className="text-xs text-gray-500">0</span>
-                      </button>
-                      <button className="text-sm text-gray-500 hover:text-blue-500 transition-colors">
-                        Reply
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <p className="text-gray-500 text-center py-8">No comments yet. Be the first to comment!</p>
             )}
