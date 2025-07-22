@@ -1,9 +1,22 @@
+import { useAuth } from '../contexts/AuthContext';
+
 interface SignInModalProps {
   onClose: () => void;
-  onSignIn: () => void;
 }
 
-export const SignInModal = ({ onClose, onSignIn }: SignInModalProps) => {
+export const SignInModal = ({ onClose }: SignInModalProps) => {
+  const { signInWithGoogle } = useAuth();
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      onClose(); // Close modal after successful sign-in
+    } catch (error) {
+      console.error('Error signing in:', error);
+      // Optionally show error message to user
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
       <div 
@@ -28,7 +41,7 @@ export const SignInModal = ({ onClose, onSignIn }: SignInModalProps) => {
           </button>
           <button 
             type="button" 
-            onClick={onSignIn}
+            onClick={handleSignIn}
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors border-0 disabled:pointer-events-none disabled:opacity-50 bg-black text-white hover:bg-gray-900 h-10 px-4 py-2"
           >
             <img src="/google.webp" alt="Google Logo" className="h-6 w-6" />

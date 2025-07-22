@@ -143,10 +143,6 @@ export const MapList = ({
       {showSignInModal && (
         <SignInModal
           onClose={() => setShowSignInModal(false)}
-          onSignIn={() => {
-            setShowSignInModal(false);
-            onCreateMap();
-          }}
         />
       )}
     </div>
