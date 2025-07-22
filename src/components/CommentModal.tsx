@@ -7,7 +7,7 @@ interface CommentModalProps {
   isOpen: boolean;
   onClose: () => void;
   map: ChapterMap;
-  onCommentAdded?: () => void;
+  onCommentAdded?: (updatedMap: ChapterMap) => void;
 }
 
 export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentModalProps) {
@@ -43,7 +43,22 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
     try {
       await addComment(map.id, user.uid, user.displayName || 'Anonymous', commentText.trim());
       setCommentText('');
-      onCommentAdded?.();
+      
+      // Create updated map with new comment
+      const newComment = {
+        id: crypto.randomUUID(),
+        userId: user.uid,
+        userName: user.displayName || 'Anonymous',
+        text: commentText.trim(),
+        createdAt: new Date()
+      };
+      
+      const updatedMap = {
+        ...map,
+        comments: [...(map.comments || []), newComment]
+      };
+      
+      onCommentAdded?.(updatedMap);
     } catch (error) {
       console.error('Error adding comment:', error);
     } finally {

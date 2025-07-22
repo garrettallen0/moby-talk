@@ -97,10 +97,9 @@ export function MapDetail() {
     setIsCommentModalOpen(false);
   };
 
-  const handleCommentAdded = () => {
-    // Refresh the map data to show the new comment
-    // This is a simple approach - you might want to implement a more sophisticated refresh
-    window.location.reload();
+  const handleCommentAdded = (updatedMap: ChapterMap) => {
+    // Update the map state with the new comment
+    setMap(updatedMap);
   };
 
   const isOwner = user && map.userId === user.uid;

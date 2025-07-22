@@ -79,10 +79,9 @@ export const MapList = ({
     setSelectedMapForComment(null);
   };
 
-  const handleCommentAdded = () => {
-    // Refresh the maps data to show the new comment
-    // This is a simple approach - you might want to implement a more sophisticated refresh
-    window.location.reload();
+  const handleCommentAdded = (updatedMap: ChapterMap) => {
+    // Update the selected map for comment to show the new comment immediately
+    setSelectedMapForComment(updatedMap);
   };
 
   const maps = activeTab === 'public' ? publicMaps : editableUserMaps;
