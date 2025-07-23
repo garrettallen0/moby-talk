@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
-import { addComment, toggleCommentLike } from '../services/mapService';
+import { addComment, toggleCommentLike, toggleLike } from '../services/mapService';
 
 interface CommentModalProps {
   isOpen: boolean;
@@ -109,6 +109,29 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
     }
   };
 
+  const handleMapLike = async () => {
+    if (!user) return;
+    
+    try {
+      await toggleLike(map.id, user.uid);
+      
+      // Update the map locally to reflect the like change
+      const likes = map.likes || [];
+      const hasLiked = likes.includes(user.uid);
+      
+      const updatedMap = {
+        ...map,
+        likes: hasLiked 
+          ? likes.filter(id => id !== user.uid)
+          : [...likes, user.uid]
+      };
+      
+      onCommentAdded?.(updatedMap);
+    } catch (error) {
+      console.error('Error toggling map like:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -154,7 +177,15 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
           <p className="text-sm mb-6">{map.shortDescription || 'No description available'}</p>
           
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1.5 text-xs hover:text-blue-500 transition-colors rounded px-2 py-1">
+            <button 
+              onClick={() => handleMapLike()}
+              disabled={!user}
+              className={`flex items-center gap-1.5 text-xs transition-colors rounded px-2 py-1 ${
+                user?.uid && map.likes?.includes(user.uid)
+                  ? 'text-blue-500 hover:text-blue-600' 
+                  : 'hover:text-blue-500'
+              } ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
               <span>↑</span>
               <span className="text-xs text-gray-500">{map.likes?.length || 0}</span>
             </button>
