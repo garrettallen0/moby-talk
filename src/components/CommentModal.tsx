@@ -189,10 +189,10 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
               <span>↑</span>
               <span className="text-xs text-gray-500">{map.likes?.length || 0}</span>
             </button>
-            <button className="flex items-center gap-0.2 text-xs hover:text-blue-500 transition-colors">
+            <div className="flex items-center gap-0.2 text-xs text-gray-500">
               <span className="mr-2">💬</span>
-              <span className="text-xs text-gray-500">{map.comments?.length || 0}</span>
-            </button>
+              <span className="text-xs">{map.comments?.length || 0}</span>
+            </div>
           </div>
         </div>
 
