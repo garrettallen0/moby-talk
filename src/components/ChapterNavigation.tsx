@@ -26,29 +26,34 @@ export function ChapterNavigation({
 
   const isDetail = variant === 'detail';
   const summaryButtonClasses = isDetail 
-    ? 'px-6 py-3 text-lg font-medium' 
-    : 'px-4 py-2 text-sm whitespace-nowrap';
+    ? 'px-4 md:px-6 py-2 md:py-3 text-base md:text-lg font-medium' 
+    : 'px-3 md:px-4 py-2 text-sm whitespace-nowrap';
 
   return (
-    <div className="flex items-center gap-4 p-4 border-b border-gray-200">
-      <button
-        className={`rounded cursor-pointer transition-all duration-200 ${summaryButtonClasses} ${
-          selectedChapter === null 
-            ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
-            : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
-        }`}
-        onClick={onSummaryClick}
-      >
-        Summary
-      </button>
-      <div className="w-px h-6 bg-gray-300"></div>
-      <div className="flex flex-wrap items-center gap-2 flex-1">
+    <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 p-3 md:p-4 border-b border-gray-200">
+      {/* Summary button and divider - Mobile: full width, Desktop: inline */}
+      <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+        <button
+          className={`rounded cursor-pointer transition-all duration-200 ${summaryButtonClasses} ${
+            selectedChapter === null 
+              ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
+              : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
+          }`}
+          onClick={onSummaryClick}
+        >
+          Summary
+        </button>
+        <div className="hidden md:block w-px h-6 bg-gray-300"></div>
+      </div>
+      
+      {/* Chapter buttons - Mobile: scrollable, Desktop: flex wrap */}
+      <div className="flex items-center gap-2 flex-1 w-full md:w-auto overflow-x-auto md:overflow-x-visible md:flex-wrap pb-2 md:pb-0 scrollbar-hide">
         {chapters
           .sort((a, b) => a - b)
           .map((chapter) => (
             <button
               key={chapter}
-              className={`px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap ${
+              className={`px-3 md:px-4 py-2 rounded cursor-pointer transition-all duration-200 text-sm whitespace-nowrap flex-shrink-0 ${
                 selectedChapter === chapter 
                   ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
                   : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
@@ -59,9 +64,11 @@ export function ChapterNavigation({
             </button>
           ))}
       </div>
+      
+      {/* Add Chapter button - Mobile: full width, Desktop: inline */}
       {variant === 'editor' && onAddChapter && (
         <button 
-          className="px-4 py-2 border border-blue-500 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-blue-500 hover:bg-blue-500 hover:text-white whitespace-nowrap"
+          className="px-3 md:px-4 py-2 border border-blue-500 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-blue-500 hover:bg-blue-500 hover:text-white whitespace-nowrap w-full md:w-auto flex-shrink-0"
           onClick={onAddChapter}
         >
           + Add Chapter
