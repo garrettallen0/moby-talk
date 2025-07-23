@@ -5,7 +5,6 @@ import { MapList } from './MapList';
 import {
   deleteMap,
   toggleLike,
-  addComment,
 } from '../services/mapService';
 import { useAuth } from '../contexts/AuthContext';
 import { useLoadMaps } from '../hooks/useLoadMaps';
@@ -50,16 +49,7 @@ export function Home() {
     }
   };
 
-  const handleCommentMap = async (mapId: string, text: string) => {
-    if (!user) return;
 
-    try {
-      await addComment(mapId, user.uid, user.displayName || 'Anonymous', text);
-      handleGlobalRefresh();
-    } catch (error) {
-      console.error('Error adding comment:', error);
-    }
-  };
 
   const handleCreateMap = () => {
     if (!user) return;
@@ -78,7 +68,6 @@ export function Home() {
         onMapClick={handleMapClick}
         onCreateMap={handleCreateMap}
         onLike={handleLikeMap}
-        onComment={handleCommentMap}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onDelete={handleDeleteMap}

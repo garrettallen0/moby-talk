@@ -3,8 +3,7 @@ import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { MapCard } from './MapCard';
-import { MapTable } from './MapTable';
-import '../styles/MapList.css';
+import { CommentModal } from './CommentModal';
 
 interface MapListProps {
   publicMaps: ChapterMap[];
@@ -12,7 +11,6 @@ interface MapListProps {
   onMapClick: (map: ChapterMap) => void;
   onCreateMap: () => void;
   onLike: (mapId: string) => Promise<void>;
-  onComment: (mapId: string, text: string) => Promise<void>;
   onDelete: (mapId: string) => Promise<void>;
   activeTab: 'public' | 'my-maps';
   onTabChange: (tab: 'public' | 'my-maps') => void;
@@ -24,7 +22,6 @@ export const MapList = ({
   onMapClick,
   onCreateMap,
   onLike,
-  onComment,
   onDelete,
   activeTab,
   onTabChange,
@@ -32,25 +29,12 @@ export const MapList = ({
   const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [editableUserMaps, setEditableUserMaps] = useState<ChapterMap[]>([]);
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [selectedMapForComment, setSelectedMapForComment] = useState<ChapterMap | null>(null);
 
   useEffect(() => {
     setEditableUserMaps(userMaps);
   }, [userMaps]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (mobile) {
-        setViewMode('cards');
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const handleCreateClick = () => {
     if (!user) {
@@ -83,89 +67,72 @@ export const MapList = ({
       setShowSignInModal(true);
       return;
     }
-    const text = window.prompt('Enter your comment:');
-    if (text) {
-      await onComment(mapId, text);
+    const map = maps.find(m => m.id === mapId);
+    if (map) {
+      setSelectedMapForComment(map);
+      setIsCommentModalOpen(true);
     }
+  };
+
+  const handleCommentModalClose = () => {
+    setIsCommentModalOpen(false);
+    setSelectedMapForComment(null);
+  };
+
+  const handleCommentAdded = (updatedMap: ChapterMap) => {
+    // Update the selected map for comment to show the new comment immediately
+    setSelectedMapForComment(updatedMap);
   };
 
   const maps = activeTab === 'public' ? publicMaps : editableUserMaps;
   const showDelete = activeTab === 'my-maps';
 
   return (
-    <div className="map-list-container">
-      {!isMobile && (
-        <div className="control-panel">
-          <h3>Controls</h3>
-          <div className="control-section">
-            <h4>View Options</h4>
-            <div className="view-toggle">
-              <button
-                className={`toggle-button ${viewMode === 'cards' ? 'active' : ''}`}
-                onClick={() => setViewMode('cards')}
-                title="Card View"
-              >
-                <span className="icon">⊞</span>
-                Cards
-              </button>
-              <button
-                className={`toggle-button ${viewMode === 'table' ? 'active' : ''}`}
-                onClick={() => setViewMode('table')}
-                title="Table View"
-              >
-                <span className="icon">≡</span>
-                Table
-              </button>
-            </div>
-          </div>
-          {/* Future filter controls will go here */}
-        </div>
-      )}
-
-      <div className="main-content">
-        <div className="map-tabs">
+    <div className="w-full mx-auto my-8 flex gap-8 md:flex-col md:gap-4 lg:px-16">
+      <div className="flex-1 min-w-0">
+        <div className="flex mb-4 border-b-2 border-gray-300 pb-2">
           <button
-            className={`tab-button ${activeTab === 'public' ? 'active' : ''}`}
+            className={`flex-1 px-6 py-3 border-none bg-transparent text-lg text-gray-600 cursor-pointer transition-all duration-200 relative m-0 hover:text-blue-500 ${
+              activeTab === 'public' ? 'text-blue-500 font-medium' : ''
+            }`}
             onClick={() => onTabChange('public')}
           >
             Public Maps
+            {activeTab === 'public' && (
+              <div className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-blue-500"></div>
+            )}
           </button>
           <button
-            className={`tab-button ${activeTab === 'my-maps' ? 'active' : ''}`}
+            className={`flex-1 px-6 py-3 border-none bg-transparent text-lg text-gray-600 cursor-pointer transition-all duration-200 relative m-0 hover:text-blue-500 ${
+              activeTab === 'my-maps' ? 'text-blue-500 font-medium' : ''
+            }`}
             onClick={() => onTabChange('my-maps')}
           >
             My Maps
+            {activeTab === 'my-maps' && (
+              <div className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-blue-500"></div>
+            )}
           </button>
         </div>
 
-        <div className={`maps-container ${viewMode}`}>
+        <div>
           {maps.length > 0 ? (
-            viewMode === 'cards' ? (
-              <div className="maps-cards">
-                {maps.map((map) => (
-                  <MapCard
-                    key={map.id}
-                    map={map}
-                    onMapClick={onMapClick}
-                    onLike={handleLike}
-                    onComment={handleComment}
-                    onDelete={handleDelete}
-                    showDelete={showDelete}
-                  />
-                ))}
-              </div>
-            ) : (
-              <MapTable
-                maps={maps}
-                onMapClick={onMapClick}
-                onLike={handleLike}
-                onComment={handleComment}
-                onDelete={handleDelete}
-                showDelete={showDelete}
-              />
-            )
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 p-4 md:p-2">
+              {maps.map((map, index) => (
+                <MapCard
+                  key={map.id}
+                  map={map}
+                  onMapClick={onMapClick}
+                  onLike={handleLike}
+                  onComment={handleComment}
+                  onDelete={handleDelete}
+                  showDelete={showDelete}
+                  index={index}
+                />
+              ))}
+            </div>
           ) : (
-            <p className="no-maps-message">
+            <p className="text-center py-10 text-gray-600 italic">
               {activeTab === 'public' 
                 ? 'No public maps available'
                 : user
@@ -175,7 +142,10 @@ export const MapList = ({
             </p>
           )}
           {user && activeTab === 'my-maps' && (
-            <button className="add-map-button" onClick={handleCreateClick}>
+            <button 
+              className="mt-5 px-5 py-2.5 bg-blue-500 text-white border-none rounded cursor-pointer text-sm transition-colors duration-200 hover:bg-blue-700" 
+              onClick={handleCreateClick}
+            >
               Create New Map
             </button>
           )}
@@ -185,10 +155,15 @@ export const MapList = ({
       {showSignInModal && (
         <SignInModal
           onClose={() => setShowSignInModal(false)}
-          onSignIn={() => {
-            setShowSignInModal(false);
-            onCreateMap();
-          }}
+        />
+      )}
+
+      {selectedMapForComment && (
+        <CommentModal
+          isOpen={isCommentModalOpen}
+          onClose={handleCommentModalClose}
+          map={selectedMapForComment}
+          onCommentAdded={handleCommentAdded}
         />
       )}
     </div>

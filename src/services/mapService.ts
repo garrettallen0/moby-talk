@@ -15,6 +15,24 @@ import {
 import { db } from '../firebase';
 import { ChapterMap, ChapterAnnotation } from '../types/map';
 
+// Utility function to clean chapter annotations by removing empty citations
+const cleanChapterAnnotations = (annotations: Record<number, ChapterAnnotation>): Record<number, ChapterAnnotation> => {
+  const cleaned: Record<number, ChapterAnnotation> = {};
+  
+  Object.entries(annotations).forEach(([chapter, annotation]) => {
+    const filteredCitations = annotation.citations?.filter(citation => 
+      citation.passage && citation.passage.trim() !== ''
+    ) || [];
+    
+    cleaned[Number(chapter)] = {
+      ...annotation,
+      citations: filteredCitations
+    };
+  });
+  
+  return cleaned;
+};
+
 const MAPS_COLLECTION = 'maps';
 
 export const saveMap = async (
@@ -23,6 +41,7 @@ export const saveMap = async (
   name: string,
   selectedChapters: number[],
   description: string = '',
+  shortDescription: string = '',
   isPublic: boolean = false,
   chapterAnnotations: Record<number, ChapterAnnotation> = {},
   theme: string = ''
@@ -31,12 +50,13 @@ export const saveMap = async (
     const mapData: Omit<ChapterMap, 'id'> = {
       name,
       description,
+      shortDescription,
       userId,
       userName,
       selectedChapters,
       isPublic,
       likes: [],
-      chapterAnnotations,
+      chapterAnnotations: cleanChapterAnnotations(chapterAnnotations),
       theme,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -60,6 +80,11 @@ export const updateMap = async (
     delete updateData.id;
     delete updateData.createdAt;
     delete updateData.updatedAt;
+    
+    // Clean chapter annotations if they exist in the update data
+    if (updateData.chapterAnnotations) {
+      updateData.chapterAnnotations = cleanChapterAnnotations(updateData.chapterAnnotations);
+    }
     
     await updateDoc(mapRef, {
       ...updateData,
@@ -191,15 +216,65 @@ export const addComment = async (mapId: string, userId: string, userName: string
       userId,
       userName,
       text,
-      createdAt: serverTimestamp()
+      createdAt: new Date(),
+      likes: []
     };
 
-    const mapRef = doc(db, 'maps', mapId);
+    const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    
+    // First, get the current document to check if comments array exists
+    const mapDoc = await getDoc(mapRef);
+    const mapData = mapDoc.data();
+    
+    if (!mapData) {
+      throw new Error('Map not found');
+    }
+
     await updateDoc(mapRef, {
       comments: arrayUnion(comment)
     });
   } catch (error) {
     console.error('Error adding comment:', error);
+    throw error;
+  }
+};
+
+export const toggleCommentLike = async (mapId: string, commentId: string, userId: string): Promise<void> => {
+  try {
+    const mapRef = doc(db, MAPS_COLLECTION, mapId);
+    const mapDoc = await getDoc(mapRef);
+    const mapData = mapDoc.data();
+    
+    if (!mapData) {
+      throw new Error('Map not found');
+    }
+
+    const comments = mapData.comments || [];
+    const commentIndex = comments.findIndex((comment: any) => comment.id === commentId);
+    
+    if (commentIndex === -1) {
+      throw new Error('Comment not found');
+    }
+
+    const comment = comments[commentIndex];
+    const likes = comment.likes || [];
+    const hasLiked = likes.includes(userId);
+
+    // Create updated comment
+    const updatedComment = {
+      ...comment,
+      likes: hasLiked ? likes.filter((id: string) => id !== userId) : [...likes, userId]
+    };
+
+    // Create updated comments array
+    const updatedComments = [...comments];
+    updatedComments[commentIndex] = updatedComment;
+
+    await updateDoc(mapRef, {
+      comments: updatedComments
+    });
+  } catch (error) {
+    console.error('Error toggling comment like:', error);
     throw error;
   }
 };
