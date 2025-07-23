@@ -26,10 +26,8 @@ service cloud.firestore {
         request.auth != null && (
           // Allow full update if user owns the document
           resource.data.userId == request.auth.uid ||
-          // Allow likes array update for any authenticated user
-          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']) &&
-           (request.resource.data.likes.size() == resource.data.likes.size() + 1 ||
-            request.resource.data.likes.size() == resource.data.likes.size() - 1))
+          // Allow likes and comments updates for any authenticated user
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'comments'])
         )
       );
       

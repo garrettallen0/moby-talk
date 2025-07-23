@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChapterMap } from "../types/map";
-import { getPublicMaps, getUserMaps } from "../services/mapService";
+import { getPublicMaps, getUserMaps, toggleLike } from "../services/mapService";
 import { useAuth } from "../contexts/AuthContext";
 import { Timestamp } from "firebase/firestore";
 import { ChapterNavigation } from "./ChapterNavigation";
 import { SummaryView } from "./SummaryView";
 import { ChapterView } from "./ChapterView";
+import { CommentModal } from "./CommentModal";
+import { SignInModal } from "./SignInModal";
 
 export function MapDetail() {
   const location = useLocation();
@@ -15,6 +17,8 @@ export function MapDetail() {
   const [map, setMap] = useState<ChapterMap | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [selectedCitations, setSelectedCitations] = useState<Set<number>>(new Set());
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   useEffect(() => {
     const mapId = location.state?.mapId;
@@ -81,6 +85,51 @@ export function MapDetail() {
 
   const handleEditClick = () => {
     navigate(`/map/${map.id}/edit`);
+  };
+
+  const handleCommentClick = () => {
+    if (!user) {
+      setShowSignInModal(true);
+      return;
+    }
+    setIsCommentModalOpen(true);
+  };
+
+  const handleCommentModalClose = () => {
+    setIsCommentModalOpen(false);
+  };
+
+  const handleCommentAdded = (updatedMap: ChapterMap) => {
+    // Update the map state with the new comment
+    setMap(updatedMap);
+  };
+
+  const handleLikeClick = async () => {
+    if (!user) {
+      setShowSignInModal(true);
+      return;
+    }
+    
+    if (!map) return;
+    
+    try {
+      await toggleLike(map.id, user.uid);
+      
+      // Update the map locally to reflect the like change
+      const likes = map.likes || [];
+      const hasLiked = likes.includes(user.uid);
+      
+      const updatedMap = {
+        ...map,
+        likes: hasLiked 
+          ? likes.filter(id => id !== user.uid)
+          : [...likes, user.uid]
+      };
+      
+      setMap(updatedMap);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
   };
 
   const isOwner = user && map.userId === user.uid;
@@ -152,14 +201,39 @@ export function MapDetail() {
           <span className="text-gray-800 font-medium">{map.userName}</span>
         </div>
         <div className="flex gap-4">
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500">
+          <button 
+            onClick={handleLikeClick}
+            className={`flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base ${
+              user?.uid && map.likes?.includes(user.uid) 
+                ? 'text-blue-500 border-blue-500 hover:bg-blue-50' 
+                : 'text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
+            }`}
+          >
             ↑ {map.likes?.length || 0}
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500">
+          <button 
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
+            onClick={handleCommentClick}
+          >
             💬 {map.comments?.length || 0}
           </button>
         </div>
       </div>
+
+      {map && (
+        <CommentModal
+          isOpen={isCommentModalOpen}
+          onClose={handleCommentModalClose}
+          map={map}
+          onCommentAdded={handleCommentAdded}
+        />
+      )}
+
+      {showSignInModal && (
+        <SignInModal
+          onClose={() => setShowSignInModal(false)}
+        />
+      )}
     </div>
   );
 }
