@@ -6,6 +6,7 @@ import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapServic
 import { AVAILABLE_THEMES, SPECIAL_CHAPTERS } from '../constants/themes';
 import { ConfirmationModal } from './ConfirmationModal';
 import { ChapterNavigation } from './ChapterNavigation';
+import { ActionButtons } from './ActionButtons';
 import { Timestamp } from 'firebase/firestore';
 
 export function MapEditor() {
@@ -75,8 +76,6 @@ export function MapEditor() {
       setSelectedChapter(null);
     }
   };
-
-
 
   const handleSave = async () => {
     if (!user || !name.trim() || selectedChapters.size === 0) return;
@@ -232,44 +231,36 @@ export function MapEditor() {
 
   return (
     <div className="flex flex-col bg-white border border-gray-200 rounded-xl shadow-lg mx-auto overflow-hidden max-w-6xl">
-      <div className="flex items-center p-4 bg-white border-b border-gray-200 gap-4">
-        <button 
-          className="px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
-          onClick={() => navigate('/')}
-        >
-          ← Back
-        </button>
-        <div className="flex items-center gap-4 flex-1">
+      {/* Header - Mobile optimized */}
+      <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center p-4 bg-white border-b border-gray-200 gap-4">
+        {/* Back button and title - Mobile: stacked, Desktop: inline */}
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <button 
+            className="px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
+            onClick={() => navigate('/')}
+          >
+            ← Back
+          </button>
           <input
             type="text"
             placeholder="Map Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="flex-1 p-2 text-2xl border-none bg-transparent text-gray-900 font-medium focus:outline-none placeholder-gray-500"
+            className="flex-1 md:flex-none p-2 text-xl md:text-2xl border-none bg-transparent text-gray-900 font-medium focus:outline-none placeholder-gray-500"
           />
         </div>
-        <div className="flex gap-2 ml-auto">
-          <button
-            className="px-4 py-2 bg-blue-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-blue-600 disabled:bg-gray-500 disabled:cursor-not-allowed"
-            onClick={handleSave}
-            disabled={!name.trim() || selectedChapters.size === 0}
-          >
-            {id ? 'Save' : 'Create Map'}
-          </button>
-          <button 
-            className="px-4 py-2 bg-gray-100 text-gray-600 border border-gray-300 rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-gray-200 hover:border-gray-400" 
-            onClick={() => navigate('/')}
-          >
-            Cancel
-          </button>
-          {id && (
-            <button
-              className="px-4 py-2 bg-red-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-red-600"
-              onClick={() => setShowDeleteConfirmation(true)}
-            >
-              Delete
-            </button>
-          )}
+        
+        {/* Action buttons - Desktop only in header */}
+        <div className="hidden md:block">
+          <ActionButtons
+            id={id}
+            name={name}
+            selectedChapters={selectedChapters}
+            onSave={handleSave}
+            onCancel={() => navigate('/')}
+            onDelete={() => setShowDeleteConfirmation(true)}
+            variant="header"
+          />
         </div>
       </div>
 
@@ -399,6 +390,19 @@ export function MapEditor() {
             </select>
           </div>
         </div>
+      </div>
+
+      {/* Mobile action buttons - bottom */}
+      <div className="md:hidden">
+        <ActionButtons
+          id={id}
+          name={name}
+          selectedChapters={selectedChapters}
+          onSave={handleSave}
+          onCancel={() => navigate('/')}
+          onDelete={() => setShowDeleteConfirmation(true)}
+          variant="bottom"
+        />
       </div>
 
       <div className="flex justify-between items-center p-4 bg-white border-t border-gray-200">
