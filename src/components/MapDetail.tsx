@@ -77,8 +77,6 @@ export function MapDetail() {
     setSelectedChapter(null);
   };
 
-
-
   const handleBackClick = () => {
     navigate("/");
   };
@@ -147,25 +145,52 @@ export function MapDetail() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-8 md:p-4 flex flex-col gap-8 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
-      <div className="border-b-2 border-gray-200 pb-4 flex relative items-center gap-4">
-        <button 
-          className="relative px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
-          onClick={handleBackClick}
-        >
-          ← Back
-        </button>
-        <h1 className="absolute left-1/2 transform -translate-x-1/2 m-0 text-gray-800 text-3xl md:text-2xl font-medium">
-          {map.name}
-        </h1>
-        {isOwner && (
+    <div className="max-w-6xl mx-auto p-4 md:p-8 flex flex-col gap-6 md:gap-8 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+      {/* Header - Mobile optimized */}
+      <div className="border-b-2 border-gray-200 pb-4">
+        {/* Mobile: Stacked layout */}
+        <div className="md:hidden flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <button 
+              className="px-3 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
+              onClick={handleBackClick}
+            >
+              ← Back
+            </button>
+            {isOwner && (
+              <button 
+                className="px-3 py-2 border border-blue-500 rounded bg-white text-blue-500 cursor-pointer transition-all duration-200 text-sm hover:bg-blue-500 hover:text-white" 
+                onClick={handleEditClick}
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          <h1 className="text-gray-800 text-2xl font-medium text-center">
+            {map.name}
+          </h1>
+        </div>
+        
+        {/* Desktop: Original layout */}
+        <div className="hidden md:flex relative items-center gap-4">
           <button 
-            className="absolute right-0 px-4 py-2 border border-blue-500 rounded bg-white text-blue-500 cursor-pointer transition-all duration-200 text-sm hover:bg-blue-500 hover:text-white" 
-            onClick={handleEditClick}
+            className="relative px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
+            onClick={handleBackClick}
           >
-            Edit Map
+            ← Back
           </button>
-        )}
+          <h1 className="absolute left-1/2 transform -translate-x-1/2 m-0 text-gray-800 text-3xl font-medium">
+            {map.name}
+          </h1>
+          {isOwner && (
+            <button 
+              className="absolute right-0 px-4 py-2 border border-blue-500 rounded bg-white text-blue-500 cursor-pointer transition-all duration-200 text-sm hover:bg-blue-500 hover:text-white" 
+              onClick={handleEditClick}
+            >
+              Edit Map
+            </button>
+          )}
+        </div>
       </div>
 
       <ChapterNavigation
@@ -176,7 +201,8 @@ export function MapDetail() {
         variant="detail"
       />
 
-      <div className="flex-1 p-8 md:p-4 overflow-y-auto flex flex-col min-h-0 bg-white border border-gray-200 rounded-lg shadow-sm mx-4">
+      {/* Content area - Mobile optimized */}
+      <div className="flex-1 p-4 md:p-8 overflow-y-auto flex flex-col min-h-0 bg-white border border-gray-200 rounded-lg shadow-sm mx-0 md:mx-4">
         {selectedChapter === null ? (
           <SummaryView map={map} />
         ) : (
@@ -189,21 +215,23 @@ export function MapDetail() {
         )}
       </div>
 
+      {/* Theme badge */}
       <div className="inline-flex items-center gap-3 px-5 py-2 bg-purple-100 rounded-full shadow-sm w-fit self-center">
         <p className="m-0 text-purple-800 leading-relaxed text-base whitespace-nowrap">
           {map.theme || "No theme specified."}
         </p>
       </div>
 
-      <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-        <div className="flex items-center gap-4">
+      {/* Footer - Mobile optimized */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 border-t border-gray-200">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 w-full md:w-auto">
           <span className="text-gray-600 text-sm">{formatDate(map.createdAt)}</span>
           <span className="text-gray-800 font-medium">{map.userName}</span>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-3 md:gap-4 w-full md:w-auto">
           <button 
             onClick={handleLikeClick}
-            className={`flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base ${
+            className={`flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base flex-1 md:flex-none justify-center ${
               user?.uid && map.likes?.includes(user.uid) 
                 ? 'text-blue-500 border-blue-500 hover:bg-blue-50' 
                 : 'text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
@@ -212,7 +240,7 @@ export function MapDetail() {
             ↑ {map.likes?.length || 0}
           </button>
           <button 
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500"
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-base text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 flex-1 md:flex-none justify-center"
             onClick={handleCommentClick}
           >
             💬 {map.comments?.length || 0}
