@@ -415,8 +415,7 @@ export function MapEditor() {
           </span>
           <span className="text-gray-500">{user?.displayName || 'Anonymous'}</span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">{isPublic ? 'Public' : 'Private'}</span>
             <div
               className={`relative w-9 h-5 rounded-full cursor-pointer transition-all duration-200 ${
@@ -429,6 +428,7 @@ export function MapEditor() {
               }`} />
             </div>
           </div>
+        <div className="flex items-center gap-4">
           <div className="flex gap-2">
             <button className="bg-transparent border-none text-gray-500 cursor-pointer p-2 text-base flex items-center gap-1 hover:text-blue-500">
               ↑ {map?.likes?.length || 0}
