@@ -47,7 +47,7 @@ export function ChapterNavigation({
 
       <div className="h-px w-full md:h-6 md:w-px bg-gray-300"></div>
       
-      <div className="flex justify-center items-center gap-2 flex-1 w-full md:w-auto flex-wrap">
+      <div className="flex justify-center md:justify-start items-center gap-2 flex-1 w-full md:w-auto flex-wrap">
         {chapters
           .sort((a, b) => a - b)
           .map((chapter) => (
