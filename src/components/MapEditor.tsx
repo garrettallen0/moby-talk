@@ -3,9 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ChapterMap, ChapterAnnotation, Citation } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { saveMap, getMapById, updateMap, deleteMap } from '../services/mapService';
-import { AVAILABLE_THEMES, SPECIAL_CHAPTERS } from '../constants/themes';
+import { AVAILABLE_THEMES } from '../constants/themes';
 import { ConfirmationModal } from './ConfirmationModal';
 import { ChapterNavigation } from './ChapterNavigation';
+import { ActionButtons } from './ActionButtons';
+import { ChapterSelectionModal } from './ChapterSelectionModal';
 import { Timestamp } from 'firebase/firestore';
 
 export function MapEditor() {
@@ -75,8 +77,6 @@ export function MapEditor() {
       setSelectedChapter(null);
     }
   };
-
-
 
   const handleSave = async () => {
     if (!user || !name.trim() || selectedChapters.size === 0) return;
@@ -232,44 +232,36 @@ export function MapEditor() {
 
   return (
     <div className="flex flex-col bg-white border border-gray-200 rounded-xl shadow-lg mx-auto overflow-hidden max-w-6xl">
-      <div className="flex items-center p-4 bg-white border-b border-gray-200 gap-4">
-        <button 
-          className="px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
-          onClick={() => navigate('/')}
-        >
-          ← Back
-        </button>
-        <div className="flex items-center gap-4 flex-1">
+      {/* Header - Mobile optimized */}
+      <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center p-4 bg-white border-b border-gray-200 gap-4">
+        {/* Back button and title - Mobile: stacked, Desktop: inline */}
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <button 
+            className="px-4 py-2 border border-gray-300 rounded bg-white cursor-pointer transition-all duration-200 text-sm text-gray-600 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500" 
+            onClick={() => navigate('/')}
+          >
+            ← Back
+          </button>
           <input
             type="text"
             placeholder="Map Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="flex-1 p-2 text-2xl border-none bg-transparent text-gray-900 font-medium focus:outline-none placeholder-gray-500"
+            className="flex-1 md:flex-none p-2 text-xl md:text-2xl border-none bg-transparent text-gray-900 font-medium focus:outline-none placeholder-gray-500"
           />
         </div>
-        <div className="flex gap-2 ml-auto">
-          <button
-            className="px-4 py-2 bg-blue-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-blue-600 disabled:bg-gray-500 disabled:cursor-not-allowed"
-            onClick={handleSave}
-            disabled={!name.trim() || selectedChapters.size === 0}
-          >
-            {id ? 'Save' : 'Create Map'}
-          </button>
-          <button 
-            className="px-4 py-2 bg-gray-100 text-gray-600 border border-gray-300 rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-gray-200 hover:border-gray-400" 
-            onClick={() => navigate('/')}
-          >
-            Cancel
-          </button>
-          {id && (
-            <button
-              className="px-4 py-2 bg-red-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-red-600"
-              onClick={() => setShowDeleteConfirmation(true)}
-            >
-              Delete
-            </button>
-          )}
+        
+        {/* Action buttons - Desktop only in header */}
+        <div className="hidden md:block">
+          <ActionButtons
+            id={id}
+            name={name}
+            selectedChapters={selectedChapters}
+            onSave={handleSave}
+            onCancel={() => navigate('/')}
+            onDelete={() => setShowDeleteConfirmation(true)}
+            variant="header"
+          />
         </div>
       </div>
 
@@ -401,6 +393,19 @@ export function MapEditor() {
         </div>
       </div>
 
+      {/* Mobile action buttons - bottom */}
+      <div className="md:hidden">
+        <ActionButtons
+          id={id}
+          name={name}
+          selectedChapters={selectedChapters}
+          onSave={handleSave}
+          onCancel={() => navigate('/')}
+          onDelete={() => setShowDeleteConfirmation(true)}
+          variant="bottom"
+        />
+      </div>
+
       <div className="flex justify-between items-center p-4 bg-white border-t border-gray-200">
         <div className="flex gap-4 text-gray-500 text-sm">
           <span className="text-gray-500">
@@ -411,8 +416,7 @@ export function MapEditor() {
           </span>
           <span className="text-gray-500">{user?.displayName || 'Anonymous'}</span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">{isPublic ? 'Public' : 'Private'}</span>
             <div
               className={`relative w-9 h-5 rounded-full cursor-pointer transition-all duration-200 ${
@@ -425,6 +429,7 @@ export function MapEditor() {
               }`} />
             </div>
           </div>
+        <div className="flex items-center gap-4">
           <div className="flex gap-2">
             <button className="bg-transparent border-none text-gray-500 cursor-pointer p-2 text-base flex items-center gap-1 hover:text-blue-500">
               ↑ {map?.likes?.length || 0}
@@ -436,51 +441,14 @@ export function MapEditor() {
         </div>
       </div>
 
-      {showChapterSelection && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowChapterSelection(false)} />
-          <div className="relative bg-white rounded-lg p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="m-0 text-gray-800 text-2xl font-medium">Select Chapters</h2>
-              <button 
-                className="bg-transparent border-none text-2xl text-gray-600 cursor-pointer p-2 hover:text-gray-800" 
-                onClick={() => setShowChapterSelection(false)}
-              >
-                &times;
-              </button>
-            </div>
-            <div className="mb-6">
-              <div className="grid grid-cols-8 md:grid-cols-12 lg:grid-cols-16 gap-2 mt-4">
-                {allChapters.map((chapter) => (
-                  <button
-                    key={chapter}
-                    className={`p-2 rounded cursor-pointer transition-all duration-200 text-sm text-center relative ${
-                      selectedChapters.has(chapter) 
-                        ? 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600 hover:border-blue-600' 
-                        : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500'
-                    }`}
-                    onClick={() => selectedChapters.has(chapter) 
-                      ? handleRemoveChapter(chapter)
-                      : handleAddChapter(chapter)
-                    }
-                    data-title={SPECIAL_CHAPTERS[String(chapter) as keyof typeof SPECIAL_CHAPTERS] || `Chapter ${chapter}`}
-                  >
-                    {chapter}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex justify-end gap-4">
-              <button 
-                className="px-4 py-2 bg-blue-500 text-white border-none rounded text-sm cursor-pointer transition-all duration-200 font-medium hover:bg-blue-600"
-                onClick={() => setShowChapterSelection(false)}
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ChapterSelectionModal
+        isOpen={showChapterSelection}
+        onClose={() => setShowChapterSelection(false)}
+        selectedChapters={selectedChapters}
+        onAddChapter={handleAddChapter}
+        onRemoveChapter={handleRemoveChapter}
+        allChapters={allChapters}
+      />
 
       {showDeleteConfirmation && (
         <ConfirmationModal
