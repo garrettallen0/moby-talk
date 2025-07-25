@@ -21,7 +21,7 @@ export const MapCard = ({
 }: MapCardProps) => {
   return (
     <div 
-      className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden hover:-translate-y-0.5"
+      className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden hover:-translate-y-0.5 flex flex-col h-full"
       onClick={() => onMapClick(map)}
     >
       <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center gap-2">
@@ -37,7 +37,7 @@ export const MapCard = ({
           </div>
         )}
       </div>
-      <div className="p-4">
+      <div className="p-4 flex-1">
         {map.shortDescription && (
           <div className="flex mb-3 last:mb-0">
           <label className="w-2/5 text-gray-600 text-sm">Summary</label>
@@ -55,7 +55,7 @@ export const MapCard = ({
           </span>
         </div>
       </div>
-      <div className="p-4 border-t border-gray-200 flex justify-between items-center gap-2">
+      <div className="p-4 border-t border-gray-200 flex justify-between items-center gap-2 mt-auto">
         <span className="text-gray-600 text-sm">{map.userName}</span>
         <div className="flex gap-2">
           <button 
