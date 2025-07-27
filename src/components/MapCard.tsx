@@ -19,6 +19,9 @@ export const MapCard = ({
   showDelete = false,
   index,
 }: MapCardProps) => {
+  // Common button base styles
+  const buttonBaseClasses = "flex items-center gap-1 px-3 py-1.5 text-gray-500 rounded-lg transition-all duration-200 hover:scale-105";
+  
   return (
     <div 
       className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1 border-2 border-gray-300 flex flex-col h-full group"
@@ -45,7 +48,7 @@ export const MapCard = ({
         </div>
         )}
       </div>
-      <div className="p-4 border-t border-gray-100 mt-auto bg-gradient-to-r from-gray-50 to-white">
+      <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white">
         <div className="flex items-center gap-2 mb-2">
           <label className="text-gray-600 text-sm font-medium">Chapters</label>
         </div>
@@ -57,11 +60,11 @@ export const MapCard = ({
         </div>
       </div>
       
-      <div className="p-4 border-t border-gray-100 flex justify-between items-center gap-2 mt-auto bg-gradient-to-r from-gray-50 to-white">
+      <div className="p-4 border-t border-gray-100 flex justify-between items-center gap-2 bg-gradient-to-r from-gray-50 to-white">
         <span className="text-gray-600 text-sm font-medium">{map.userName}</span>
         <div className="flex gap-3">
           <button 
-            className="flex items-center gap-1 px-3 py-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:scale-105"
+            className={`${buttonBaseClasses} hover:text-blue-600 hover:bg-blue-50`}
             onClick={(e) => onLike(e, map.id)}
             title="Like"
           >
@@ -69,7 +72,7 @@ export const MapCard = ({
             <span className="text-xs font-semibold">{map.likes?.length || 0}</span>
           </button>
           <button 
-            className="flex items-center gap-1 px-3 py-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 hover:scale-105"
+            className={`${buttonBaseClasses} hover:text-green-600 hover:bg-green-50`}
             onClick={(e) => onComment(e, map.id)}
             title="Comment"
           >
@@ -78,7 +81,7 @@ export const MapCard = ({
           </button>
           {showDelete && onDelete && (
             <button 
-              className="flex items-center gap-1 px-3 py-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 hover:scale-105"
+              className={`${buttonBaseClasses} hover:text-red-600 hover:bg-red-50`}
               onClick={(e) => onDelete(e, map.id)}
               title="Delete"
             >
