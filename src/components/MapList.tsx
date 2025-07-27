@@ -3,6 +3,7 @@ import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { SignInModal } from './SignInModal';
 import { MapCard } from './MapCard';
+import { CommentModal } from './CommentModal';
 
 interface MapListProps {
   publicMaps: ChapterMap[];
@@ -10,7 +11,6 @@ interface MapListProps {
   onMapClick: (map: ChapterMap) => void;
   onCreateMap: () => void;
   onLike: (mapId: string) => Promise<void>;
-  onComment: (mapId: string, text: string) => Promise<void>;
   onDelete: (mapId: string) => Promise<void>;
   activeTab: 'public' | 'my-maps';
   onTabChange: (tab: 'public' | 'my-maps') => void;
@@ -22,7 +22,6 @@ export const MapList = ({
   onMapClick,
   onCreateMap,
   onLike,
-  onComment,
   onDelete,
   activeTab,
   onTabChange,
@@ -30,6 +29,8 @@ export const MapList = ({
   const { user } = useAuth();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [editableUserMaps, setEditableUserMaps] = useState<ChapterMap[]>([]);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [selectedMapForComment, setSelectedMapForComment] = useState<ChapterMap | null>(null);
 
   useEffect(() => {
     setEditableUserMaps(userMaps);
@@ -66,10 +67,21 @@ export const MapList = ({
       setShowSignInModal(true);
       return;
     }
-    const text = window.prompt('Enter your comment:');
-    if (text) {
-      await onComment(mapId, text);
+    const map = maps.find(m => m.id === mapId);
+    if (map) {
+      setSelectedMapForComment(map);
+      setIsCommentModalOpen(true);
     }
+  };
+
+  const handleCommentModalClose = () => {
+    setIsCommentModalOpen(false);
+    setSelectedMapForComment(null);
+  };
+
+  const handleCommentAdded = (updatedMap: ChapterMap) => {
+    // Update the selected map for comment to show the new comment immediately
+    setSelectedMapForComment(updatedMap);
   };
 
   const maps = activeTab === 'public' ? publicMaps : editableUserMaps;
@@ -143,10 +155,15 @@ export const MapList = ({
       {showSignInModal && (
         <SignInModal
           onClose={() => setShowSignInModal(false)}
-          onSignIn={() => {
-            setShowSignInModal(false);
-            onCreateMap();
-          }}
+        />
+      )}
+
+      {selectedMapForComment && (
+        <CommentModal
+          isOpen={isCommentModalOpen}
+          onClose={handleCommentModalClose}
+          map={selectedMapForComment}
+          onCommentAdded={handleCommentAdded}
         />
       )}
     </div>

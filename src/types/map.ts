@@ -6,6 +6,7 @@ export interface Comment {
   userName: string;
   text: string;
   createdAt: Date | Timestamp;
+  likes?: string[];
 }
 
 export interface Citation {
@@ -31,5 +32,5 @@ export interface ChapterMap {
   createdAt: Date;
   updatedAt: Date;
   likes?: string[];
-  comments?: any[];
+  comments?: Comment[];
 } 
