@@ -59,28 +59,30 @@ export const MapCard = ({
       
       <div className="p-4 border-t border-gray-200 flex justify-between items-center gap-2 mt-auto">
         <span className="text-gray-600 text-sm">{map.userName}</span>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button 
-            className="px-2 py-1 border-none rounded bg-transparent text-blue-500 text-sm cursor-pointer transition-all duration-200 hover:bg-gray-100"
+            className="flex items-center gap-1 px-2 py-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-150"
             onClick={(e) => onLike(e, map.id)}
             title="Like"
           >
-            ↑ {map.likes?.length || 0}
+            <span className="text-sm">↑</span>
+            <span className="text-xs font-medium">{map.likes?.length || 0}</span>
           </button>
           <button 
-            className="px-2 py-1 border-none rounded bg-transparent text-green-500 text-sm cursor-pointer transition-all duration-200 hover:bg-gray-100"
+            className="flex items-center gap-1 px-2 py-1 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-md transition-all duration-150"
             onClick={(e) => onComment(e, map.id)}
             title="Comment"
           >
-            💬 {map.comments?.length || 0}
+            <span className="text-sm">💬</span>
+            <span className="text-xs font-medium">{map.comments?.length || 0}</span>
           </button>
           {showDelete && onDelete && (
             <button 
-              className="px-2 py-1 border-none rounded bg-transparent text-red-500 text-sm cursor-pointer transition-all duration-200 hover:bg-gray-100"
+              className="flex items-center gap-1 px-2 py-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-md transition-all duration-150"
               onClick={(e) => onDelete(e, map.id)}
               title="Delete"
             >
-              🗑️
+              <span className="text-sm">🗑️</span>
             </button>
           )}
         </div>
