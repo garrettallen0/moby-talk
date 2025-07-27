@@ -44,17 +44,22 @@ export const MapCard = ({
           <span className="flex-1 text-gray-800">{map.shortDescription}</span>
         </div>
         )}
-        <div className="flex mb-3 last:mb-0">
-          <label className="w-2/5 text-gray-600 text-sm"># of Chapters</label>
-          <span className="flex-1 text-gray-800">{map.selectedChapters.length}</span>
-        </div>
-        <div className="flex mb-3 last:mb-0">
-          <label className="w-2/5 text-gray-600 text-sm">Chapters</label>
-          <span className="flex-1 text-gray-800 block whitespace-nowrap overflow-hidden text-ellipsis">
-            {map.selectedChapters.sort((a, b) => a - b).join(', ')}
-          </span>
-        </div>
       </div>
+      <div className="p-4 border-t border-gray-200 flex justify-between items-center gap-2 mt-auto">
+
+      <div className="flex mb-3 last:mb-0">
+            <label className="w-2/5 text-gray-600 text-sm">Chapters</label>
+            <span className="flex-1 text-gray-800 block whitespace-nowrap overflow-hidden text-ellipsis">
+              {map.selectedChapters.sort((a, b) => a - b).join(', ')}
+            </span>
+          </div>
+        
+        <div className="flex mb-3 last:mb-0">
+            <span className="flex-1 text-gray-800">{map.selectedChapters.length}</span>
+          </div>
+          
+      </div>
+      
       <div className="p-4 border-t border-gray-200 flex justify-between items-center gap-2 mt-auto">
         <span className="text-gray-600 text-sm">{map.userName}</span>
         <div className="flex gap-2">
