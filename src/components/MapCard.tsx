@@ -42,18 +42,10 @@ export const MapCard = ({
       </div>
       <div className="p-4 flex-1 bg-white">
         {map.shortDescription && (
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <label className="text-gray-600 text-sm font-bold">Summary</label>
-            </div>
-            <span className="text-gray-700 leading-relaxed">{map.shortDescription}</span>
-          </div>
+          <span className="text-gray-700 leading-relaxed">{map.shortDescription}</span>
         )}
       </div>
       <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-        <div className="flex items-center gap-2 mb-2">
-          <label className="text-gray-600 text-sm font-bold">Chapters</label>
-        </div>
         <div className="flex justify-between items-center gap-2">
           <span className="text-gray-700 text-sm flex-1">
             {map.selectedChapters.sort((a, b) => a - b).join(', ')}
