@@ -45,7 +45,7 @@ export const MapCard = ({
           <p className="text-gray-700 leading-relaxed m-0">{map.shortDescription}</p>
         </div>
       )}
-      <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+      <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white mt-auto">
         <div className="flex justify-between items-center gap-2">
           <span className="text-gray-700 text-sm flex-1">
             {map.selectedChapters.sort((a, b) => a - b).join(', ')}
@@ -54,7 +54,7 @@ export const MapCard = ({
         </div>
       </div>
       
-      <div className="p-4 border-t border-gray-100 flex justify-between items-center gap-2 bg-gradient-to-r from-gray-50 to-white">
+      <div className="p-4 border-t border-gray-100 flex justify-between items-center gap-2 bg-gradient-to-r from-gray-50 to-white mt-auto">
         <span className="text-gray-600 text-sm font-medium">{map.userName}</span>
         <div className="flex gap-3">
           <button 
