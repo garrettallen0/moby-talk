@@ -53,7 +53,7 @@ export const MapCard = ({
           <span className="text-gray-800 text-sm flex-1">
             {map.selectedChapters.sort((a, b) => a - b).join(', ')}
           </span>
-          <span className="text-gray-800 font-medium">{map.selectedChapters.length}</span>
+          <span className="text-gray-800 font-medium border border-dotted border-gray-400 rounded-full w-8 h-8 flex items-center justify-center text-sm">{map.selectedChapters.length}</span>
         </div>
       </div>
       
