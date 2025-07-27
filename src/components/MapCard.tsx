@@ -24,7 +24,7 @@ export const MapCard = ({
   
   return (
     <div 
-      className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1 border-2 border-gray-300 flex flex-col h-full group"
+      className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1 border border-black flex flex-col h-full group"
       onClick={() => onMapClick(map)}
     >
       <div className="p-4 bg-blue-100 border-b border-blue-200 flex justify-between items-center gap-2">
