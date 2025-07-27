@@ -1,5 +1,6 @@
 import { SPECIAL_CHAPTERS } from '../constants/themes';
 import { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ChapterSelectionModalProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export function ChapterSelectionModal({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex justify-center items-center">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
       <div className="relative bg-white rounded-lg p-4 md:p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-hidden shadow-lg flex flex-col">
@@ -162,6 +163,7 @@ export function ChapterSelectionModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 } 
