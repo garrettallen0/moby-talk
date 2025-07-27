@@ -19,12 +19,15 @@ export const MapCard = ({
   showDelete = false,
   index,
 }: MapCardProps) => {
+  // Common button base styles
+  const buttonBaseClasses = "flex items-center gap-1 px-3 py-1.5 text-gray-500 rounded-lg transition-all duration-200 hover:scale-105";
+  
   return (
     <div 
-      className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden hover:-translate-y-0.5"
+      className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1 border border-black flex flex-col h-full group"
       onClick={() => onMapClick(map)}
     >
-      <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center gap-2">
+      <div className="p-4 bg-blue-100 border-b border-blue-200 flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
           {index !== undefined && (
             <span className="text-gray-600 text-sm">#{index + 1}</span>
@@ -37,48 +40,46 @@ export const MapCard = ({
           </div>
         )}
       </div>
-      <div className="p-4">
-        {map.shortDescription && (
-          <div className="flex mb-3 last:mb-0">
-          <label className="w-2/5 text-gray-600 text-sm">Summary</label>
-          <span className="flex-1 text-gray-800">{map.shortDescription}</span>
+      {map.shortDescription && (
+        <div className="p-4 flex-1 bg-white">
+          <p className="text-gray-700 leading-relaxed m-0">{map.shortDescription}</p>
         </div>
-        )}
-        <div className="flex mb-3 last:mb-0">
-          <label className="w-2/5 text-gray-600 text-sm"># of Chapters</label>
-          <span className="flex-1 text-gray-800">{map.selectedChapters.length}</span>
-        </div>
-        <div className="flex mb-3 last:mb-0">
-          <label className="w-2/5 text-gray-600 text-sm">Chapters</label>
-          <span className="flex-1 text-gray-800 block whitespace-nowrap overflow-hidden text-ellipsis">
+      )}
+      <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white mt-auto">
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-gray-700 text-sm flex-1">
             {map.selectedChapters.sort((a, b) => a - b).join(', ')}
           </span>
+          <span className="text-blue-600 font-semibold bg-blue-100 border border-blue-200 rounded-full w-8 h-8 flex items-center justify-center text-sm">{map.selectedChapters.length}</span>
         </div>
       </div>
-      <div className="p-4 border-t border-gray-200 flex justify-between items-center gap-2">
-        <span className="text-gray-600 text-sm">{map.userName}</span>
-        <div className="flex gap-2">
+      
+      <div className="p-4 border-t border-gray-100 flex justify-between items-center gap-2 bg-gradient-to-r from-gray-50 to-white mt-auto">
+        <span className="text-gray-600 text-sm font-medium">{map.userName}</span>
+        <div className="flex gap-3">
           <button 
-            className="px-2 py-1 border-none rounded bg-transparent text-blue-500 text-sm cursor-pointer transition-all duration-200 hover:bg-gray-100"
+            className={`${buttonBaseClasses} hover:text-blue-600 hover:bg-blue-50`}
             onClick={(e) => onLike(e, map.id)}
             title="Like"
           >
-            ↑ {map.likes?.length || 0}
+            <span className="text-sm">↑</span>
+            <span className="text-xs font-semibold">{map.likes?.length || 0}</span>
           </button>
           <button 
-            className="px-2 py-1 border-none rounded bg-transparent text-green-500 text-sm cursor-pointer transition-all duration-200 hover:bg-gray-100"
+            className={`${buttonBaseClasses} hover:text-green-600 hover:bg-green-50`}
             onClick={(e) => onComment(e, map.id)}
             title="Comment"
           >
-            💬 {map.comments?.length || 0}
+            <span className="text-sm">💬</span>
+            <span className="text-xs font-semibold">{map.comments?.length || 0}</span>
           </button>
           {showDelete && onDelete && (
             <button 
-              className="px-2 py-1 border-none rounded bg-transparent text-red-500 text-sm cursor-pointer transition-all duration-200 hover:bg-gray-100"
+              className={`${buttonBaseClasses} hover:text-red-600 hover:bg-red-50`}
               onClick={(e) => onDelete(e, map.id)}
               title="Delete"
             >
-              🗑️
+              <span className="text-sm">🗑️</span>
             </button>
           )}
         </div>
