@@ -450,14 +450,13 @@ export function MapEditor() {
         allChapters={allChapters}
       />
 
-      {showDeleteConfirmation && (
-        <ConfirmationModal
-          message="Are you sure you want to delete this map?"
-          confirmText="Yes, delete"
-          onConfirm={handleDelete}
-          onCancel={() => setShowDeleteConfirmation(false)}
-        />
-      )}
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        message="Are you sure you want to delete this map?"
+        confirmText="Yes, delete"
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirmation(false)}
+      />
     </div>
   );
 } 
