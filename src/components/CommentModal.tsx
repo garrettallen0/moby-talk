@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ChapterMap } from '../types/map';
+import { ChapterMap, Comment } from '../types/map';
+import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { addComment, toggleCommentLike, toggleLike } from '../services/mapService';
 
@@ -68,7 +69,7 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
     }
   };
 
-  const formatDate = (date: Date | any) => {
+  const formatDate = (date: Date | Timestamp) => {
     if (date instanceof Date) {
       return date.toLocaleDateString();
     }
@@ -226,8 +227,8 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
           {/* Existing Comments */}
           <div className="space-y-6">
             {map.comments && map.comments.length > 0 ? (
-              map.comments.map((comment: any, index: number) => {
-                const hasLiked = comment.likes?.includes(user?.uid) || false;
+              map.comments.map((comment: Comment, index: number) => {
+                const hasLiked = user?.uid ? comment.likes?.includes(user.uid) || false : false;
                 return (
                   <div key={index} className="p-4 pl-0 border-b pb-6">
                     <div className="flex items-center justify-between">
