@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 interface ConfirmationModalProps {
   message: string;
@@ -13,7 +14,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   onCancel
 }) => {
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg w-90 max-w-md m-4 md:m-0">
         <p className="text-gray-900 mb-6">{message}</p>
@@ -26,6 +27,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }; 
