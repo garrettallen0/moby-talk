@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChapterMap } from '../types/map';
 import { useAuth } from '../contexts/AuthContext';
 import { addComment, toggleCommentLike, toggleLike } from '../services/mapService';
@@ -134,7 +135,7 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
       <div 
@@ -284,6 +285,7 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
           <span className="sr-only">Close</span>
         </button>
       </div>
-    </>
+    </>,
+    document.body
   );
 } 
