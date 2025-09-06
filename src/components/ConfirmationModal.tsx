@@ -40,7 +40,8 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg w-90 max-w-md m-4 md:m-0">
+      <div className="absolute inset-0" onClick={onCancel} />
+      <div className="relative bg-white p-8 rounded-lg w-90 max-w-md m-4 md:m-0">
         <p className="text-gray-900 text-center mb-6 px-8">{message}</p>
         <div className="flex justify-center gap-4">
           <button className="px-6 py-3 bg-red-500 text-white border-none rounded text-sm cursor-pointer font-medium transition-all duration-200 hover:bg-red-600" onClick={onConfirm}>
