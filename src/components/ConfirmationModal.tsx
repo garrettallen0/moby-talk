@@ -28,11 +28,13 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       document.addEventListener('keydown', handleEscape);
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
+      document.body.style.touchAction = 'auto';
     };
   }, [isOpen, onCancel]);
 
