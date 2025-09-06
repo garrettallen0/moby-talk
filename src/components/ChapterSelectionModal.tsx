@@ -82,7 +82,7 @@ export function ChapterSelectionModal({
   return createPortal(
     <div className="fixed inset-0 z-50 flex justify-center items-center">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
-      <div className="relative bg-white rounded-lg p-4 md:p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-hidden shadow-lg flex flex-col">
+      <div className="relative bg-white rounded-lg p-4 md:p-8 w-11/12 max-w-4xl max-h-[80vh] overflow-hidden shadow-lg flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="m-0 text-gray-800 text-xl md:text-2xl font-medium">Select Chapters</h2>
