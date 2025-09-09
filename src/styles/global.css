@@ -88,7 +88,6 @@ body {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
-  position: relative;
 }
 
 #root {
@@ -98,17 +97,3 @@ body {
   overscroll-behavior: none;
   position: relative;
 }
-
-/* Modal scroll prevention - better approach */
-.modal-open {
-  overflow: hidden !important;
-  position: fixed !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* Prevent iOS Safari bounce on modals */
-.modal-open body {
-  -webkit-overflow-scrolling: auto !important;
-  overscroll-behavior: none !important;
-} 
