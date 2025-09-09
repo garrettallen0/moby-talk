@@ -1,6 +1,7 @@
 import { SPECIAL_CHAPTERS } from '../constants/themes';
 import { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { lockScroll, unlockScroll } from '../utils/scrollLock';
 
 interface ChapterSelectionModalProps {
   isOpen: boolean;
@@ -32,17 +33,14 @@ export function ChapterSelectionModal({
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
+      lockScroll();
     } else {
-      document.body.style.overflow = 'unset';
-      document.body.style.touchAction = 'auto';
+      unlockScroll();
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-      document.body.style.touchAction = 'auto';
+      unlockScroll();
     };
   }, [isOpen, onClose]);
 

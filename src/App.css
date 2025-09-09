@@ -17,6 +17,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
+  /* Mobile scroll optimizations */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+  position: relative;
 }
 
 /* Global link styles */

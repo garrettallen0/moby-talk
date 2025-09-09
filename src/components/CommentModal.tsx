@@ -4,6 +4,7 @@ import { ChapterMap, Comment } from '../types/map';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { addComment, toggleCommentLike, toggleLike } from '../services/mapService';
+import { lockScroll, unlockScroll } from '../utils/scrollLock';
 
 interface CommentModalProps {
   isOpen: boolean;
@@ -27,13 +28,14 @@ export function CommentModal({ isOpen, onClose, map, onCommentAdded }: CommentMo
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
+      lockScroll();
+    } else {
+      unlockScroll();
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      unlockScroll();
     };
   }, [isOpen, onClose]);
 

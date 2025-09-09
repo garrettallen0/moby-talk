@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { lockScroll, unlockScroll } from '../utils/scrollLock';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -26,15 +27,14 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
+      lockScroll();
+    } else {
+      unlockScroll();
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-      document.body.style.touchAction = 'auto';
+      unlockScroll();
     };
   }, [isOpen, onCancel]);
 
