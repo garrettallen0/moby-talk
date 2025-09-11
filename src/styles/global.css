@@ -16,6 +16,18 @@
   overscroll-behavior: none;
 }
 
+/* Debug: Add temporary visual indicators */
+body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+html {
+  overscroll-behavior: none;
+}
+
+/* Debug script to log scroll events */
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
